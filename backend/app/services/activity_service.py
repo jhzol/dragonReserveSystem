@@ -480,3 +480,23 @@ def checkin_activity(
     db.commit()
     db.refresh(participant)
     return participant
+
+
+def cancel_signup(db: Session, activity: Activity, user: User) -> None:
+    """Remove the current user's signup if still allowed."""
+
+    participant = db.scalar(
+        select(ActivityParticipant).where(
+            ActivityParticipant.activity_id == activity.id,
+            ActivityParticipant.user_id == user.id,
+        )
+    )
+    if participant is None:
+        raise NotFoundError("Signup record not found")
+
+    deadline = activity.signup_deadline or activity.start_time
+    if user.role != "admin" and deadline and _app_now() >= deadline:
+        raise ValidationAppError("Signup deadline has passed; contact an admin to remove this signup")
+
+    db.delete(participant)
+    db.commit()

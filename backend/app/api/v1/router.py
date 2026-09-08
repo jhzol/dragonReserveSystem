@@ -9,6 +9,7 @@ from app.api.v1.diagnostics import router as diagnostics_router
 from app.api.v1.health import router as health_router
 from app.api.v1.stats import router as stats_router
 from app.api.v1.users import router as users_router
+from app.api.v1.weather import router as weather_router
 
 
 api_router = APIRouter()
@@ -19,3 +20,4 @@ api_router.include_router(diagnostics_router)
 api_router.include_router(health_router)
 api_router.include_router(stats_router)
 api_router.include_router(users_router)
+api_router.include_router(weather_router)

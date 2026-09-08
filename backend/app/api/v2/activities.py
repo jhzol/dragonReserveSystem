@@ -11,6 +11,7 @@ from app.api.deps import (
     get_optional_current_user,
     require_admin,
     require_activity_create_permission,
+    require_activity_signup_permission,
 )
 from app.core.database import get_db
 from app.core.exceptions import PermissionDeniedError
@@ -203,7 +204,7 @@ def delete_activity_v2(
 def post_signup_v2(
     activity_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_activity_signup_permission),
 ) -> ActivitySignupResponse:
     activity = get_activity_by_id(db, activity_id)
     participant = signup_activity(db, activity, current_user)

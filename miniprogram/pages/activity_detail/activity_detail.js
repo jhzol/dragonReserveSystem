@@ -556,10 +556,27 @@ Page({
         const textRect = rects && rects[1];
         const toggleRect = rects && rects[2];
         if (!rowRect || !textRect || !toggleRect) return;
-        const toggleWidth = Math.max(0, Number(toggleRect.width) || 0);
-        const availableTextWidth = Math.max(0, rowRect.width - toggleWidth - 7.69);
+        const rowWidth = Math.max(0, Number(rowRect.width) || 0);
+        const naturalTextWidth = Math.max(0, Number(textRect.width) || 0);
         const collapsedHeight = Math.max(0, Number(textRect.height) || 0);
-        const widthOverflows = textRect.width > availableTextWidth + 0.5;
+        // 先按完整一行可用宽度判断真实溢出；不能提前为“展开”预留空间，
+        // 否则 iOS/Skyline 会把本可单行展示的备注误判成可展开。
+        const naturalTextOverflowsRow = naturalTextWidth > rowWidth + 0.5;
+        if (!naturalTextOverflowsRow) {
+          this.setData({
+            remarkExpandable: false,
+            remarkExpanded: false,
+            remarkToggleRotationDeg: 0,
+            remarkTextWidthPx: rowWidth,
+            remarkCollapsedHeightPx: collapsedHeight,
+            remarkExpandedHeightPx: collapsedHeight,
+            remarkViewportHeightPx: collapsedHeight
+          });
+          return;
+        }
+
+        const toggleWidth = Math.max(0, Number(toggleRect.width) || 0);
+        const availableTextWidth = Math.max(0, rowWidth - toggleWidth - 7.69);
         this.setData({
           remarkTextWidthPx: availableTextWidth,
           remarkCollapsedHeightPx: collapsedHeight,
@@ -573,20 +590,16 @@ Page({
               collapsedHeight,
               Number(fullRect && fullRect.height) || collapsedHeight
             );
-            const remarkExpandable = widthOverflows || expandedHeight > collapsedHeight + 0.5;
             const expandByDefault = !!(
-              remarkExpandable &&
               this.data.activity &&
               this.data.activity.status === "已结束"
             );
             this.setData({
-              remarkExpandable,
+              remarkExpandable: true,
               remarkExpanded: expandByDefault,
               remarkToggleRotationDeg: expandByDefault ? 180 : 0,
               remarkExpandedHeightPx: expandedHeight,
-              remarkViewportHeightPx: remarkExpandable
-                ? (expandByDefault ? expandedHeight : collapsedHeight)
-                : expandedHeight
+              remarkViewportHeightPx: expandByDefault ? expandedHeight : collapsedHeight
             });
           });
         });
@@ -885,7 +898,7 @@ Page({
       return;
     }
     const userRole = app.globalData.userRole || wx.getStorageSync("userRole") || "guest";
-    if (userRole !== "admin") {
+    if (userRole !== "user" && userRole !== "admin") {
       this.showSignupPermissionDenied();
       return;
     }

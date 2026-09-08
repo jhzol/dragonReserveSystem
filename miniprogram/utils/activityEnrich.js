@@ -330,11 +330,11 @@ function enrichSingleActivity(rawItem, typeStyles, myUserId, myNickname, now) {
   activity.bgVideoUrl = selectedStyle ? (selectedStyle.bgVideoUrl || "") : "";
   activity.largeCardBgImageUrl = selectedStyle ? (selectedStyle.largeCardBgImageUrl || "") : "";
   activity.largeCardGlassImageUrl = selectedStyle ? (selectedStyle.largeCardGlassImageUrl || "") : "";
-  activity.smallCardBgImageUrl = selectedStyle ? (selectedStyle.smallCardBgImageUrl || "") : "";
+  activity.smallCardBgImageUrl = selectedStyle ? (selectedStyle.largeCardBgImageUrl || "") : "";
 
   if (activity.activityCover && activity.activityCover.imageUrl) {
     activity.largeCardBgImageUrl = activity.activityCover.imageUrl;
-    activity.smallCardBgImageUrl = activity.activityCover.thumbnailUrl || activity.activityCover.imageUrl;
+    activity.smallCardBgImageUrl = activity.activityCover.imageUrl;
     activity.largeCardGlassImageUrl = activity.activityCover.largeCardGlassImageUrl || "";
     activity.bgVideoUrl = "";
     activity.showTypeBadge = false;

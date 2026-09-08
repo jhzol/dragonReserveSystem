@@ -1,6 +1,6 @@
 const userService = require("./services/user");
 const authService = require("./services/auth");
-const { logPageError } = require("./services/logger");
+const { logPageError, resumeDiagnosticUploads } = require("./services/logger");
 
 
 
@@ -60,6 +60,10 @@ App({
   },
 
 
+
+  onShow() {
+    resumeDiagnosticUploads();
+  },
 
   restoreSessionFromStorage() {
 
@@ -180,6 +184,8 @@ App({
     wx.setStorageSync("userAvatarUrl", user.avatar_url || "");
 
     wx.setStorageSync("userRole", role);
+
+    resumeDiagnosticUploads();
 
     wx.setStorageSync("isAuthenticated", isAuthenticated);
 

@@ -172,7 +172,7 @@ test("home opens the create form on one page, hides Tab during its lifecycle, an
   assert.match(listJs, /showCreateModal\(\)\s*\{[\s\S]*?_setTabBarHidden\(true\)/);
   assert.match(listJs, /onCreateFormAfterLeave\(\)\s*\{[\s\S]*?_setTabBarHidden\(false, \{ animate: true \}\)/);
   assert.match(listJs, /onShow\(\)\s*\{[\s\S]*?_setTabBarHidden\(!!\([\s\S]*?this\.data\.createFormContainerRendered[\s\S]*?this\.data\.showCreateForm[\s\S]*?this\._coldStartTabEntrancePending[\s\S]*?\)\)/);
-  assert.match(listJs, /onHide\(\)\s*\{[\s\S]*?keepTabBarHidden\s*=\s*!!\([\s\S]*?this\.data\.createFormContainerRendered[\s\S]*?this\.data\.showCreateForm[\s\S]*?this\._coldStartTabEntrancePending[\s\S]*?\)[\s\S]*?_setTabBarHidden\(keepTabBarHidden\)/);
+  assert.match(listJs, /onHide\(\)\s*\{[\s\S]*?keepTabBarHidden\s*=\s*!!\([\s\S]*?this\.data\.createFormContainerRendered[\s\S]*?this\.data\.showCreateForm[\s\S]*?\)[\s\S]*?_setTabBarHidden\(keepTabBarHidden\)/);
   assert.match(listJs, /_setTabBarHidden\(hidden,[\s\S]*?app\.globalData\.tabBarHidden\s*=\s*nextHidden/);
   assert.doesNotMatch(listJs, /_syncTabBarVisibility/);
 });

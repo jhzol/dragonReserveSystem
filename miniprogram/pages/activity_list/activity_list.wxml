@@ -1,3 +1,17 @@
+<template name="home-skeleton-shape">
+  <view class="skeleton-block {{shape}}" aria-hidden="true">
+    <view class="skeleton-shimmer {{running ? 'skeleton-shimmer--running' : ''}}"></view>
+  </view>
+</template>
+<template name="home-card-skeleton">
+  <view class="card-skeleton card-skeleton--{{size}}" aria-label="卡片加载中">
+    <template is="home-skeleton-shape" data="{{shape: size === 'large' ? 'skeleton-large' : 'skeleton-small', running}}" />
+    <block wx:if="{{size === 'small'}}">
+      <template is="home-skeleton-shape" data="{{shape: 'skeleton-name', running}}" />
+      <template is="home-skeleton-shape" data="{{shape: 'skeleton-time', running}}" />
+    </block>
+  </view>
+</template>
 <!-- 页面容器 -->
 <view class="page-wrap">
   <!-- 原型装饰层：脱离滚动文档流，固定沉在首页内容下方。 -->
@@ -31,6 +45,22 @@
 
     <block>
 
+      <!-- The shell paints before the activity request resolves. -->
+      <view wx:if="{{homeListLoading}}" class="home-loading-shell">
+        <view class="group-section">
+          <view class="group-header"><template is="home-skeleton-shape" data="{{shape: 'skeleton-heading', running: skeletonShimmerRunning}}" /></view>
+          <view class="skeleton-initial-row skeleton-initial-row--large">
+            <view wx:for="{{[0, 1]}}" wx:key="*this" class="skeleton-initial-large"><template is="home-card-skeleton" data="{{size: 'large', running: skeletonShimmerRunning}}" /></view>
+          </view>
+        </view>
+        <view class="group-section">
+          <view class="group-header"><template is="home-skeleton-shape" data="{{shape: 'skeleton-heading', running: skeletonShimmerRunning}}" /></view>
+          <view class="skeleton-initial-row skeleton-initial-row--small">
+            <view wx:for="{{[0, 1]}}" wx:key="*this" class="skeleton-initial-small"><template is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning}}" /></view>
+          </view>
+        </view>
+      </view>
+
       <!-- ── 我参与的 ── -->
       <view wx:if="{{groupSectionVisibility.joined}}" class="group-section joined-group-section">
         <view class="group-header">
@@ -53,9 +83,10 @@
             wx:key="_id"
             class="large-card-slide"
           >
+            <view class="home-card-slot home-card-slot--large">
+              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'large', running: skeletonShimmerRunning}}" />
             <view
-              class="large-card-wrap home-card-entrance home-card-entrance--{{item._id == createdCardEntranceId ? createdCardEntranceState : cardEntranceState}}"
-              style="transition-delay: {{item._id == createdCardEntranceId ? 0 : index * cardEntranceStaggerMs}}ms;"
+              class="large-card-wrap home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
               <text class="card-datetime-label">{{item.cardDateTimeLabel || item.startTime}}</text>
               <open-container
@@ -75,9 +106,9 @@
                 <image
                   wx:if="{{item.largeCardBgImageUrl}}"
                   class="card-image-bg"
-                  src="{{item.largeCardBgImageUrl}}"
+                  src="{{item._homeCoverSrc || item.largeCardBgImageUrl}}"
                   mode="aspectFill"
-                  lazy-load="{{true}}"
+                  lazy-load="{{false}}"
                   bindload="onCardBgLoaded"
                   binderror="onCardBgError"
                   data-group="joined"
@@ -142,8 +173,9 @@
                       <!-- 服务端已完成镜像扩边和单次模糊；真机只展示静态位图，不运行实时滤镜。 -->
                       <image
                         class="glass-static-blur-image"
-                        src="{{item.largeCardGlassImageUrl}}"
+                        src="{{item._homeGlassSrc || item.largeCardGlassImageUrl}}"
                         mode="aspectFill"
+                        data-group="joined"
                         bindload="onCardGlassLoaded"
                         binderror="onCardGlassError"
                         data-activity-id="{{item._id}}"
@@ -172,6 +204,7 @@
                 </view>
               </open-container>
             </view>
+            </view>
           </swiper-item>
         </swiper>
       </view>
@@ -194,9 +227,10 @@
           bindchange="onGroupSwiperChange"
         >
           <swiper-item wx:for="{{groupedActivities.accepting}}" wx:key="_id" class="small-card-slide">
+            <view class="home-card-slot home-card-slot--small">
+              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning}}" />
             <view
-              class="small-card-layout home-card-entrance home-card-entrance--{{item._id == createdCardEntranceId ? createdCardEntranceState : cardEntranceState}}"
-              style="transition-delay: {{item._id == createdCardEntranceId ? 0 : index * cardEntranceStaggerMs}}ms;"
+              class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
               <view class="small-card-shadow" aria-hidden="true"></view>
               <open-container
@@ -216,9 +250,9 @@
                 <image
                   wx:if="{{item.smallCardBgImageUrl}}"
                   class="card-image-bg"
-                  src="{{item.smallCardBgImageUrl}}"
+                  src="{{item._homeCoverSrc || item.smallCardBgImageUrl}}"
                   mode="aspectFill"
-                  lazy-load="{{true}}"
+                  lazy-load="{{false}}"
                   bindload="onCardBgLoaded"
                   binderror="onCardBgError"
                   data-group="accepting"
@@ -268,6 +302,7 @@
               </view>
               </open-container>
             </view>
+            </view>
           </swiper-item>
         </swiper>
       </view>
@@ -290,9 +325,10 @@
           bindchange="onGroupSwiperChange"
         >
           <swiper-item wx:for="{{groupedActivities.notStarted}}" wx:key="_id" class="small-card-slide">
+            <view class="home-card-slot home-card-slot--small">
+              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning}}" />
             <view
-              class="small-card-layout home-card-entrance home-card-entrance--{{item._id == createdCardEntranceId ? createdCardEntranceState : cardEntranceState}}"
-              style="transition-delay: {{item._id == createdCardEntranceId ? 0 : index * cardEntranceStaggerMs}}ms;"
+              class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
               <view class="small-card-shadow" aria-hidden="true"></view>
               <open-container
@@ -312,9 +348,9 @@
                 <image
                   wx:if="{{item.smallCardBgImageUrl}}"
                   class="card-image-bg"
-                  src="{{item.smallCardBgImageUrl}}"
+                  src="{{item._homeCoverSrc || item.smallCardBgImageUrl}}"
                   mode="aspectFill"
-                  lazy-load="{{true}}"
+                  lazy-load="{{false}}"
                   bindload="onCardBgLoaded"
                   binderror="onCardBgError"
                   data-group="notStarted"
@@ -364,6 +400,7 @@
               </view>
               </open-container>
             </view>
+            </view>
           </swiper-item>
         </swiper>
       </view>
@@ -386,9 +423,10 @@
           bindchange="onGroupSwiperChange"
         >
           <swiper-item wx:for="{{groupedActivities.ended}}" wx:key="_id" class="small-card-slide">
+            <view class="home-card-slot home-card-slot--small">
+              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning}}" />
             <view
-              class="small-card-layout home-card-entrance home-card-entrance--{{item._id == createdCardEntranceId ? createdCardEntranceState : cardEntranceState}}"
-              style="transition-delay: {{item._id == createdCardEntranceId ? 0 : index * cardEntranceStaggerMs}}ms;"
+              class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
               <view class="small-card-shadow" aria-hidden="true"></view>
               <open-container
@@ -408,9 +446,9 @@
                 <image
                   wx:if="{{item.smallCardBgImageUrl}}"
                   class="card-image-bg"
-                  src="{{item.smallCardBgImageUrl}}"
+                  src="{{item._homeCoverSrc || item.smallCardBgImageUrl}}"
                   mode="aspectFill"
-                  lazy-load="{{true}}"
+                  lazy-load="{{false}}"
                   bindload="onCardBgLoaded"
                   binderror="onCardBgError"
                   data-group="ended"
@@ -459,6 +497,7 @@
                 </view>
               </view>
               </open-container>
+            </view>
             </view>
           </swiper-item>
           <swiper-item wx:if="{{endedHasMore && groupedActivities.ended.length > 0}}" class="small-card-slide">

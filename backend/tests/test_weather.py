@@ -170,8 +170,8 @@ def test_activity_detail_serializes_available_weather_date(client, db_session, a
     assert response.json()["weather"]["temperature"] == 24
 
 
-def test_legacy_weather_endpoint_is_not_exposed(client) -> None:
-    assert "/api/v1/weather/activity" not in client.app.openapi()["paths"]
+def test_legacy_weather_endpoint_remains_available(client) -> None:
+    assert "/api/v1/weather/activity" in client.app.openapi()["paths"]
 
 
 def test_refresh_deduplicates_same_location_and_keeps_weather_when_air_quality_fails(db_session, admin_user) -> None:

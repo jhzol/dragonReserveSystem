@@ -118,7 +118,10 @@ test("activity remark uses measured one-line overflow and restores the prototype
   assert.match(js, /select\("\.hero-remark-measure"\)\.boundingClientRect\(\)/);
   assert.match(js, /select\("\.remark-toggle-measure"\)\.boundingClientRect\(\)/);
   assert.match(js, /select\("\.hero-remark-full-measure"\)\.boundingClientRect\(\)/);
-  assert.match(js, /rowRect\.width - toggleWidth - 7\.69/);
+  assert.match(js, /naturalTextOverflowsRow = naturalTextWidth > rowWidth \+ 0\.5/);
+  assert.match(js, /if \(!naturalTextOverflowsRow\) \{[\s\S]*?remarkExpandable:\s*false/);
+  assert.match(js, /availableTextWidth = Math\.max\(0, rowWidth - toggleWidth - 7\.69\)/);
+  assert.doesNotMatch(js, /textRect\.width > availableTextWidth/);
   assert.doesNotMatch(js, /remark\.length\s*>/);
   assert.match(wxss, /\.hero-remark-viewport\s*\{[^}]*overflow:\s*hidden;[^}]*transition:\s*height 260ms/s);
   assert.match(wxss, /\.hero-copy\s*\{[^}]*left:\s*38\.46rpx;[^}]*right:\s*38\.46rpx;/s);
@@ -135,6 +138,81 @@ test("activity remark uses measured one-line overflow and restores the prototype
   assert.match(wxss, /\.remark-toggle-text-out-down\s*\{[^}]*translateY\(7\.69rpx\)/s);
   assert.match(js, /remarkToggleRotationDeg:\s*\(Number\(this\.data\.remarkToggleRotationDeg\) \|\| 0\) \+ 180/);
   assert.match(wxml, /<\/view>\s*<\/view>\s*<!-- 测量节点必须放在 hero-copy 外/);
+});
+
+function measureRemarkOverflow({ rowWidth, naturalTextWidth, toggleWidth, expandedHeight, status = "未开始" }) {
+  const vm = require("node:vm");
+  let page;
+  let fullMeasureRequested = false;
+  const wx = {
+    nextTick(callback) { callback(); },
+    createSelectorQuery() {
+      const selectors = [];
+      return {
+        select(selector) { selectors.push(selector); return this; },
+        boundingClientRect() { return this; },
+        exec(callback) {
+          if (selectors.includes(".hero-remark-full-measure")) {
+            fullMeasureRequested = true;
+            callback([{ height: expandedHeight }]);
+            return;
+          }
+          callback([
+            { width: rowWidth },
+            { width: naturalTextWidth, height: 20 },
+            { width: toggleWidth }
+          ]);
+        }
+      };
+    }
+  };
+  vm.runInNewContext(js, {
+    getApp: () => ({ globalData: {} }),
+    Page: (definition) => { page = definition; },
+    require: () => ({}),
+    wx,
+    console,
+    setTimeout
+  });
+  const data = {
+    activity: { remark: "测试备注", status },
+    remarkExpandable: false,
+    remarkExpanded: false,
+    remarkToggleRotationDeg: 0
+  };
+  page.updateRemarkOverflow.call({
+    data,
+    setData(next, callback) {
+      Object.assign(data, next);
+      if (typeof callback === "function") callback();
+    }
+  });
+  return { data, fullMeasureRequested };
+}
+
+test("activity remark only reserves toggle space after the text truly overflows the full row", () => {
+  const singleLine = measureRemarkOverflow({
+    rowWidth: 250,
+    naturalTextWidth: 220,
+    toggleWidth: 60,
+    expandedHeight: 40,
+    status: "已结束"
+  });
+  assert.equal(singleLine.data.remarkExpandable, false);
+  assert.equal(singleLine.data.remarkExpanded, false);
+  assert.equal(singleLine.fullMeasureRequested, false);
+
+  const multiLine = measureRemarkOverflow({
+    rowWidth: 250,
+    naturalTextWidth: 251,
+    toggleWidth: 60,
+    expandedHeight: 40,
+    status: "已结束"
+  });
+  assert.equal(multiLine.data.remarkExpandable, true);
+  assert.equal(multiLine.data.remarkExpanded, true);
+  assert.equal(multiLine.data.remarkViewportHeightPx, 40);
+  assert.equal(multiLine.fullMeasureRequested, true);
 });
 
 test("activity detail calculates and formats location distance", () => {
@@ -199,10 +277,10 @@ test("primary action keeps signup, cancel, checkin and disabled business states"
   });
 });
 
-test("signup permission is enforced before the signup request and guides ordinary users to Profile", () => {
+test("signup permission is enforced before the signup request and guides guests to Profile", () => {
   assert.match(js, /showSignupPermissionDenied\(\)\s*\{[\s\S]*?title:\s*"暂无报名权限"[\s\S]*?confirmText:\s*"去我的"[\s\S]*?wx\.switchTab\(\{\s*url:\s*"\/pages\/profile\/profile"\s*\}\)/);
-  assert.match(js, /const userRole = app\.globalData\.userRole \|\| wx\.getStorageSync\("userRole"\) \|\| "guest";\s*if \(userRole !== "admin"\) \{\s*this\.showSignupPermissionDenied\(\);\s*return;/s);
-  assert.ok(js.indexOf('if (userRole !== "admin")') < js.indexOf('.signupActivity(activity._id)'));
+  assert.match(js, /const userRole = app\.globalData\.userRole \|\| wx\.getStorageSync\("userRole"\) \|\| "guest";\s*if \(userRole !== "user" && userRole !== "admin"\) \{\s*this\.showSignupPermissionDenied\(\);\s*return;/s);
+  assert.ok(js.indexOf('if (userRole !== "user" && userRole !== "admin")') < js.indexOf('.signupActivity(activity._id)'));
 });
 
 test("activity detail keeps QA anchors and the existing participants drawer", () => {
@@ -487,4 +565,44 @@ test("prototype key sizes, colors, typography and action layout do not regress",
   assert.match(wxml, /src="\/images\/icon-edit\.svg"/);
   assert.doesNotMatch(wxml, /icon-chevron-down-light\.svg/);
   assert.doesNotMatch(wxss, /remark-chevron-up/);
+});
+
+test("signup executes the real page handler for each role without contacting a server", async () => {
+  const vm = require("node:vm");
+  for (const role of ["user", "admin", "guest", "unknown", ""]) {
+    const events = [];
+    const app = { globalData: {
+      accessToken: "test-token", userId: "123", userRole: role,
+      userProfile: { nickname: "测试用户", avatarUrl: "https://example.test/avatar.png" }
+    } };
+    let page;
+    vm.runInNewContext(js, {
+      getApp: () => app,
+      Page: (definition) => { page = definition; },
+      require: (name) => {
+        if (name === "../../services/activity") return {
+          signupActivity: async () => { events.push("request"); }
+        };
+        if (name === "../../utils/profileUtils") return {
+          isDefaultNickname: () => false, isDefaultAvatar: () => false
+        };
+        return {};
+      },
+      wx: {
+        getStorageSync: () => "", showLoading() {}, hideLoading() {},
+        showToast() {}, showModal: () => events.push("modal")
+      },
+      console
+    });
+    page.showSignupPermissionDenied = () => events.push("denied");
+    page.refreshDetail = async () => {};
+    const activity = { _id: 1, status: "未开始", participants: [] };
+    page.directSignup(activity);
+    await new Promise(setImmediate);
+    assert.deepEqual(events, [role === "user" || role === "admin" ? "request" : "denied"], role);
+    events.length = 0;
+    app.globalData.accessToken = "";
+    page.directSignup(activity);
+    assert.deepEqual(events, ["modal"], "logged-out users must log in");
+  }
 });

@@ -94,8 +94,8 @@ def test_combined_ranking_endpoint_is_not_exposed(client, user_headers) -> None:
     assert response.status_code == 404
 
 
-def test_legacy_history_endpoints_are_not_exposed(client) -> None:
+def test_legacy_history_endpoints_remain_available(client) -> None:
     paths = client.app.openapi()["paths"]
 
-    assert "/api/v1/stats/history" not in paths
-    assert "/api/v1/stats/history-summary" not in paths
+    assert "/api/v1/stats/history" in paths
+    assert "/api/v1/stats/history-summary" in paths

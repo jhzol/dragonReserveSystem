@@ -402,18 +402,18 @@ def test_admin_can_signup(client, sample_activity, admin_headers) -> None:
     assert signup_response.json()["status"] == "signed_up"
 
 
-def test_legacy_activity_aliases_are_not_exposed(client) -> None:
+def test_legacy_activity_aliases_remain_available(client) -> None:
     paths = client.app.openapi()["paths"]
 
-    assert "/api/v1/activities/mine" not in paths
-    assert "delete" not in paths["/api/v1/activities/{activity_id}/signup"]
+    assert "/api/v1/activities/mine" in paths
+    assert "delete" in paths["/api/v1/activities/{activity_id}/signup"]
 
 
-def test_non_admin_cannot_signup(client, sample_activity, user_headers) -> None:
+def test_normal_user_can_signup(client, sample_activity, user_headers) -> None:
     response = client.post(f"/api/v1/activities/{sample_activity.id}/signup", headers=user_headers)
 
-    assert response.status_code == 403
-    assert response.json()["code"] == "PERMISSION_DENIED"
+    assert response.status_code == 200
+    assert response.json()["status"] == "signed_up"
 
 
 def test_creator_auto_signed_up_on_create(client, admin_headers) -> None:

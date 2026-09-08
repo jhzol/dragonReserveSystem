@@ -8,75 +8,99 @@
       "artworks": [
         {
           "id": "aleksey-rico-001",
-          "width": 720,
-          "height": 960,
+          "width": 1125,
+          "height": 1500,
           "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-001.jpg",
           "image_path": "aleksey-rico/images/aleksey-rico-001.jpg",
           "glass_path": "aleksey-rico/glass/aleksey-rico-001.jpg"
         },
         {
           "id": "aleksey-rico-002",
-          "width": 720,
-          "height": 960,
+          "width": 1125,
+          "height": 1500,
           "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-002.jpg",
           "image_path": "aleksey-rico/images/aleksey-rico-002.jpg",
           "glass_path": "aleksey-rico/glass/aleksey-rico-002.jpg"
         },
         {
           "id": "aleksey-rico-003",
-          "width": 720,
-          "height": 993,
+          "width": 1211,
+          "height": 1671,
           "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-003.jpg",
           "image_path": "aleksey-rico/images/aleksey-rico-003.jpg",
           "glass_path": "aleksey-rico/glass/aleksey-rico-003.jpg"
         },
         {
           "id": "aleksey-rico-004",
-          "width": 720,
-          "height": 954,
+          "width": 1132,
+          "height": 1500,
           "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-004.jpg",
           "image_path": "aleksey-rico/images/aleksey-rico-004.jpg",
           "glass_path": "aleksey-rico/glass/aleksey-rico-004.jpg"
         },
         {
           "id": "aleksey-rico-005",
-          "width": 720,
-          "height": 900,
+          "width": 1080,
+          "height": 1350,
           "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-005.jpg",
           "image_path": "aleksey-rico/images/aleksey-rico-005.jpg",
           "glass_path": "aleksey-rico/glass/aleksey-rico-005.jpg"
         },
         {
           "id": "aleksey-rico-006",
-          "width": 720,
-          "height": 900,
+          "width": 1080,
+          "height": 1350,
           "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-006.jpg",
           "image_path": "aleksey-rico/images/aleksey-rico-006.jpg",
           "glass_path": "aleksey-rico/glass/aleksey-rico-006.jpg"
         },
         {
-          "id": "aleksey-rico-007",
-          "width": 720,
-          "height": 576,
-          "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-007.jpg",
-          "image_path": "aleksey-rico/images/aleksey-rico-007.jpg",
-          "glass_path": "aleksey-rico/glass/aleksey-rico-007.jpg"
-        },
-        {
-          "id": "aleksey-rico-008",
-          "width": 720,
-          "height": 720,
-          "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-008.jpg",
-          "image_path": "aleksey-rico/images/aleksey-rico-008.jpg",
-          "glass_path": "aleksey-rico/glass/aleksey-rico-008.jpg"
-        },
-        {
           "id": "aleksey-rico-009",
-          "width": 720,
-          "height": 1018,
+          "width": 842,
+          "height": 1191,
           "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-009.jpg",
           "image_path": "aleksey-rico/images/aleksey-rico-009.jpg",
           "glass_path": "aleksey-rico/glass/aleksey-rico-009.jpg"
+        },
+        {
+          "id": "aleksey-rico-010",
+          "width": 1125,
+          "height": 1500,
+          "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-010.jpg",
+          "image_path": "aleksey-rico/images/aleksey-rico-010.jpg",
+          "glass_path": "aleksey-rico/glass/aleksey-rico-010.jpg"
+        },
+        {
+          "id": "aleksey-rico-011",
+          "width": 1125,
+          "height": 1500,
+          "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-011.jpg",
+          "image_path": "aleksey-rico/images/aleksey-rico-011.jpg",
+          "glass_path": "aleksey-rico/glass/aleksey-rico-011.jpg"
+        },
+        {
+          "id": "aleksey-rico-012",
+          "width": 1125,
+          "height": 1500,
+          "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-012.jpg",
+          "image_path": "aleksey-rico/images/aleksey-rico-012.jpg",
+          "glass_path": "aleksey-rico/glass/aleksey-rico-012.jpg"
+        },
+        {
+          "id": "aleksey-rico-013",
+          "width": 1350,
+          "height": 1800,
+          "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-013.jpg",
+          "image_path": "aleksey-rico/images/aleksey-rico-013.jpg",
+          "glass_path": "aleksey-rico/glass/aleksey-rico-013.jpg"
+        },
+        {
+          "id": "aleksey-rico-014",
+          "width": 1125,
+          "height": 1500,
+          "thumbnail_path": "aleksey-rico/thumbs/aleksey-rico-014.jpg",
+          "image_path": "aleksey-rico/images/aleksey-rico-014.jpg",
+          "glass_path": "aleksey-rico/glass/aleksey-rico-014.jpg"
         }
       ]
     },
@@ -87,67 +111,99 @@
       "artworks": [
         {
           "id": "lam-001",
-          "width": 720,
-          "height": 720,
+          "width": 1280,
+          "height": 1280,
           "thumbnail_path": "lam/thumbs/lam-001.jpg",
           "image_path": "lam/images/lam-001.jpg",
           "glass_path": "lam/glass/lam-001.jpg"
         },
         {
           "id": "lam-002",
-          "width": 720,
-          "height": 1012,
+          "width": 1067,
+          "height": 1500,
           "thumbnail_path": "lam/thumbs/lam-002.jpg",
           "image_path": "lam/images/lam-002.jpg",
           "glass_path": "lam/glass/lam-002.jpg"
         },
         {
           "id": "lam-003",
-          "width": 720,
-          "height": 1010,
+          "width": 1069,
+          "height": 1500,
           "thumbnail_path": "lam/thumbs/lam-003.jpg",
           "image_path": "lam/images/lam-003.jpg",
           "glass_path": "lam/glass/lam-003.jpg"
         },
         {
           "id": "lam-004",
-          "width": 720,
-          "height": 1017,
+          "width": 1062,
+          "height": 1500,
           "thumbnail_path": "lam/thumbs/lam-004.jpg",
           "image_path": "lam/images/lam-004.jpg",
           "glass_path": "lam/glass/lam-004.jpg"
         },
         {
           "id": "lam-005",
-          "width": 720,
-          "height": 1017,
+          "width": 991,
+          "height": 1400,
           "thumbnail_path": "lam/thumbs/lam-005.jpg",
           "image_path": "lam/images/lam-005.jpg",
           "glass_path": "lam/glass/lam-005.jpg"
         },
         {
           "id": "lam-006",
-          "width": 720,
-          "height": 1230,
+          "width": 995,
+          "height": 1700,
           "thumbnail_path": "lam/thumbs/lam-006.jpg",
           "image_path": "lam/images/lam-006.jpg",
           "glass_path": "lam/glass/lam-006.jpg"
         },
         {
           "id": "lam-007",
-          "width": 720,
-          "height": 944,
+          "width": 1440,
+          "height": 1889,
           "thumbnail_path": "lam/thumbs/lam-007.jpg",
           "image_path": "lam/images/lam-007.jpg",
           "glass_path": "lam/glass/lam-007.jpg"
         },
         {
           "id": "lam-008",
-          "width": 720,
-          "height": 1017,
+          "width": 1440,
+          "height": 2033,
           "thumbnail_path": "lam/thumbs/lam-008.jpg",
           "image_path": "lam/images/lam-008.jpg",
           "glass_path": "lam/glass/lam-008.jpg"
+        },
+        {
+          "id": "lam-009",
+          "width": 1080,
+          "height": 1496,
+          "thumbnail_path": "lam/thumbs/lam-009.jpg",
+          "image_path": "lam/images/lam-009.jpg",
+          "glass_path": "lam/glass/lam-009.jpg"
+        },
+        {
+          "id": "lam-010",
+          "width": 1190,
+          "height": 1500,
+          "thumbnail_path": "lam/thumbs/lam-010.jpg",
+          "image_path": "lam/images/lam-010.jpg",
+          "glass_path": "lam/glass/lam-010.jpg"
+        },
+        {
+          "id": "lam-011",
+          "width": 1062,
+          "height": 1500,
+          "thumbnail_path": "lam/thumbs/lam-011.jpg",
+          "image_path": "lam/images/lam-011.jpg",
+          "glass_path": "lam/glass/lam-011.jpg"
+        },
+        {
+          "id": "lam-012",
+          "width": 1062,
+          "height": 1500,
+          "thumbnail_path": "lam/thumbs/lam-012.jpg",
+          "image_path": "lam/images/lam-012.jpg",
+          "glass_path": "lam/glass/lam-012.jpg"
         }
       ]
     },
@@ -158,40 +214,40 @@
       "artworks": [
         {
           "id": "ardhira-putra-001",
-          "width": 720,
-          "height": 720,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-001.jpg",
           "image_path": "ardhira-putra/images/ardhira-putra-001.jpg",
           "glass_path": "ardhira-putra/glass/ardhira-putra-001.jpg"
         },
         {
           "id": "ardhira-putra-002",
-          "width": 720,
-          "height": 720,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-002.jpg",
           "image_path": "ardhira-putra/images/ardhira-putra-002.jpg",
           "glass_path": "ardhira-putra/glass/ardhira-putra-002.jpg"
         },
         {
           "id": "ardhira-putra-003",
-          "width": 720,
-          "height": 720,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-003.jpg",
           "image_path": "ardhira-putra/images/ardhira-putra-003.jpg",
           "glass_path": "ardhira-putra/glass/ardhira-putra-003.jpg"
         },
         {
           "id": "ardhira-putra-004",
-          "width": 720,
-          "height": 720,
+          "width": 1080,
+          "height": 1080,
           "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-004.jpg",
           "image_path": "ardhira-putra/images/ardhira-putra-004.jpg",
           "glass_path": "ardhira-putra/glass/ardhira-putra-004.jpg"
         },
         {
           "id": "ardhira-putra-005",
-          "width": 720,
-          "height": 720,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-005.jpg",
           "image_path": "ardhira-putra/images/ardhira-putra-005.jpg",
           "glass_path": "ardhira-putra/glass/ardhira-putra-005.jpg"
@@ -214,19 +270,43 @@
         },
         {
           "id": "ardhira-putra-008",
-          "width": 632,
-          "height": 632,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-008.jpg",
           "image_path": "ardhira-putra/images/ardhira-putra-008.jpg",
           "glass_path": "ardhira-putra/glass/ardhira-putra-008.jpg"
         },
         {
           "id": "ardhira-putra-009",
-          "width": 720,
-          "height": 720,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-009.jpg",
           "image_path": "ardhira-putra/images/ardhira-putra-009.jpg",
           "glass_path": "ardhira-putra/glass/ardhira-putra-009.jpg"
+        },
+        {
+          "id": "ardhira-putra-010",
+          "width": 1440,
+          "height": 2035,
+          "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-010.jpg",
+          "image_path": "ardhira-putra/images/ardhira-putra-010.jpg",
+          "glass_path": "ardhira-putra/glass/ardhira-putra-010.jpg"
+        },
+        {
+          "id": "ardhira-putra-011",
+          "width": 1440,
+          "height": 2036,
+          "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-011.jpg",
+          "image_path": "ardhira-putra/images/ardhira-putra-011.jpg",
+          "glass_path": "ardhira-putra/glass/ardhira-putra-011.jpg"
+        },
+        {
+          "id": "ardhira-putra-012",
+          "width": 1440,
+          "height": 1801,
+          "thumbnail_path": "ardhira-putra/thumbs/ardhira-putra-012.jpg",
+          "image_path": "ardhira-putra/images/ardhira-putra-012.jpg",
+          "glass_path": "ardhira-putra/glass/ardhira-putra-012.jpg"
         }
       ]
     },
@@ -245,8 +325,8 @@
         },
         {
           "id": "magoyama-002",
-          "width": 720,
-          "height": 1011,
+          "width": 855,
+          "height": 1200,
           "thumbnail_path": "magoyama/thumbs/magoyama-002.jpg",
           "image_path": "magoyama/images/magoyama-002.jpg",
           "glass_path": "magoyama/glass/magoyama-002.jpg"
@@ -261,19 +341,75 @@
         },
         {
           "id": "magoyama-004",
-          "width": 720,
-          "height": 949,
+          "width": 910,
+          "height": 1200,
           "thumbnail_path": "magoyama/thumbs/magoyama-004.jpg",
           "image_path": "magoyama/images/magoyama-004.jpg",
           "glass_path": "magoyama/glass/magoyama-004.jpg"
         },
         {
           "id": "magoyama-005",
-          "width": 720,
-          "height": 947,
+          "width": 912,
+          "height": 1200,
           "thumbnail_path": "magoyama/thumbs/magoyama-005.jpg",
           "image_path": "magoyama/images/magoyama-005.jpg",
           "glass_path": "magoyama/glass/magoyama-005.jpg"
+        },
+        {
+          "id": "magoyama-006",
+          "width": 1114,
+          "height": 1200,
+          "thumbnail_path": "magoyama/thumbs/magoyama-006.jpg",
+          "image_path": "magoyama/images/magoyama-006.jpg",
+          "glass_path": "magoyama/glass/magoyama-006.jpg"
+        },
+        {
+          "id": "magoyama-007",
+          "width": 1122,
+          "height": 1200,
+          "thumbnail_path": "magoyama/thumbs/magoyama-007.jpg",
+          "image_path": "magoyama/images/magoyama-007.jpg",
+          "glass_path": "magoyama/glass/magoyama-007.jpg"
+        },
+        {
+          "id": "magoyama-008",
+          "width": 1163,
+          "height": 1200,
+          "thumbnail_path": "magoyama/thumbs/magoyama-008.jpg",
+          "image_path": "magoyama/images/magoyama-008.jpg",
+          "glass_path": "magoyama/glass/magoyama-008.jpg"
+        },
+        {
+          "id": "magoyama-009",
+          "width": 1164,
+          "height": 1200,
+          "thumbnail_path": "magoyama/thumbs/magoyama-009.jpg",
+          "image_path": "magoyama/images/magoyama-009.jpg",
+          "glass_path": "magoyama/glass/magoyama-009.jpg"
+        },
+        {
+          "id": "magoyama-010",
+          "width": 1189,
+          "height": 1200,
+          "thumbnail_path": "magoyama/thumbs/magoyama-010.jpg",
+          "image_path": "magoyama/images/magoyama-010.jpg",
+          "glass_path": "magoyama/glass/magoyama-010.jpg"
+        },
+        {
+          "id": "magoyama-011",
+          "width": 1200,
+          "height": 1200,
+          "thumbnail_path": "magoyama/thumbs/magoyama-011.jpg",
+          "image_path": "magoyama/images/magoyama-011.jpg",
+          "glass_path": "magoyama/glass/magoyama-011.jpg"
+        },
+        {
+          "id": "magoyama-012",
+          "width": 1200,
+          "height": 1200,
+          "thumbnail_path": "magoyama/thumbs/magoyama-012.jpg",
+          "image_path": "magoyama/images/magoyama-012.jpg",
+          "glass_path": "magoyama/glass/magoyama-012.jpg"
         }
       ]
     },
@@ -283,84 +419,100 @@
       "avatar_path": "yoneyama-mai/avatar.jpg",
       "artworks": [
         {
-          "id": "yoneyama-mai-001",
-          "width": 1199,
-          "height": 720,
-          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-001.jpg",
-          "image_path": "yoneyama-mai/images/yoneyama-mai-001.jpg",
-          "glass_path": "yoneyama-mai/glass/yoneyama-mai-001.jpg"
-        },
-        {
-          "id": "yoneyama-mai-002",
-          "width": 720,
-          "height": 720,
-          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-002.jpg",
-          "image_path": "yoneyama-mai/images/yoneyama-mai-002.jpg",
-          "glass_path": "yoneyama-mai/glass/yoneyama-mai-002.jpg"
-        },
-        {
           "id": "yoneyama-mai-003",
-          "width": 720,
-          "height": 720,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-003.jpg",
           "image_path": "yoneyama-mai/images/yoneyama-mai-003.jpg",
           "glass_path": "yoneyama-mai/glass/yoneyama-mai-003.jpg"
         },
         {
           "id": "yoneyama-mai-004",
-          "width": 720,
-          "height": 720,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-004.jpg",
           "image_path": "yoneyama-mai/images/yoneyama-mai-004.jpg",
           "glass_path": "yoneyama-mai/glass/yoneyama-mai-004.jpg"
         },
         {
-          "id": "yoneyama-mai-005",
-          "width": 642,
-          "height": 642,
-          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-005.jpg",
-          "image_path": "yoneyama-mai/images/yoneyama-mai-005.jpg",
-          "glass_path": "yoneyama-mai/glass/yoneyama-mai-005.jpg"
-        },
-        {
           "id": "yoneyama-mai-006",
-          "width": 720,
-          "height": 1083,
+          "width": 1440,
+          "height": 2165,
           "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-006.jpg",
           "image_path": "yoneyama-mai/images/yoneyama-mai-006.jpg",
           "glass_path": "yoneyama-mai/glass/yoneyama-mai-006.jpg"
         },
         {
           "id": "yoneyama-mai-007",
-          "width": 720,
-          "height": 720,
+          "width": 1440,
+          "height": 1440,
           "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-007.jpg",
           "image_path": "yoneyama-mai/images/yoneyama-mai-007.jpg",
           "glass_path": "yoneyama-mai/glass/yoneyama-mai-007.jpg"
         },
         {
           "id": "yoneyama-mai-008",
-          "width": 720,
-          "height": 1025,
+          "width": 1440,
+          "height": 2050,
           "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-008.jpg",
           "image_path": "yoneyama-mai/images/yoneyama-mai-008.jpg",
           "glass_path": "yoneyama-mai/glass/yoneyama-mai-008.jpg"
         },
         {
-          "id": "yoneyama-mai-009",
-          "width": 720,
-          "height": 720,
-          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-009.jpg",
-          "image_path": "yoneyama-mai/images/yoneyama-mai-009.jpg",
-          "glass_path": "yoneyama-mai/glass/yoneyama-mai-009.jpg"
-        },
-        {
           "id": "yoneyama-mai-010",
-          "width": 720,
-          "height": 1025,
+          "width": 1440,
+          "height": 2050,
           "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-010.jpg",
           "image_path": "yoneyama-mai/images/yoneyama-mai-010.jpg",
           "glass_path": "yoneyama-mai/glass/yoneyama-mai-010.jpg"
+        },
+        {
+          "id": "yoneyama-mai-011",
+          "width": 1440,
+          "height": 1921,
+          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-011.jpg",
+          "image_path": "yoneyama-mai/images/yoneyama-mai-011.jpg",
+          "glass_path": "yoneyama-mai/glass/yoneyama-mai-011.jpg"
+        },
+        {
+          "id": "yoneyama-mai-012",
+          "width": 1440,
+          "height": 1923,
+          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-012.jpg",
+          "image_path": "yoneyama-mai/images/yoneyama-mai-012.jpg",
+          "glass_path": "yoneyama-mai/glass/yoneyama-mai-012.jpg"
+        },
+        {
+          "id": "yoneyama-mai-013",
+          "width": 1440,
+          "height": 1981,
+          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-013.jpg",
+          "image_path": "yoneyama-mai/images/yoneyama-mai-013.jpg",
+          "glass_path": "yoneyama-mai/glass/yoneyama-mai-013.jpg"
+        },
+        {
+          "id": "yoneyama-mai-014",
+          "width": 1440,
+          "height": 1993,
+          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-014.jpg",
+          "image_path": "yoneyama-mai/images/yoneyama-mai-014.jpg",
+          "glass_path": "yoneyama-mai/glass/yoneyama-mai-014.jpg"
+        },
+        {
+          "id": "yoneyama-mai-015",
+          "width": 1440,
+          "height": 2010,
+          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-015.jpg",
+          "image_path": "yoneyama-mai/images/yoneyama-mai-015.jpg",
+          "glass_path": "yoneyama-mai/glass/yoneyama-mai-015.jpg"
+        },
+        {
+          "id": "yoneyama-mai-016",
+          "width": 1440,
+          "height": 2031,
+          "thumbnail_path": "yoneyama-mai/thumbs/yoneyama-mai-016.jpg",
+          "image_path": "yoneyama-mai/images/yoneyama-mai-016.jpg",
+          "glass_path": "yoneyama-mai/glass/yoneyama-mai-016.jpg"
         }
       ]
     },
@@ -371,67 +523,99 @@
       "artworks": [
         {
           "id": "benjamin-flouw-001",
-          "width": 720,
-          "height": 900,
+          "width": 1080,
+          "height": 1350,
           "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-001.jpg",
           "image_path": "benjamin-flouw/images/benjamin-flouw-001.jpg",
           "glass_path": "benjamin-flouw/glass/benjamin-flouw-001.jpg"
         },
         {
-          "id": "benjamin-flouw-002",
-          "width": 500,
-          "height": 756,
-          "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-002.jpg",
-          "image_path": "benjamin-flouw/images/benjamin-flouw-002.jpg",
-          "glass_path": "benjamin-flouw/glass/benjamin-flouw-002.jpg"
-        },
-        {
           "id": "benjamin-flouw-003",
-          "width": 720,
-          "height": 900,
+          "width": 1440,
+          "height": 1800,
           "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-003.jpg",
           "image_path": "benjamin-flouw/images/benjamin-flouw-003.jpg",
           "glass_path": "benjamin-flouw/glass/benjamin-flouw-003.jpg"
         },
         {
           "id": "benjamin-flouw-004",
-          "width": 720,
-          "height": 900,
+          "width": 1080,
+          "height": 1350,
           "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-004.jpg",
           "image_path": "benjamin-flouw/images/benjamin-flouw-004.jpg",
           "glass_path": "benjamin-flouw/glass/benjamin-flouw-004.jpg"
         },
         {
           "id": "benjamin-flouw-005",
-          "width": 720,
-          "height": 900,
+          "width": 1080,
+          "height": 1350,
           "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-005.jpg",
           "image_path": "benjamin-flouw/images/benjamin-flouw-005.jpg",
           "glass_path": "benjamin-flouw/glass/benjamin-flouw-005.jpg"
         },
         {
           "id": "benjamin-flouw-006",
-          "width": 720,
-          "height": 960,
+          "width": 1080,
+          "height": 1440,
           "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-006.jpg",
           "image_path": "benjamin-flouw/images/benjamin-flouw-006.jpg",
           "glass_path": "benjamin-flouw/glass/benjamin-flouw-006.jpg"
         },
         {
           "id": "benjamin-flouw-007",
-          "width": 720,
-          "height": 1008,
+          "width": 1440,
+          "height": 2016,
           "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-007.jpg",
           "image_path": "benjamin-flouw/images/benjamin-flouw-007.jpg",
           "glass_path": "benjamin-flouw/glass/benjamin-flouw-007.jpg"
         },
         {
-          "id": "benjamin-flouw-008",
-          "width": 720,
-          "height": 900,
-          "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-008.jpg",
-          "image_path": "benjamin-flouw/images/benjamin-flouw-008.jpg",
-          "glass_path": "benjamin-flouw/glass/benjamin-flouw-008.jpg"
+          "id": "benjamin-flouw-009",
+          "width": 1080,
+          "height": 1440,
+          "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-009.jpg",
+          "image_path": "benjamin-flouw/images/benjamin-flouw-009.jpg",
+          "glass_path": "benjamin-flouw/glass/benjamin-flouw-009.jpg"
+        },
+        {
+          "id": "benjamin-flouw-010",
+          "width": 1080,
+          "height": 1440,
+          "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-010.jpg",
+          "image_path": "benjamin-flouw/images/benjamin-flouw-010.jpg",
+          "glass_path": "benjamin-flouw/glass/benjamin-flouw-010.jpg"
+        },
+        {
+          "id": "benjamin-flouw-011",
+          "width": 1440,
+          "height": 1896,
+          "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-011.jpg",
+          "image_path": "benjamin-flouw/images/benjamin-flouw-011.jpg",
+          "glass_path": "benjamin-flouw/glass/benjamin-flouw-011.jpg"
+        },
+        {
+          "id": "benjamin-flouw-012",
+          "width": 1440,
+          "height": 1971,
+          "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-012.jpg",
+          "image_path": "benjamin-flouw/images/benjamin-flouw-012.jpg",
+          "glass_path": "benjamin-flouw/glass/benjamin-flouw-012.jpg"
+        },
+        {
+          "id": "benjamin-flouw-013",
+          "width": 1440,
+          "height": 2016,
+          "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-013.jpg",
+          "image_path": "benjamin-flouw/images/benjamin-flouw-013.jpg",
+          "glass_path": "benjamin-flouw/glass/benjamin-flouw-013.jpg"
+        },
+        {
+          "id": "benjamin-flouw-014",
+          "width": 1440,
+          "height": 2016,
+          "thumbnail_path": "benjamin-flouw/thumbs/benjamin-flouw-014.jpg",
+          "image_path": "benjamin-flouw/images/benjamin-flouw-014.jpg",
+          "glass_path": "benjamin-flouw/glass/benjamin-flouw-014.jpg"
         }
       ]
     },
@@ -442,59 +626,75 @@
       "artworks": [
         {
           "id": "venmen-001",
-          "width": 720,
-          "height": 955,
+          "width": 1440,
+          "height": 1910,
           "thumbnail_path": "venmen/thumbs/venmen-001.jpg",
           "image_path": "venmen/images/venmen-001.jpg",
           "glass_path": "venmen/glass/venmen-001.jpg"
         },
         {
-          "id": "venmen-002",
-          "width": 720,
-          "height": 985,
-          "thumbnail_path": "venmen/thumbs/venmen-002.jpg",
-          "image_path": "venmen/images/venmen-002.jpg",
-          "glass_path": "venmen/glass/venmen-002.jpg"
-        },
-        {
           "id": "venmen-003",
-          "width": 720,
-          "height": 1072,
+          "width": 1440,
+          "height": 2143,
           "thumbnail_path": "venmen/thumbs/venmen-003.jpg",
           "image_path": "venmen/images/venmen-003.jpg",
           "glass_path": "venmen/glass/venmen-003.jpg"
         },
         {
           "id": "venmen-004",
-          "width": 720,
-          "height": 1068,
+          "width": 1440,
+          "height": 2136,
           "thumbnail_path": "venmen/thumbs/venmen-004.jpg",
           "image_path": "venmen/images/venmen-004.jpg",
           "glass_path": "venmen/glass/venmen-004.jpg"
         },
         {
           "id": "venmen-005",
-          "width": 720,
-          "height": 1066,
+          "width": 1440,
+          "height": 2133,
           "thumbnail_path": "venmen/thumbs/venmen-005.jpg",
           "image_path": "venmen/images/venmen-005.jpg",
           "glass_path": "venmen/glass/venmen-005.jpg"
         },
         {
           "id": "venmen-006",
-          "width": 720,
-          "height": 1241,
+          "width": 1440,
+          "height": 2482,
           "thumbnail_path": "venmen/thumbs/venmen-006.jpg",
           "image_path": "venmen/images/venmen-006.jpg",
           "glass_path": "venmen/glass/venmen-006.jpg"
         },
         {
           "id": "venmen-007",
-          "width": 720,
-          "height": 1007,
+          "width": 1440,
+          "height": 2014,
           "thumbnail_path": "venmen/thumbs/venmen-007.jpg",
           "image_path": "venmen/images/venmen-007.jpg",
           "glass_path": "venmen/glass/venmen-007.jpg"
+        },
+        {
+          "id": "venmen-008",
+          "width": 1440,
+          "height": 1864,
+          "thumbnail_path": "venmen/thumbs/venmen-008.jpg",
+          "image_path": "venmen/images/venmen-008.jpg",
+          "glass_path": "venmen/glass/venmen-008.jpg"
+        },
+        {
+          "id": "venmen-010",
+          "width": 1440,
+          "height": 1855,
+          "thumbnail_path": "venmen/thumbs/venmen-010.jpg",
+          "image_path": "venmen/images/venmen-010.jpg",
+          "glass_path": "venmen/glass/venmen-010.jpg"
+        },
+        {
+          "id": "venmen-011",
+          "width": 1440,
+          "height": 2009,
+          "thumbnail_path": "venmen/thumbs/venmen-011.jpg",
+          "image_path": "venmen/images/venmen-011.jpg",
+          "glass_path": "venmen/glass/venmen-011.jpg"
         }
       ]
     },
@@ -504,28 +704,12 @@
       "avatar_path": "patryk-wojciechowicz/avatar.jpg",
       "artworks": [
         {
-          "id": "patryk-wojciechowicz-001",
-          "width": 1440,
-          "height": 1080,
-          "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-001.jpg",
-          "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-001.jpg",
-          "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-001.jpg"
-        },
-        {
           "id": "patryk-wojciechowicz-002",
           "width": 1440,
           "height": 1080,
           "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-002.jpg",
           "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-002.jpg",
           "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-002.jpg"
-        },
-        {
-          "id": "patryk-wojciechowicz-003",
-          "width": 1440,
-          "height": 1080,
-          "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-003.jpg",
-          "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-003.jpg",
-          "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-003.jpg"
         },
         {
           "id": "patryk-wojciechowicz-004",
@@ -574,6 +758,46 @@
           "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-009.jpg",
           "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-009.jpg",
           "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-009.jpg"
+        },
+        {
+          "id": "patryk-wojciechowicz-010",
+          "width": 1440,
+          "height": 2036,
+          "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-010.jpg",
+          "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-010.jpg",
+          "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-010.jpg"
+        },
+        {
+          "id": "patryk-wojciechowicz-011",
+          "width": 1440,
+          "height": 2036,
+          "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-011.jpg",
+          "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-011.jpg",
+          "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-011.jpg"
+        },
+        {
+          "id": "patryk-wojciechowicz-012",
+          "width": 1440,
+          "height": 2036,
+          "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-012.jpg",
+          "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-012.jpg",
+          "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-012.jpg"
+        },
+        {
+          "id": "patryk-wojciechowicz-013",
+          "width": 1440,
+          "height": 2036,
+          "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-013.jpg",
+          "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-013.jpg",
+          "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-013.jpg"
+        },
+        {
+          "id": "patryk-wojciechowicz-014",
+          "width": 1440,
+          "height": 2036,
+          "thumbnail_path": "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-014.jpg",
+          "image_path": "patryk-wojciechowicz/images/patryk-wojciechowicz-014.jpg",
+          "glass_path": "patryk-wojciechowicz/glass/patryk-wojciechowicz-014.jpg"
         }
       ]
     }

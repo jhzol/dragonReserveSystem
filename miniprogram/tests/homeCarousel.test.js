@@ -25,7 +25,7 @@ test("activity cards use Skyline open-container for native card-to-page transiti
   assert.equal(smallCardContainers.length, 3);
   assert.ok(smallCardContainers.every((container) => container.includes('closed-color="transparent"')));
   assert.ok(smallCardContainers.every((container) => container.includes('closed-border-radius="0"')));
-  assert.equal((wxml.match(/class="small-card-layout home-card-entrance home-card-entrance--\{\{item\._id == createdCardEntranceId \? createdCardEntranceState : cardEntranceState\}\}"/g) || []).length, 3);
+  assert.equal((wxml.match(/class="small-card-layout home-card-entrance home-card-entrance--\{\{!item\._homeMediaReady \? 'pending' : \(item\._id == createdCardEntranceId \? createdCardEntranceState : 'entered'\)\}\}"/g) || []).length, 3);
   assert.match(wxml, /<view[\s\S]*?class="large-card-wrap home-card-entrance[^\"]*"[\s\S]*?<text class="card-datetime-label">[\s\S]*?<open-container[\s\S]*?class="large-card-transition"[\s\S]*?closed-color="transparent"/);
 
   assert.equal(projectConfig.setting.skylineRenderEnable, true);
@@ -60,41 +60,62 @@ test("home activity refresh stays silent without a global loading overlay", () =
   assert.match(js, /loadActivityList\(options = \{\}\)[\s\S]*?activityService\.listActivities\(\)/);
 });
 
-test("home shell paints before the delayed per-card entrance starts", () => {
-  const wxss = fs.readFileSync(path.join(pageDir, "activity_list.wxss"), "utf8");
+test("returning from activity detail preserves the active card by ID across list refreshes", () => {
+  const vm = require("node:vm");
+  let page;
+  vm.runInNewContext(js, {
+    getApp: () => ({ globalData: {} }),
+    Page: (definition) => { page = definition; },
+    require: () => ({}),
+    console,
+    setTimeout,
+    clearTimeout,
+    wx: { navigateTo: () => {} }
+  });
 
-  assert.match(js, /cardEntranceState:\s*"idle"/);
-  assert.match(js, /onReady\(\)\s*\{[\s\S]*this\._homeFirstFrameReady\s*=\s*true[\s\S]*Date\.now\(\) \+ COLD_START_CARD_ENTRANCE_DELAY_MS[\s\S]*this\._scheduleColdStartCardEntrance\(\)/);
-  assert.match(js, /_prepareColdStartCardPresentation\(groupedActivities\)/);
-  assert.match(js, /this\._pendingColdStartGroupedActivities\s*=\s*groupedActivities/);
-  assert.match(js, /_prepareColdStartCardPresentation\(groupedActivities\)[\s\S]*?groupedActivities,[\s\S]*?cardEntranceState:\s*"pending"/);
-  assert.match(js, /_scheduleColdStartCardEntrance\(\)/);
-  assert.match(js, /COLD_START_CARD_ENTRANCE_DELAY_MS\s*=\s*400/);
-  assert.match(js, /COLD_START_CARD_ENTRANCE_FRAME_MS\s*=\s*17/);
-  assert.match(js, /cardEntranceStaggerMs:\s*200/);
-  assert.match(js, /_buildGroupSectionVisibility\(groupedActivities\)/);
-  assert.match(js, /groupSectionVisibility:\s*cardPresentation\.groupSectionVisibility/);
-  assert.match(wxml, /wx:if="\{\{groupSectionVisibility\.joined\}\}"/);
-  assert.match(wxml, /wx:if="\{\{groupSectionVisibility\.accepting\}\}"/);
-  assert.match(wxml, /wx:if="\{\{groupSectionVisibility\.notStarted\}\}"/);
-  assert.match(wxml, /wx:if="\{\{groupSectionVisibility\.ended\}\}"/);
-  assert.match(js, /_revealColdStartCards\(\)/);
-  assert.match(js, /_coldStartGlassPendingIds[\s\S]*?largeCardGlassImageUrl/);
-  assert.match(js, /_loadedCardGlassUrls/);
-  assert.match(js, /this\.setData\(\{ groupedActivities, cardEntranceState:\s*"pending" \}/);
-  assert.match(appJs, /homeTabEntrancePending:\s*true/);
-  assert.match(js, /this\._coldStartTabEntrancePending\s*=\s*true/);
-  assert.doesNotMatch(js, /!this\._hasRenderableCards\(groupedActivities\)/);
-  assert.match(js, /接口失败或列表为空[\s\S]*?this\._pendingColdStartGroupedActivities\s*=\s*this\.data\.groupedActivities[\s\S]*?this\._scheduleColdStartCardEntrance\(\)/);
-  assert.match(js, /homeTabEntrancePending\s*=\s*false[\s\S]*?_setTabBarHidden\(false, \{ animate:\s*true \}\)[\s\S]*?const enter = \(\) =>/);
-  assert.match(js, /setTimeout\([\s\S]*cardEntranceState:\s*"entered"[\s\S]*COLD_START_CARD_ENTRANCE_FRAME_MS\)/);
-  assert.equal((wxml.match(/home-card-entrance--\{\{item\._id == createdCardEntranceId \? createdCardEntranceState : cardEntranceState\}\}/g) || []).length, 4);
-  assert.equal((wxml.match(/style="transition-delay: \{\{item\._id == createdCardEntranceId \? 0 : index \* cardEntranceStaggerMs\}\}ms;"/g) || []).length, 4);
-  assert.match(wxml, /class="large-card-wrap home-card-entrance home-card-entrance--\{\{item\._id == createdCardEntranceId \? createdCardEntranceState : cardEntranceState\}\}"/);
-  assert.equal((wxml.match(/class="small-card-layout home-card-entrance home-card-entrance--\{\{item\._id == createdCardEntranceId \? createdCardEntranceState : cardEntranceState\}\}"/g) || []).length, 3);
-  assert.match(wxss, /\.home-card-entrance\s*\{[^}]*opacity:\s*1;[^}]*transform:\s*translateY\(0\);[^}]*transition:\s*transform 560ms cubic-bezier\(0\.2, 0\.8, 0\.2, 1\), opacity 440ms ease-out;/s);
-  assert.match(wxss, /\.home-card-entrance--pending\s*\{[^}]*opacity:\s*0;[^}]*transform:\s*translateY\(23\.08rpx\);/s);
-  assert.doesNotMatch(wxss, /will-change/);
+  const context = {
+    data: {
+      focusedCardIndex: { joined: 2, accepting: 0, notStarted: 0, ended: 0 },
+      groupedActivities: {
+        joined: [{ _id: "a" }, { _id: "b" }, { _id: "c" }],
+        accepting: [], notStarted: [], ended: []
+      }
+    },
+    _focusedCardActivityIds: {}
+  };
+  context._rememberFocusedCard = page._rememberFocusedCard;
+  page._rememberFocusedCard.call(context, "joined", 2);
+
+  const sameOrder = page._resolveFocusedCardIndex.call(context, context.data.groupedActivities);
+  assert.equal(sameOrder.joined, 2);
+
+  const refreshedOrder = page._resolveFocusedCardIndex.call(context, {
+    joined: [{ _id: "a" }, { _id: "c" }, { _id: "b" }],
+    accepting: [], notStarted: [], ended: []
+  });
+  assert.equal(refreshedOrder.joined, 1);
+  // Tapping a neighbouring card must not move the carousel on return.
+  page.showDetail.call(context, {
+    currentTarget: { dataset: { activity: { _id: "b", _homeMediaReady: true } } }
+  });
+  assert.equal(context._focusedCardActivityIds.joined, "c");
+  assert.equal(page._resolveFocusedCardIndex.call(context, context.data.groupedActivities).joined, 2);
+  assert.equal(context.data.focusedCardIndex.joined, 2);
+  assert.doesNotMatch(js, /focusReset/);
+});
+
+test("home uses independent skeletons and an image-independent Tab entrance", () => {
+  const wxss = fs.readFileSync(path.join(pageDir, "activity_list.wxss"), "utf8");
+  assert.match(js, /homeListLoading: true/);
+  assert.doesNotMatch(js, /_coldStartGlassPendingIds|_pendingColdStartGroupedActivities/);
+  assert.match(wxml, /wx:if="\{\{homeListLoading\}\}"/);
+  assert.equal((wxml.match(/class="home-card-slot home-card-slot--/g) || []).length, 4);
+  assert.equal((wxml.match(/wx:if="\{\{!item\._homeMediaReady\}\}"/g) || []).length, 4);
+  assert.doesNotMatch(wxml, /cardEntranceStaggerMs|lazy-load="\{\{true\}\}"/);
+  assert.match(wxss, /background: #e9eaec/);
+  assert.match(wxss, /skeleton-shimmer--running[^}]*transition: transform 1400ms linear/s);
+  assert.match(wxss, /home-card-entrance--pending[^}]*opacity: 0/s);
+  assert.match(js, /homeTabEntrancePending = false;[\s\S]*?_setTabBarHidden\(false, \{ animate: true \}\)/);
 });
 
 test("a newly created activity is inserted immediately and animates without replaying old cards", () => {
@@ -106,8 +127,8 @@ test("a newly created activity is inserted immediately and animates without repl
   assert.match(js, /_revealCreatedCard\(\)[\s\S]*?_createdCardDrawerDismissed\s*=\s*true[\s\S]*?_tryRevealCreatedCard\(\)/);
   assert.match(js, /_tryRevealCreatedCard\(\)[\s\S]*?!this\._createdCardDrawerDismissed[\s\S]*?!this\._createdCardGlassReady[\s\S]*?createdCardEntranceState:\s*"entered"/);
   assert.match(js, /CREATED_CARD_ENTRANCE_DURATION_MS\s*=\s*560/);
-  assert.equal((wxml.match(/item\._id == createdCardEntranceId \? createdCardEntranceState : cardEntranceState/g) || []).length, 4);
-  assert.equal((wxml.match(/item\._id == createdCardEntranceId \? 0 : index \* cardEntranceStaggerMs/g) || []).length, 4);
+  assert.equal((wxml.match(/!item\._homeMediaReady \? 'pending' : \(item\._id == createdCardEntranceId \? createdCardEntranceState : 'entered'\)/g) || []).length, 4);
+  assert.doesNotMatch(wxml, /transition-delay/);
 });
 
 test("a newly created large card waits for its glass bitmap before entering", () => {
@@ -115,7 +136,8 @@ test("a newly created large card waits for its glass bitmap before entering", ()
   assert.match(js, /this\._createdCardGlassReady = !waitsForGlass/);
   assert.doesNotMatch(js, /CREATED_CARD_GLASS_WAIT_TIMEOUT_MS/);
   assert.match(js, /onCardGlassLoaded\(e\)[\s\S]*?_markCreatedCardGlassReady/);
-  assert.match(js, /onCardGlassError\(e\)[\s\S]*?_markCreatedCardGlassReady/);
+  const glassError = js.slice(js.indexOf("  onCardGlassError(e)"), js.indexOf("  onCardVideoLoaded(e)"));
+  assert.doesNotMatch(glassError, /_markCreatedCardGlassReady|_markHomeImageReady/);
   assert.match(wxml, /class="glass-static-blur-image"[\s\S]*?bindload="onCardGlassLoaded"[\s\S]*?binderror="onCardGlassError"[\s\S]*?data-activity-id="\{\{item\._id\}\}"/);
 });
 
@@ -227,7 +249,7 @@ test("home large and small cards both use the original cover image", () => {
   assert.match(js, /activity\.smallCardBgImageUrl = selectedStyle \? \(selectedStyle\.largeCardBgImageUrl \|\| ""\) : ""/);
   assert.match(js, /activity\.largeCardBgImageUrl = activity\.activityCover\.imageUrl;[\s\S]*?activity\.smallCardBgImageUrl = activity\.activityCover\.imageUrl;/);
   assert.doesNotMatch(js, /activity\.smallCardBgImageUrl = activity\.activityCover\.thumbnailUrl/);
-  assert.match(wxml, /class="card-image-bg"[\s\S]*?src="\{\{item\.smallCardBgImageUrl\}\}"[\s\S]*?mode="aspectFill"/);
+  assert.match(wxml, /class="card-image-bg"[\s\S]*?src="\{\{item\._homeCoverSrc \|\| item\.smallCardBgImageUrl\}\}"[\s\S]*?mode="aspectFill"/);
 });
 
 test("large-card glass uses a pre-rendered static image with the black gradient", () => {
@@ -242,7 +264,7 @@ test("large-card glass uses a pre-rendered static image with the black gradient"
   assert.match(js, /activity\.largeCardGlassImageUrl = activity\.activityCover\.largeCardGlassImageUrl \|\| ""/);
   assert.match(wxml, /class="glass-bottom"[\s\S]*class="glass-static-blur-layer"/);
   assert.match(wxml, /wx:if="\{\{item\.largeCardGlassImageUrl\}\}"/);
-  assert.match(wxml, /class="glass-static-blur-image"[\s\S]*src="\{\{item\.largeCardGlassImageUrl\}\}"/);
+  assert.match(wxml, /class="glass-static-blur-image"[\s\S]*src="\{\{item\._homeGlassSrc \|\| item\.largeCardGlassImageUrl\}\}"/);
   assert.match(wxml, /class="glass-tint-layer"/);
   assert.match(wxml, /class="glass-content"/);
   assert.match(glassSection, /\.glass-static-blur-layer\s*\{[\s\S]*top: 0;[\s\S]*bottom: 0;[\s\S]*overflow: hidden;[\s\S]*border-bottom-left-radius: inherit;/);

@@ -6,6 +6,8 @@ const { enrichSingleActivity } = require("../../utils/activityEnrich");
 const { parseCreatedAtMs, orderParticipantsForRecentAvatarSlice } = require("../../utils/participantSort");
 const cacheManager = require("../../services/cacheManager");
 const { patchTabBarIfNeeded } = require("../../utils/tabBarSync");
+const { createHomeCardMediaLoader } = require("../../utils/homeCardMediaLoader");
+const { createHomePresentationDiagnostics } = require("../../utils/homePresentationDiagnostics");
 const calendarWarmup = require("../../utils/calendarWarmup");
 const { getBottomSafeAreaRpx } = require("../../utils/safeArea");
 
@@ -401,8 +403,8 @@ Page({
     searchKeyword: "",
     selectedFilter: "我参与的",
     activityTypeStyles: DEFAULT_ACTIVITY_TYPE_STYLES,
-    cardEntranceState: "idle",
-    cardEntranceStaggerMs: 200,
+    homeListLoading: true,
+    skeletonShimmerRunning: false,
     createdCardEntranceId: null,
     createdCardEntranceState: "entered",
     createFormContainerRendered: false,
@@ -414,8 +416,6 @@ Page({
   onLoad(options) {
     this._homeFirstFrameReady = false;
     this._cardEntranceNotBefore = 0;
-    this._pendingColdStartGroupedActivities = null;
-    this._coldStartCardEntranceStarted = false;
     this._coldStartTabEntrancePending = false;
     this._cardEntranceTimer = null;
     this._cardEntranceFrameTimer = null;
@@ -425,7 +425,8 @@ Page({
     this._createdCardGlassReady = true;
     this._createdCardRevealStarted = false;
     this._loadedCardGlassUrls = new Set();
-    this._coldStartGlassPendingIds = new Set();
+    this._homeReadyImages = new Map();
+    this._homeEnteredMediaKeys = new Set();
     const aid = options && options.activityId;
     if (aid) {
       if (app && app.globalData) app.globalData.homeTabEntrancePending = false;
@@ -456,10 +457,12 @@ Page({
     this._homeFirstFrameReady = true;
     this._cardEntranceNotBefore = Date.now() + COLD_START_CARD_ENTRANCE_DELAY_MS;
     this._scheduleColdStartCardEntrance();
+    this._startSkeletonShimmer();
   },
 
   onShow() {
     this._pageVisible = true;
+    this._ensureHomePresentationDiagnostics();
     this._loadGeneration = (this._loadGeneration || 0) + 1;
     this.syncGuestState();
     /** 原生弹层也可能触发 show；一级抽屉仍存续时不得提前恢复 Tab。 */
@@ -481,6 +484,7 @@ Page({
       isAdmin: app.globalData.userRole === "admin",
     });
     this._scheduleColdStartCardEntrance();
+    this._startSkeletonShimmer();
   },
 
   hasCreateActivityPermission() {
@@ -513,17 +517,16 @@ Page({
     this._pageVisible = false;
     this._loadGeneration = (this._loadGeneration || 0) + 1;
     this._finishColdStartCardEntrance();
+    this._stopHomeCardMedia();
     this._finishCreatedCardEntrance();
     this._clearCardMediaDiagnostics();
     calendarWarmup.cancelScheduledPrefetch();
     /**
-     * wx.chooseLocation、编译重载或切后台都会暂时隐藏首页；冷启动动画尚未触发时
-     * 必须连同抽屉状态一起保留隐藏，避免 Tab 先恢复、再被 onShow 隐藏而闪现。
+     * 页面隐藏时只保留抽屉对 Tab 的隐藏要求；卡片准备状态不影响其他页面的 Tab。
      */
     const keepTabBarHidden = !!(
       this.data.createFormContainerRendered ||
-      this.data.showCreateForm ||
-      this._coldStartTabEntrancePending
+      this.data.showCreateForm
     );
     const self = this;
     const flush = () => self._setTabBarHidden(keepTabBarHidden);
@@ -534,6 +537,7 @@ Page({
   onUnload() {
     this._pageVisible = false;
     this._loadGeneration = (this._loadGeneration || 0) + 1;
+    this._stopHomeCardMedia();
     if (this._cardEntranceTimer) clearTimeout(this._cardEntranceTimer);
     if (this._cardEntranceFrameTimer) clearTimeout(this._cardEntranceFrameTimer);
     if (this._createdCardEntranceFrameTimer) clearTimeout(this._createdCardEntranceFrameTimer);
@@ -542,7 +546,6 @@ Page({
     this._cardEntranceFrameTimer = null;
     this._createdCardEntranceFrameTimer = null;
     this._createdCardEntranceClearTimer = null;
-    this._pendingColdStartGroupedActivities = null;
     this._coldStartTabEntrancePending = false;
     if (app && app.globalData) app.globalData.homeTabEntrancePending = false;
     calendarWarmup.cancelScheduledPrefetch();
@@ -574,87 +577,229 @@ Page({
     }, {});
   },
 
-  _prepareColdStartCardPresentation(groupedActivities) {
-    const groupSectionVisibility = this._buildGroupSectionVisibility(groupedActivities);
-    if (this._coldStartCardEntranceStarted) {
-      return {
-        groupedActivities,
-        cardEntranceState: this.data.cardEntranceState || "idle",
-        groupSectionVisibility
-      };
-    }
-    this._pendingColdStartGroupedActivities = groupedActivities;
-    const joined = Array.isArray(groupedActivities && groupedActivities.joined)
-      ? groupedActivities.joined
+  _rememberFocusedCard(group, index, groupedActivities = this.data.groupedActivities) {
+    const cards = Array.isArray(groupedActivities && groupedActivities[group])
+      ? groupedActivities[group]
       : [];
-    this._coldStartGlassPendingIds = new Set(
-      joined
-        .filter((item) => item.largeCardGlassImageUrl && !this._loadedCardGlassUrls.has(item.largeCardGlassImageUrl))
-        .map((item) => String(item._id))
-    );
-    this._scheduleColdStartCardEntrance();
-    return {
-      groupedActivities,
-      cardEntranceState: "pending",
-      groupSectionVisibility
+    const activity = cards[index];
+    if (!activity || activity._id == null) return;
+    this._focusedCardActivityIds = {
+      ...(this._focusedCardActivityIds || {}),
+      [group]: String(activity._id)
     };
   },
 
-  _scheduleColdStartCardEntrance() {
-    if (
-      this._coldStartCardEntranceStarted ||
-      this._cardEntranceTimer ||
-      !this._homeFirstFrameReady ||
-      !this._pendingColdStartGroupedActivities ||
-      (this._coldStartGlassPendingIds && this._coldStartGlassPendingIds.size > 0) ||
-      this._pageVisible === false
-    ) return;
-    const waitMs = Math.max(0, (this._cardEntranceNotBefore || Date.now()) - Date.now());
-    this._cardEntranceTimer = setTimeout(() => {
-      this._cardEntranceTimer = null;
-      this._revealColdStartCards();
-    }, waitMs);
-  },
-
-  _revealColdStartCards() {
-    if (
-      this._coldStartCardEntranceStarted ||
-      !this._pendingColdStartGroupedActivities ||
-      this._pageVisible === false
-    ) return;
-    const groupedActivities = this._pendingColdStartGroupedActivities;
-    this._pendingColdStartGroupedActivities = null;
-    this._coldStartCardEntranceStarted = true;
-    this.setData({ groupedActivities, cardEntranceState: "pending" }, () => {
-      this._coldStartTabEntrancePending = false;
-      if (app && app.globalData) app.globalData.homeTabEntrancePending = false;
-      const keepTabBarHidden = !!(this.data.createFormContainerRendered || this.data.showCreateForm);
-      if (!keepTabBarHidden) this._setTabBarHidden(false, { animate: true });
-      const enter = () => {
-        if (this._pageVisible === false || this.data.cardEntranceState !== "pending") return;
-        this._cardEntranceFrameTimer = setTimeout(() => {
-          this._cardEntranceFrameTimer = null;
-          if (this._pageVisible === false || this.data.cardEntranceState !== "pending") return;
-          this.setData({ cardEntranceState: "entered" });
-        }, COLD_START_CARD_ENTRANCE_FRAME_MS);
-      };
-      if (typeof wx !== "undefined" && typeof wx.nextTick === "function") wx.nextTick(enter);
-      else enter();
+  _rememberFocusedActivity(activityId) {
+    if (activityId == null) return;
+    const groups = this.data.groupedActivities || {};
+    Object.keys(groups).some((group) => {
+      const cards = Array.isArray(groups[group]) ? groups[group] : [];
+      const index = cards.findIndex((item) => String(item && item._id) === String(activityId));
+      if (index < 0) return false;
+      this._rememberFocusedCard(group, index, groups);
+      return true;
     });
   },
 
-  _finishColdStartCardEntrance() {
-    if (this._cardEntranceTimer) {
-      clearTimeout(this._cardEntranceTimer);
-      this._cardEntranceTimer = null;
+  _resolveFocusedCardIndex(groupedActivities) {
+    const previous = this.data.focusedCardIndex || {};
+    const focusedIds = this._focusedCardActivityIds || {};
+    return Object.keys(previous).reduce((nextFocus, group) => {
+      const cards = Array.isArray(groupedActivities && groupedActivities[group])
+        ? groupedActivities[group]
+        : [];
+      const focusedId = focusedIds[group];
+      const matchedIndex = focusedId
+        ? cards.findIndex((item) => String(item && item._id) === focusedId)
+        : -1;
+      const previousIndex = Math.max(0, Math.floor(Number(previous[group]) || 0));
+      nextFocus[group] = matchedIndex >= 0
+        ? matchedIndex
+        : Math.min(previousIndex, Math.max(0, cards.length - 1));
+      return nextFocus;
+    }, {});
+  },
+
+  _cardImageUrls(item, group) {
+    return [group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl,
+      group === "joined" ? item.largeCardGlassImageUrl : ""].filter(Boolean);
+  },
+
+  _cardMediaKey(item, group) {
+    return JSON.stringify([group, String(item._id), ...this._cardImageUrls(item, group), item.bgVideoUrl || ""]);
+  },
+
+  _prepareColdStartCardPresentation(groupedActivities) {
+    const decorated = {};
+    Object.keys(groupedActivities).forEach((group) => {
+      decorated[group] = groupedActivities[group].map((item) => {
+        const key = this._cardMediaKey(item, group);
+        const cover = group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl;
+        return { ...item, _homeMediaKey: key, _homeMediaReady: this._homeEnteredMediaKeys.has(key),
+          _homeCoverSrc: this._homeReadyImages.get(cover) || "",
+          _homeGlassSrc: this._homeReadyImages.get(item.largeCardGlassImageUrl) || "" };
+      });
+    });
+    return {
+      groupedActivities: decorated,
+      groupSectionVisibility: this._buildGroupSectionVisibility(decorated)
+    };
+  },
+
+  _ensureHomePresentationDiagnostics() {
+    if (this._homePresentationDiagnostics || this._pageVisible === false) return;
+    this._homePresentationDiagnostics = createHomePresentationDiagnostics({
+      page: this, wxApi: wx, traceId: createTraceId("home-view"),
+      emit: (event, payload) => logInfo(event, payload)
+    });
+  },
+
+  // Tab entrance is gated only by the page's first frame, never by requests/images.
+  _scheduleColdStartCardEntrance() {
+    if (this._pageVisible === false || !this._homeFirstFrameReady) return;
+    if (this._coldStartTabEntrancePending && !this._cardEntranceTimer) {
+      const waitMs = Math.max(0, this._cardEntranceNotBefore - Date.now());
+      this._cardEntranceTimer = setTimeout(() => {
+        this._cardEntranceTimer = null;
+        if (this._pageVisible === false) return;
+        this._coldStartTabEntrancePending = false;
+        if (app && app.globalData) app.globalData.homeTabEntrancePending = false;
+        if (!this.data.createFormContainerRendered && !this.data.showCreateForm && !app.globalData.pendingOpenCreateActivity) {
+          this._setTabBarHidden(false, { animate: true });
+        }
+      }, waitMs);
     }
-    if (this._cardEntranceFrameTimer) {
-      clearTimeout(this._cardEntranceFrameTimer);
+    this._ensureHomePresentationDiagnostics();
+    this._prepareHomeCardImages();
+    this._scheduleReadyHomeCards();
+    this._startSkeletonShimmer();
+  },
+
+  _prepareHomeCardImages({ retryFailed = false } = {}) {
+    if (this._pageVisible === false) return;
+    if (!this._homeImageLoader) {
+      this._homeImageLoader = createHomeCardMediaLoader({
+        load: (url, ready, failed) => {
+          // Decode independently of swiper item creation. The local file is reused
+          // by the rendered image; native bindload remains a second success path.
+          wx.getImageInfo({ src: url, success: (res) => ready(res.path), fail: failed });
+        },
+        onReady: (url, path) => {
+          this._homePresentationDiagnostics?.media(url, "preload", "loaded");
+          this._markHomeImageReady(url, path);
+        },
+        onError: (url, error) => {
+          this._homePresentationDiagnostics?.media(url, "preload", summarizeError(error));
+          this._homePresentationDiagnostics?.snapshot("preload_error", { url: String(url).split(/[?#]/)[0], summary: summarizeError(error) });
+          logError("activity_card_presentation_pending", {
+            url, summary: summarizeError(error),
+            waitingCards: this._homeCardsWaitingFor(url)
+          });
+        }
+      });
+    }
+    const groups = this.data.groupedActivities || {};
+    // Round-robin by group: prioritize each visible/focused card before the tails.
+    const ordered = Object.keys(groups).map((group) => {
+      const cards = groups[group] || [];
+      const focus = this.data.focusedCardIndex[group] || 0;
+      return cards.slice(focus).concat(cards.slice(0, focus)).map((item) => ({ item, group }));
+    });
+    const urls = [];
+    for (let i = 0; ordered.some((cards) => i < cards.length); i += 1) {
+      ordered.forEach((cards) => {
+        if (cards[i]) urls.push(...this._cardImageUrls(cards[i].item, cards[i].group));
+      });
+    }
+    this._homeImageLoader.enqueue(urls.filter((url) => !this._homeReadyImages.has(url)), { retryFailed });
+  },
+
+  _homeCardsWaitingFor(url) {
+    const result = [];
+    Object.keys(this.data.groupedActivities || {}).forEach((group) => {
+      this.data.groupedActivities[group].forEach((item) => {
+        if (!item._homeMediaReady && this._cardImageUrls(item, group).includes(url)) {
+          result.push({ group, activityId: String(item._id) });
+        }
+      });
+    });
+    return result.slice(0, 6);
+  },
+
+  _markHomeImageReady(url, path) {
+    if (!url || this._pageVisible === false) return;
+    if (!this._homeReadyImages.has(url)) this._homeReadyImages.set(url, path || url);
+    this._loadedCardGlassUrls.add(url);
+    const created = Object.values(this.data.groupedActivities || {}).flat().find(
+      (item) => String(item._id) === String(this.data.createdCardEntranceId)
+    );
+    if (created && created.largeCardGlassImageUrl === url) this._markCreatedCardGlassReady(created._id);
+    const patch = {};
+    Object.keys(this.data.groupedActivities || {}).forEach((group) => {
+      this.data.groupedActivities[group].forEach((item, index) => {
+        const cover = group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl;
+        if (cover === url && path && item._homeCoverSrc !== path) patch[`groupedActivities.${group}[${index}]._homeCoverSrc`] = path;
+        if (group === "joined" && item.largeCardGlassImageUrl === url && path && item._homeGlassSrc !== path) patch[`groupedActivities.${group}[${index}]._homeGlassSrc`] = path;
+      });
+    });
+    if (Object.keys(patch).length) this.setData(patch, () => this._scheduleReadyHomeCards());
+    else this._scheduleReadyHomeCards();
+  },
+
+  _scheduleReadyHomeCards() {
+    if (this._pageVisible === false || !this._homeFirstFrameReady || this._cardEntranceFrameTimer) return;
+    this._cardEntranceFrameTimer = setTimeout(() => {
       this._cardEntranceFrameTimer = null;
-    }
-    if (this._coldStartCardEntranceStarted && this.data.cardEntranceState === "pending") {
-      this.setData({ cardEntranceState: "entered" });
-    }
+      if (this._pageVisible === false) return;
+      const patch = {};
+      Object.keys(this.data.groupedActivities || {}).forEach((group) => {
+        this.data.groupedActivities[group].forEach((item, index) => {
+          if (item._homeMediaReady) return;
+          const urls = this._cardImageUrls(item, group);
+          const videoOnlyPending = !urls.length && item.bgVideoUrl && !this._homeReadyImages.has(item.bgVideoUrl);
+          if (videoOnlyPending || !urls.every((url) => this._homeReadyImages.has(url))) return;
+          const key = this._cardMediaKey(item, group);
+          this._homeEnteredMediaKeys.add(key);
+          patch[`groupedActivities.${group}[${index}]._homeMediaReady`] = true;
+          logInfo("activity_card_presentation_ready", { group, activityId: String(item._id) });
+        });
+      });
+      if (Object.keys(patch).length) this.setData(patch, () => this._homePresentationDiagnostics?.check());
+      else this._homePresentationDiagnostics?.check();
+    }, COLD_START_CARD_ENTRANCE_FRAME_MS);
+  },
+
+  _startSkeletonShimmer() {
+    if (!this._homeFirstFrameReady || this._pageVisible === false || this._skeletonShimmerTimer) return;
+    const tick = () => {
+      if (this._pageVisible === false) return;
+      const pending = this.data.homeListLoading || Object.values(this.data.groupedActivities || {})
+        .some((cards) => cards.some((item) => !item._homeMediaReady));
+      if (!pending) {
+        this._skeletonShimmerTimer = null;
+        if (this.data.skeletonShimmerRunning) this.setData({ skeletonShimmerRunning: false });
+        return;
+      }
+      this.setData({ skeletonShimmerRunning: !this.data.skeletonShimmerRunning });
+      this._skeletonShimmerTimer = setTimeout(tick, this.data.skeletonShimmerRunning ? 1500 : 100);
+    };
+    tick();
+  },
+
+  _stopHomeCardMedia() {
+    this._homePresentationDiagnostics?.stop();
+    this._homePresentationDiagnostics = null;
+    if (this._homeImageLoader) this._homeImageLoader.dispose();
+    this._homeImageLoader = null;
+    clearTimeout(this._skeletonShimmerTimer);
+    this._skeletonShimmerTimer = null;
+  },
+
+  _finishColdStartCardEntrance() {
+    clearTimeout(this._cardEntranceTimer);
+    clearTimeout(this._cardEntranceFrameTimer);
+    this._cardEntranceTimer = null;
+    this._cardEntranceFrameTimer = null;
   },
 
   _finishCreatedCardEntrance() {
@@ -992,6 +1137,8 @@ Page({
     if (!group || !Object.prototype.hasOwnProperty.call(this.data.focusedCardIndex, group)) return;
     const current = Math.max(0, Math.floor(Number(e.detail && e.detail.current) || 0));
     const previous = Number(this.data.focusedCardIndex[group]) || 0;
+    this._homePresentationDiagnostics?.swipe();
+    this._rememberFocusedCard(group, current);
     this.setData({ [`focusedCardIndex.${group}`]: current }, () => {
       this._syncVideoFocus(group, previous, current);
       const endedCount = (this.data.groupedActivities.ended || []).length;
@@ -1088,6 +1235,7 @@ Page({
     const myUserId = app.globalData.userId || wx.getStorageSync("userId") || "";
     const myNickname = (app.globalData.userProfile?.nickname || wx.getStorageSync("userNickname") || "").trim();
     this.setData({ isAdmin: app.globalData.userRole === "admin", myUserId, myNickname });
+    this._prepareHomeCardImages({ retryFailed: true });
     return this.loadActivityList({ forceNetwork: true });
   },
 
@@ -1162,10 +1310,10 @@ Page({
       ended: visibleEnded
     };
     this.setData({
-      groupedActivities,
+      groupedActivities: this._prepareColdStartCardPresentation(groupedActivities).groupedActivities,
       endedHasMore,
       endedLoadingMore: false
-    });
+    }, () => this._scheduleColdStartCardEntrance());
   },
 
   loadActivityListFromCache() {
@@ -1179,6 +1327,7 @@ Page({
     if (cacheUserId && (!myUserId || cacheUserId !== String(myUserId))) {
       return false;
     }
+    this._homePresentationDiagnostics?.list("cache");
     const listWithFlags = reapplyListParticipationFlags(list, myUserId, myNickname);
     cacheManager.setCachedActivityList(listWithFlags, myUserId);
     const { selectedFilter, searchKeyword } = this.data;
@@ -1186,10 +1335,10 @@ Page({
     const fullGroupedActivities = this.computeGroupedActivities(listWithFlags);
     const endedStream = this.buildEndedStreamState(fullGroupedActivities, ENDED_ACTIVITY_PAGE_SIZE);
     const groupedActivities = endedStream.groupedActivities;
-    const focusReset = { joined: 0, accepting: 0, notStarted: 0, ended: 0 };
+    const focusedCardIndex = this._resolveFocusedCardIndex(groupedActivities);
     const cardPresentation = this._prepareColdStartCardPresentation(groupedActivities);
     // 须在 setData 回调之前创建 session，否则缓存命中的首帧 bindload 可能早于回调，导致事件丢弃并误报 stalled（H1）
-    this._startCardMediaDiagnostics(listWithFlags, groupedActivities, focusReset);
+    this._startCardMediaDiagnostics(listWithFlags, groupedActivities, focusedCardIndex);
     this.setData({
       activityList: listWithFlags,
       filteredList: filtered,
@@ -1197,8 +1346,8 @@ Page({
       allEndedActivities: endedStream.allEndedActivities,
       endedHasMore: endedStream.endedHasMore,
       endedLoadingMore: false,
-      focusedCardIndex: focusReset,
-      cardEntranceState: cardPresentation.cardEntranceState,
+      focusedCardIndex,
+      homeListLoading: false,
       groupSectionVisibility: cardPresentation.groupSectionVisibility
     }, () => this._scheduleColdStartCardEntrance());
     return true;
@@ -1208,21 +1357,26 @@ Page({
     const generation = options.generation == null ? (this._loadGeneration || 0) : options.generation;
     if (this._pageVisible === false || generation !== (this._loadGeneration || 0)) return Promise.resolve();
     this._clearCardMediaDiagnostics();
+    this._homePresentationDiagnostics?.list("request_pending");
     return (options.responsePromise || activityService.listActivities())
-      .then((res) => this.processActivityList(res || [], new Date()))
+      .then((res) => {
+        if (this._pageVisible !== false && generation === (this._loadGeneration || 0)) this._homePresentationDiagnostics?.list("response_received");
+        return this.processActivityList(res || [], new Date());
+      })
       .then(result => {
         if (this._pageVisible === false || generation !== (this._loadGeneration || 0)) return;
         if (result) {
+          this._homePresentationDiagnostics?.list("list_processed");
           const { list } = result;
           const { selectedFilter, searchKeyword } = this.data;
           const filtered = this.computeFilteredList(list, selectedFilter, searchKeyword);
           const fullGroupedActivities = this.computeGroupedActivities(list);
           const endedStream = this.buildEndedStreamState(fullGroupedActivities, ENDED_ACTIVITY_PAGE_SIZE);
           const groupedActivities = endedStream.groupedActivities;
-          const focusReset = { joined: 0, accepting: 0, notStarted: 0, ended: 0 };
+          const focusedCardIndex = this._resolveFocusedCardIndex(groupedActivities);
           const cardPresentation = this._prepareColdStartCardPresentation(groupedActivities);
           if (!options.skipCardMediaDiagnostics) {
-            this._startCardMediaDiagnostics(list, groupedActivities, focusReset);
+            this._startCardMediaDiagnostics(list, groupedActivities, focusedCardIndex);
           }
           this.setData({
             activityList: list,
@@ -1231,8 +1385,8 @@ Page({
             allEndedActivities: endedStream.allEndedActivities,
             endedHasMore: endedStream.endedHasMore,
             endedLoadingMore: false,
-            focusedCardIndex: focusReset,
-            cardEntranceState: cardPresentation.cardEntranceState,
+            focusedCardIndex,
+            homeListLoading: false,
             groupSectionVisibility: cardPresentation.groupSectionVisibility
           }, () => this._scheduleColdStartCardEntrance());
           cacheManager.setCachedActivityList(list, this.data.myUserId || "");
@@ -1245,14 +1399,11 @@ Page({
       })
       .catch(err => {
         if (this._pageVisible === false || generation !== (this._loadGeneration || 0)) return;
+        this._homePresentationDiagnostics?.list("list_failed", summarizeError(err));
+        this._homePresentationDiagnostics?.snapshot("list_error");
         console.error(err);
-        // 即使接口失败或列表为空，也不能让冷启动 Tab 永久停留在屏幕下方。
-        if (this._coldStartTabEntrancePending && !this._pendingColdStartGroupedActivities) {
-          this._pendingColdStartGroupedActivities = this.data.groupedActivities || {
-            joined: [], accepting: [], notStarted: [], ended: []
-          };
-          this._scheduleColdStartCardEntrance();
-        }
+        // The independent Tab entrance also runs when the request never resolves.
+        this._scheduleColdStartCardEntrance();
         // 测试环境切换后常见：本地缓存 token 对应的用户不在当前库中
         if (err && err.statusCode === 404 && String(err.message || "").includes("User not found")) {
           app.logout();
@@ -1568,7 +1719,7 @@ Page({
       this.setData({
         activityList,
         filteredList,
-        groupedActivities,
+        groupedActivities: this._prepareColdStartCardPresentation(groupedActivities).groupedActivities,
         allEndedActivities: endedStream.allEndedActivities,
         endedHasMore: endedStream.endedHasMore,
         endedLoadingMore: false,
@@ -1577,6 +1728,7 @@ Page({
         createdCardEntranceId: createdActivity._id,
         createdCardEntranceState: "pending"
       }, () => {
+        this._scheduleColdStartCardEntrance();
         cacheManager.setCachedActivityList(activityList, this.data.myUserId || "");
         calendarWarmup.schedulePrefetchSignedUpList(app);
         resolve(true);
@@ -1641,7 +1793,11 @@ Page({
 
   showDetail(e) {
     const activity = e.currentTarget.dataset.activity;
-    if (!activity || !activity._id) return;
+    if (!activity || !activity._id || !activity._homeMediaReady) return;
+    // Preserve the visible carousel positions, not the card tapped at the edge.
+    Object.entries(this.data.focusedCardIndex || {}).forEach(([group, index]) => {
+      this._rememberFocusedCard(group, index);
+    });
     wx.navigateTo({
       url: `/pages/activity_detail/activity_detail?id=${activity._id}`
     });
@@ -1668,11 +1824,17 @@ Page({
 
   onCardBgLoaded(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "image");
+    this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "loaded", meta);
     this._markCardMediaEvent(meta, "loaded");
+    this._markHomeImageReady(meta.url);
   },
 
   onCardBgError(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "image");
+    this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "error", meta);
+    this._homePresentationDiagnostics?.snapshot("native_media_error", {
+      url: String(meta.url || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
+    });
     this._markCardMediaEvent(meta, "error", e && e.detail);
   },
 
@@ -1680,32 +1842,38 @@ Page({
     const dataset = e && e.currentTarget && e.currentTarget.dataset;
     const activityId = String((dataset && dataset.activityId) || "");
     const url = String((dataset && dataset.url) || "");
-    if (url) this._loadedCardGlassUrls.add(url);
-    if (this._coldStartGlassPendingIds) this._coldStartGlassPendingIds.delete(activityId);
-    this._scheduleColdStartCardEntrance();
+    this._homePresentationDiagnostics?.media(url, "glass", "loaded", { activityId, group: (dataset && dataset.group) || "joined" });
+    this._markHomeImageReady(url);
     this._markCreatedCardGlassReady(activityId);
   },
 
   onCardGlassError(e) {
     const dataset = e && e.currentTarget && e.currentTarget.dataset;
+    this._homePresentationDiagnostics?.media(dataset && dataset.url, "glass", "error", { activityId: dataset && dataset.activityId, group: (dataset && dataset.group) || "joined" });
+    this._homePresentationDiagnostics?.snapshot("glass_error", {
+      url: String((dataset && dataset.url) || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
+    });
     logError("activity_card_glass_load_failed", {
       activityId: String((dataset && dataset.activityId) || ""),
       url: String((dataset && dataset.url) || ""),
       summary: summarizeError((e && e.detail) || {})
     });
-    const activityId = String((dataset && dataset.activityId) || "");
-    if (this._coldStartGlassPendingIds) this._coldStartGlassPendingIds.delete(activityId);
-    this._scheduleColdStartCardEntrance();
-    this._markCreatedCardGlassReady(activityId);
+    // Failure never releases a card: keep its own skeleton visible.
   },
 
   onCardVideoLoaded(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "video");
+    this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "loaded", meta);
     this._markCardMediaEvent(meta, "loaded");
+    this._markHomeImageReady(meta.url);
   },
 
   onCardVideoError(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "video");
+    this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "error", meta);
+    this._homePresentationDiagnostics?.snapshot("native_media_error", {
+      url: String(meta.url || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
+    });
     this._markCardMediaEvent(meta, "error", e && e.detail);
   },
 

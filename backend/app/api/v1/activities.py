@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, get_optional_current_user, require_admin
+from app.api.deps import get_current_user, get_optional_current_user, require_admin, require_activity_signup_permission
 from app.core.config import get_settings
 from app.core.database import get_db
 from app.core.logging import logger
@@ -30,6 +30,7 @@ from app.services.activity_share_preview_service import get_or_create_activity_s
 from app.services.activity_service import (
     admin_cancel_checkin_participant,
     admin_checkin_participant,
+    cancel_signup,
     checkin_activity,
     create_activity,
     delete_activity,
@@ -115,6 +116,7 @@ def get_style_signature(
 
 
 @router.get("/me/signed-up", response_model=list[ActivityResponse], summary="List my signed-up activities")
+@router.get("/mine", response_model=list[ActivityResponse], summary="List my signed-up activities")
 def get_my_activities(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -207,9 +209,9 @@ def remove_activity(
 def post_signup(
     activity_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_activity_signup_permission),
 ) -> ActivitySignupResponse:
-    """Sign the current admin up for an activity."""
+    """Sign the current member or admin up for an activity."""
 
     activity = get_activity_by_id(db, activity_id)
     participant = signup_activity(db, activity, current_user)
@@ -281,4 +283,17 @@ def delete_admin_checkin_participant(
 
     activity = get_activity_by_id(db, activity_id)
     admin_cancel_checkin_participant(db, activity, participant_id, current_user)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.delete("/{activity_id}/signup", status_code=status.HTTP_204_NO_CONTENT, summary="Cancel signup")
+def delete_signup(
+    activity_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Response:
+    """Cancel the current user's signup."""
+
+    activity = get_activity_by_id(db, activity_id)
+    cancel_signup(db, activity, current_user)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

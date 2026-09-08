@@ -32795,7 +32795,7 @@
                                       "fill": {
                                         "type": "image",
                                         "enabled": true,
-                                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/avatar.png",
+                                        "url": "../backend/app/assets/activity-covers/aleksey-rico/avatar.jpg",
                                         "mode": "fill"
                                       },
                                       "width": 28,
@@ -32845,7 +32845,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-001.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-001.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -32901,7 +32901,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-002.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-002.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -32931,7 +32931,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-003.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-003.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -32961,7 +32961,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-004.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-004.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -32991,7 +32991,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-005.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-005.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33021,7 +33021,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-006.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-006.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33051,7 +33051,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-007.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-007.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33081,7 +33081,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-008.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-008.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33111,7 +33111,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-009.png",
+                                            "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-009.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33148,7 +33148,7 @@
                                       "fill": {
                                         "type": "image",
                                         "enabled": true,
-                                        "url": "../.local-assets/activity-cover-inbox/lam/avatar.png",
+                                        "url": "../backend/app/assets/activity-covers/lam/avatar.jpg",
                                         "mode": "fill"
                                       },
                                       "width": 28,
@@ -33197,7 +33197,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-001.png",
+                                            "url": "../backend/app/assets/activity-covers/lam/images/lam-001.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33227,7 +33227,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-002.png",
+                                            "url": "../backend/app/assets/activity-covers/lam/images/lam-002.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33257,7 +33257,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-003.png",
+                                            "url": "../backend/app/assets/activity-covers/lam/images/lam-003.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33287,7 +33287,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-004.png",
+                                            "url": "../backend/app/assets/activity-covers/lam/images/lam-004.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33317,7 +33317,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-005.png",
+                                            "url": "../backend/app/assets/activity-covers/lam/images/lam-005.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33347,7 +33347,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-006.png",
+                                            "url": "../backend/app/assets/activity-covers/lam/images/lam-006.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33377,7 +33377,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-007.png",
+                                            "url": "../backend/app/assets/activity-covers/lam/images/lam-007.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33407,7 +33407,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-008.png",
+                                            "url": "../backend/app/assets/activity-covers/lam/images/lam-008.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33444,7 +33444,7 @@
                                       "fill": {
                                         "type": "image",
                                         "enabled": true,
-                                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/avatar.png",
+                                        "url": "../backend/app/assets/activity-covers/ardhira-putra/avatar.jpg",
                                         "mode": "fill"
                                       },
                                       "width": 28,
@@ -33493,7 +33493,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-001.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-001.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33523,7 +33523,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-002.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-002.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33553,7 +33553,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-003.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-003.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33583,7 +33583,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-004.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-004.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33613,7 +33613,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-005.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-005.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33643,7 +33643,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-006.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-006.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33673,7 +33673,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-007.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-007.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33703,7 +33703,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-008.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-008.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33733,7 +33733,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-009.png",
+                                            "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-009.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33770,7 +33770,7 @@
                                       "fill": {
                                         "type": "image",
                                         "enabled": true,
-                                        "url": "../.local-assets/activity-cover-inbox/magoyama/avatar.png",
+                                        "url": "../backend/app/assets/activity-covers/magoyama/avatar.jpg",
                                         "mode": "fill"
                                       },
                                       "width": 28,
@@ -33819,7 +33819,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-001.png",
+                                            "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-001.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33849,7 +33849,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-002.png",
+                                            "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-002.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33879,7 +33879,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-003.png",
+                                            "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-003.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33909,7 +33909,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-004.png",
+                                            "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-004.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33939,7 +33939,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-005.png",
+                                            "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-005.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -33976,7 +33976,7 @@
                                       "fill": {
                                         "type": "image",
                                         "enabled": true,
-                                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/avatar.png",
+                                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/avatar.jpg",
                                         "mode": "fill"
                                       },
                                       "width": 28,
@@ -34025,7 +34025,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-001.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-001.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34055,7 +34055,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-002.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-002.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34085,7 +34085,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-003.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-003.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34115,7 +34115,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-004.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-004.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34145,7 +34145,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-005.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-005.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34175,7 +34175,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-006.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-006.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34205,7 +34205,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-007.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-007.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34235,7 +34235,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-008.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-008.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34265,7 +34265,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-009.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-009.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34295,7 +34295,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-010.png",
+                                            "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-010.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34332,7 +34332,7 @@
                                       "fill": {
                                         "type": "image",
                                         "enabled": true,
-                                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/avatar.png",
+                                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/avatar.jpg",
                                         "mode": "fill"
                                       },
                                       "width": 28,
@@ -34381,7 +34381,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-001.png",
+                                            "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-001.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34411,7 +34411,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-002.png",
+                                            "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-002.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34441,7 +34441,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-003.png",
+                                            "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-003.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34471,7 +34471,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-004.png",
+                                            "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-004.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34501,7 +34501,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-005.png",
+                                            "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-005.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34531,7 +34531,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-006.png",
+                                            "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-006.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34561,7 +34561,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-007.png",
+                                            "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-007.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34591,7 +34591,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-008.png",
+                                            "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-008.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34628,7 +34628,7 @@
                                       "fill": {
                                         "type": "image",
                                         "enabled": true,
-                                        "url": "../.local-assets/activity-cover-inbox/venmen/avatar.png",
+                                        "url": "../backend/app/assets/activity-covers/venmen/avatar.jpg",
                                         "mode": "fill"
                                       },
                                       "width": 28,
@@ -34677,7 +34677,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-001.png",
+                                            "url": "../backend/app/assets/activity-covers/venmen/images/venmen-001.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34707,7 +34707,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-002.png",
+                                            "url": "../backend/app/assets/activity-covers/venmen/images/venmen-002.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34737,7 +34737,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-003.png",
+                                            "url": "../backend/app/assets/activity-covers/venmen/images/venmen-003.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34767,7 +34767,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-004.png",
+                                            "url": "../backend/app/assets/activity-covers/venmen/images/venmen-004.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34797,7 +34797,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-005.png",
+                                            "url": "../backend/app/assets/activity-covers/venmen/images/venmen-005.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34827,7 +34827,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-006.png",
+                                            "url": "../backend/app/assets/activity-covers/venmen/images/venmen-006.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34857,7 +34857,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-007.png",
+                                            "url": "../backend/app/assets/activity-covers/venmen/images/venmen-007.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34894,7 +34894,7 @@
                                       "fill": {
                                         "type": "image",
                                         "enabled": true,
-                                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/avatar.png",
+                                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/avatar.jpg",
                                         "mode": "fill"
                                       },
                                       "width": 28,
@@ -34943,7 +34943,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-001.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-001.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -34973,7 +34973,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-002.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-002.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -35003,7 +35003,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-003.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-003.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -35033,7 +35033,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-004.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-004.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -35063,7 +35063,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-005.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-005.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -35093,7 +35093,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-006.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-006.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -35123,7 +35123,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-007.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-007.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -35153,7 +35153,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-008.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-008.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -35183,7 +35183,7 @@
                                           "fill": {
                                             "type": "image",
                                             "enabled": true,
-                                            "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-009.png",
+                                            "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-009.jpg",
                                             "mode": "fill"
                                           },
                                           "width": 154,
@@ -81879,7 +81879,7 @@
                   "fill": {
                     "type": "image",
                     "enabled": true,
-                    "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-001.png",
+                    "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-001.jpg",
                     "mode": "fill"
                   },
                   "width": 154,
@@ -81950,7 +81950,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-002.png",
+                        "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-002.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82010,7 +82010,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-003.png",
+                        "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-003.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82070,7 +82070,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-004.png",
+                        "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-004.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82130,7 +82130,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-005.png",
+                        "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-005.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82190,7 +82190,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-006.png",
+                        "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-006.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82250,7 +82250,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-007.png",
+                        "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-007.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82310,7 +82310,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-008.png",
+                        "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-008.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82370,7 +82370,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-009.png",
+                        "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-009.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82430,7 +82430,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-001.png",
+                        "url": "../backend/app/assets/activity-covers/lam/images/lam-001.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82490,7 +82490,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-002.png",
+                        "url": "../backend/app/assets/activity-covers/lam/images/lam-002.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82550,7 +82550,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-003.png",
+                        "url": "../backend/app/assets/activity-covers/lam/images/lam-003.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82610,7 +82610,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-004.png",
+                        "url": "../backend/app/assets/activity-covers/lam/images/lam-004.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82670,7 +82670,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-005.png",
+                        "url": "../backend/app/assets/activity-covers/lam/images/lam-005.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82730,7 +82730,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-006.png",
+                        "url": "../backend/app/assets/activity-covers/lam/images/lam-006.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82790,7 +82790,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-007.png",
+                        "url": "../backend/app/assets/activity-covers/lam/images/lam-007.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82850,7 +82850,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/lam/artworks/lam-008.png",
+                        "url": "../backend/app/assets/activity-covers/lam/images/lam-008.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82910,7 +82910,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-001.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-001.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -82970,7 +82970,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-002.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-002.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83030,7 +83030,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-003.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-003.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83090,7 +83090,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-004.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-004.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83150,7 +83150,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-005.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-005.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83210,7 +83210,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-006.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-006.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83270,7 +83270,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-007.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-007.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83330,7 +83330,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-008.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-008.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83390,7 +83390,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/ardhira-putra/artworks/ardhira-putra-009.png",
+                        "url": "../backend/app/assets/activity-covers/ardhira-putra/images/ardhira-putra-009.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83450,7 +83450,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-001.png",
+                        "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-001.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83510,7 +83510,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-002.png",
+                        "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-002.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83570,7 +83570,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-003.png",
+                        "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-003.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83630,7 +83630,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-004.png",
+                        "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-004.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83690,7 +83690,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/magoyama/artworks/magoyama-005.png",
+                        "url": "../backend/app/assets/activity-covers/magoyama/images/magoyama-005.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83750,7 +83750,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-001.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-001.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83810,7 +83810,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-002.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-002.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83870,7 +83870,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-003.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-003.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83930,7 +83930,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-004.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-004.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -83990,7 +83990,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-005.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-005.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84050,7 +84050,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-006.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-006.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84110,7 +84110,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-007.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-007.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84170,7 +84170,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-008.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-008.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84230,7 +84230,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-009.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-009.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84290,7 +84290,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/yoneyama-mai/artworks/yoneyama-mai-010.png",
+                        "url": "../backend/app/assets/activity-covers/yoneyama-mai/images/yoneyama-mai-010.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84350,7 +84350,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-001.png",
+                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-001.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84410,7 +84410,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-002.png",
+                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-002.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84470,7 +84470,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-003.png",
+                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-003.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84530,7 +84530,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-004.png",
+                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-004.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84590,7 +84590,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-005.png",
+                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-005.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84650,7 +84650,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-006.png",
+                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-006.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84710,7 +84710,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-007.png",
+                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-007.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84770,7 +84770,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/benjamin-flouw/artworks/benjamin-flouw-008.png",
+                        "url": "../backend/app/assets/activity-covers/benjamin-flouw/images/benjamin-flouw-008.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84830,7 +84830,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-001.png",
+                        "url": "../backend/app/assets/activity-covers/venmen/images/venmen-001.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84890,7 +84890,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-002.png",
+                        "url": "../backend/app/assets/activity-covers/venmen/images/venmen-002.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -84950,7 +84950,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-003.png",
+                        "url": "../backend/app/assets/activity-covers/venmen/images/venmen-003.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85010,7 +85010,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-004.png",
+                        "url": "../backend/app/assets/activity-covers/venmen/images/venmen-004.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85070,7 +85070,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-005.png",
+                        "url": "../backend/app/assets/activity-covers/venmen/images/venmen-005.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85130,7 +85130,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-006.png",
+                        "url": "../backend/app/assets/activity-covers/venmen/images/venmen-006.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85190,7 +85190,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/venmen/artworks/venmen-007.png",
+                        "url": "../backend/app/assets/activity-covers/venmen/images/venmen-007.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85250,7 +85250,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-001.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-001.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85310,7 +85310,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-002.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-002.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85370,7 +85370,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-003.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-003.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85430,7 +85430,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-004.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-004.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85490,7 +85490,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-005.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-005.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85550,7 +85550,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-006.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-006.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85610,7 +85610,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-007.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-007.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85670,7 +85670,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-008.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-008.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85730,7 +85730,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-009.png",
+                        "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-009.jpg",
                         "mode": "fill"
                       },
                       "width": 154,
@@ -85813,7 +85813,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "../.local-assets/activity-cover-inbox/aleksey-rico/artworks/aleksey-rico-001.png",
+                "url": "../backend/app/assets/activity-covers/aleksey-rico/images/aleksey-rico-001.jpg",
                 "mode": "fit"
               },
               "width": 390,
@@ -85893,7 +85893,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "../.local-assets/activity-cover-inbox/aleksey-rico/avatar.png",
+                "url": "../backend/app/assets/activity-covers/aleksey-rico/avatar.jpg",
                 "mode": "fill"
               },
               "width": 36,
@@ -86044,7 +86044,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-001.png",
+                "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-001.jpg",
                 "mode": "fit"
               },
               "width": 390,
@@ -86124,7 +86124,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/avatar.png",
+                "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/avatar.jpg",
                 "mode": "fill"
               },
               "width": 36,
@@ -86275,7 +86275,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/artworks/patryk-wojciechowicz-001.png",
+                "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/images/patryk-wojciechowicz-001.jpg",
                 "mode": "fill"
               },
               "width": 780,
@@ -86393,7 +86393,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "../.local-assets/activity-cover-inbox/patryk-wojciechowicz/avatar.png",
+                "url": "../backend/app/assets/activity-covers/patryk-wojciechowicz/avatar.jpg",
                 "mode": "fill"
               },
               "width": 36,
@@ -104877,6 +104877,331 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "bxNIN",
+      "x": -793,
+      "y": 292,
+      "name": "状态 · 首页 · 骨架屏加载中",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "#ffffffff",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "Um3vr",
+          "layoutPosition": "absolute",
+          "x": 175,
+          "y": -29,
+          "name": "装饰图 · 右上角龙 Logo",
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "图片素材/image.png",
+            "mode": "fill"
+          },
+          "width": 323,
+          "height": 211
+        },
+        {
+          "id": "YrPbw",
+          "type": "ref",
+          "ref": "ihvbF",
+          "name": "顶部导航/首页",
+          "width": 390,
+          "height": 88,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "type": "frame",
+          "id": "zNpKF",
+          "x": 0,
+          "y": 88,
+          "name": "首页骨架内容区",
+          "clip": true,
+          "width": 390,
+          "height": 756,
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            12,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "pL4eY",
+              "name": "我参与的 · 骨架分区",
+              "width": "fill_container",
+              "height": 436,
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "WxSJh",
+                  "name": "我参与的 · 标题骨架容器",
+                  "width": "fill_container",
+                  "height": 28,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 9,
+                      "id": "qRAQO",
+                      "name": "我参与的 · 标题骨架",
+                      "fill": "#EAECEF",
+                      "width": 80,
+                      "height": 18
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "N0khBr",
+                  "name": "活动大卡骨架横向列表",
+                  "clip": true,
+                  "width": 852,
+                  "height": 396,
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 16,
+                      "id": "HJGvX",
+                      "name": "活动大卡整体骨架 · 1",
+                      "fill": "#EAECEF",
+                      "width": 276,
+                      "height": 396
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 16,
+                      "id": "RYZZQ",
+                      "name": "活动大卡整体骨架 · 2",
+                      "fill": "#EAECEF",
+                      "width": 276,
+                      "height": 396
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 16,
+                      "id": "z31tNh",
+                      "name": "活动大卡整体骨架 · 3",
+                      "fill": "#EAECEF",
+                      "width": 276,
+                      "height": 396
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "umGC6",
+              "name": "接受报名 · 骨架分区",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JAII6",
+                  "name": "接受报名 · 标题骨架容器",
+                  "width": 390,
+                  "height": 28,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 9,
+                      "id": "kOKqn",
+                      "name": "接受报名 · 标题骨架",
+                      "fill": "#EAECEF",
+                      "width": 80,
+                      "height": 18
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "TMjyH",
+                  "name": "活动小卡骨架横向列表",
+                  "clip": true,
+                  "width": 564,
+                  "height": 222,
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "RtmWh",
+                      "name": "活动小卡骨架 · 1",
+                      "width": 180,
+                      "height": 222,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 12,
+                          "id": "Z8PzuG",
+                          "name": "小卡主视觉骨架",
+                          "fill": "#EAECEF",
+                          "width": "fill_container",
+                          "height": 180
+                        },
+                        {
+                          "type": "frame",
+                          "id": "xgfpS",
+                          "name": "小卡信息骨架",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 7,
+                              "id": "AJnXX",
+                              "name": "小卡标题骨架",
+                              "fill": "#EAECEF",
+                              "width": 128,
+                              "height": 14
+                            },
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 6,
+                              "id": "A1BPs",
+                              "name": "小卡时间骨架",
+                              "fill": "#EAECEF",
+                              "width": 96,
+                              "height": 11
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DAldM",
+                      "name": "活动小卡骨架 · 2",
+                      "width": 180,
+                      "height": 222,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 12,
+                          "id": "Dl3MJ",
+                          "name": "小卡主视觉骨架",
+                          "fill": "#EAECEF",
+                          "width": "fill_container",
+                          "height": 180
+                        },
+                        {
+                          "type": "frame",
+                          "id": "r2WCj",
+                          "name": "小卡信息骨架",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 7,
+                              "id": "JB68Z",
+                              "name": "小卡标题骨架",
+                              "fill": "#EAECEF",
+                              "width": 128,
+                              "height": 14
+                            },
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 6,
+                              "id": "FavZb",
+                              "name": "小卡时间骨架",
+                              "fill": "#EAECEF",
+                              "width": 96,
+                              "height": 11
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vmqlr",
+                      "name": "活动小卡骨架 · 3",
+                      "width": 180,
+                      "height": 222,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 12,
+                          "id": "ELiC1",
+                          "name": "小卡主视觉骨架",
+                          "fill": "#EAECEF",
+                          "width": "fill_container",
+                          "height": 180
+                        },
+                        {
+                          "type": "frame",
+                          "id": "jVG1d",
+                          "name": "小卡信息骨架",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 7,
+                              "id": "gXfYC",
+                              "name": "小卡标题骨架",
+                              "fill": "#EAECEF",
+                              "width": 128,
+                              "height": 14
+                            },
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 6,
+                              "id": "CyXzR",
+                              "name": "小卡时间骨架",
+                              "fill": "#EAECEF",
+                              "width": 96,
+                              "height": 11
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "n7NNp",
+          "type": "ref",
+          "ref": "Hae5C",
+          "name": "底部安全区/Touch Bar",
+          "x": 0,
+          "y": 806,
+          "width": 390,
+          "height": 38,
+          "descendants": {
+            "xfatr": {
+              "fill": []
+            }
+          }
         }
       ]
     }

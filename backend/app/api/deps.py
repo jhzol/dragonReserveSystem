@@ -81,3 +81,11 @@ def require_activity_create_permission(user: User = Depends(get_current_user)) -
     if user.role not in {"user", "admin"}:
         raise PermissionDeniedError("Activity creation permission required")
     return user
+
+
+def require_activity_signup_permission(user: User = Depends(get_current_user)) -> User:
+    """Allow members and admins to sign up, but reject guests and unknown roles."""
+
+    if user.role not in {"user", "admin"}:
+        raise PermissionDeniedError("Activity signup permission required")
+    return user
