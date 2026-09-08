@@ -11,7 +11,7 @@ page { background: #ffffff; overflow: hidden; }
 .ranking-content { position: relative; z-index: 2; box-sizing: border-box; display: flex; width: 100%; max-width: 480px; min-height: 100%; margin: 0 auto; padding: 15.38rpx 38.46rpx; flex-direction: column; }
 
 .ranking-switch { position: relative; display: flex; box-sizing: border-box; width: 100%; height: 76.92rpx; padding: 7.69rpx; gap: 7.69rpx; border-radius: 23.08rpx; background: #f5f5f5; flex: none; }
-.ranking-switch-slider { position: absolute; z-index: 0; top: 7.69rpx; bottom: 7.69rpx; left: 7.69rpx; width: calc((100% - 23.07rpx) / 2); border-radius: 15.38rpx; background: #ffffff; box-shadow: 0 3.85rpx 19.23rpx rgba(0,0,0,.08); transform: translateX(0); transition: transform 180ms cubic-bezier(.2,.8,.2,1); will-change: transform; pointer-events: none; }
+.ranking-switch-slider { position: absolute; z-index: 0; top: 7.69rpx; bottom: 7.69rpx; left: 7.69rpx; width: calc((100% - 23.07rpx) / 2); border-radius: 15.38rpx; background: #ffffff; box-shadow: 0 3.85rpx 19.23rpx rgba(0,0,0,.08); transform: translateX(0); transition: transform 180ms cubic-bezier(.2,.8,.2,1); pointer-events: none; }
 .ranking-switch-slider.is-pigeon { transform: translateX(calc(100% + 7.69rpx)); }
 .ranking-switch-item { position: relative; z-index: 1; display: flex; min-width: 0; height: 61.54rpx; flex: 1; align-items: center; justify-content: center; border-radius: 15.38rpx; color: #4b5563; font-size: 26.92rpx; font-weight: 500; transition: color 160ms ease; }
 .ranking-switch-item.is-active { color: #ff9800; font-weight: 600; }
@@ -55,7 +55,8 @@ page { background: #ffffff; overflow: hidden; }
 .pigeon-summary-content { display: flex; min-height: 0; flex: 1; gap: 15.38rpx; align-items: center; }
 .pigeon-copy { display: flex; min-width: 0; height: 100%; flex: 1; gap: 11.54rpx; flex-direction: column; justify-content: center; }
 .pigeon-label { color: #c94f00; font-size: 23.08rpx; font-weight: 700; line-height: 34.62rpx; }
-.pigeon-description { color: #9a7255; font-size: 19.23rpx; font-weight: 500; line-height: 28.85rpx; white-space: pre-line; }
+.pigeon-description { display: flex; flex-direction: column; color: #9a7255; font-size: 19.23rpx; font-weight: 500; line-height: 28.85rpx; }
+.pigeon-description-line { display: block; height: 28.85rpx; line-height: 28.85rpx; }
 .pigeon-ring { display: flex; box-sizing: border-box; width: 215.38rpx; height: 215.38rpx; flex: none; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 7.69rpx 23.08rpx rgba(184,74,0,.1); }
 .pigeon-ring-inner { display: flex; width: 138.46rpx; height: 138.46rpx; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,.95); }
 .pigeon-rate { color: #b84a00; font-size: 46.15rpx; font-weight: 700; line-height: 57.69rpx; }

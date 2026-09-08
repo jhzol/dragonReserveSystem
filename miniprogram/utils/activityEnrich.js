@@ -6,7 +6,7 @@
 const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
 
 const { parseCreatedAtMs, orderParticipantsForRecentAvatarSlice } = require("./participantSort");
-const { getApiBaseUrl, resolveLocalMediaUrl, isLocalTestMediaUrl } = require("../services/config");
+const { resolveLocalMediaUrl, isLocalTestMediaUrl } = require("../services/config");
 
 const DEFAULT_AVATAR = "/images/default-avatar.svg";
 const LOCAL_TEST_AVATAR_PREFIX = "/images/avatars";
@@ -160,12 +160,6 @@ function normalizeTypeKey(value) {
   return t;
 }
 
-function buildCardGlassImageUrl(typeKey, styleKey) {
-  const apiBaseUrl = String(getApiBaseUrl() || "").replace(/\/$/, "");
-  if (!apiBaseUrl || !typeKey || !styleKey) return "";
-  return `${apiBaseUrl}/activities/type-styles/${encodeURIComponent(typeKey)}/${encodeURIComponent(styleKey)}/glass-image?v=2`;
-}
-
 function buildTypeStyleMap(typeStyles) {
   const source = Array.isArray(typeStyles) && typeStyles.length > 0 ? typeStyles : DEFAULT_ACTIVITY_TYPE_STYLES;
   const map = {};
@@ -184,7 +178,7 @@ function buildTypeStyleMap(typeStyles) {
         showBadge: s.show_badge !== false,
         showAvatarCluster: s.show_avatar_cluster !== false,
         largeCardBgImageUrl: String(s.large_card_bg_image_url || ""),
-        largeCardGlassImageUrl: buildCardGlassImageUrl(key, styleKey),
+        largeCardGlassImageUrl: "",
         smallCardBgImageUrl: String(s.small_card_bg_image_url || ""),
         bgVideoUrl: s.bg_video_url ? String(s.bg_video_url) : ""
       };
@@ -265,8 +259,11 @@ function adaptParticipant(participant) {
     userId: participant.user_id != null ? String(participant.user_id) : null,
     avatarUrl: normalizeAvatarUrl(participant.display_avatar_url),
     checkedInAt: formatDateTime(participant.checked_in_at),
+    checkedInAtRaw: participant.checked_in_at || "",
     checkinLat: participant.checkin_lat,
     checkinLng: participant.checkin_lng,
+    checkinLocationName: participant.checkin_location_name || "",
+    checkinAddress: participant.checkin_address || "",
     signedUpAtMs: parseCreatedAtMs(participant.created_at)
   };
 }
@@ -275,8 +272,10 @@ function adaptActivity(item) {
   const participants = (item.participants || []).map(adaptParticipant);
   const startTime = formatDateTime(item.start_time);
   const rawType = item.activity_type;
+  const rawCover = item.activity_cover && typeof item.activity_cover === "object" ? item.activity_cover : null;
   return {
     _id: String(item.id),
+    createdBy: item.created_by != null ? String(item.created_by) : "",
     date: startTime.split(" ")[0] || "",
     name: item.name,
     status: item.status || "进行中",
@@ -293,13 +292,23 @@ function adaptActivity(item) {
     signupEnabled: item.signup_enabled !== false,
     activityType: rawType || "other",
     activityStyleKey: item.activity_style_key || "",
+    activityCoverId: item.activity_cover_id || (rawCover && rawCover.id) || "",
+    activityCover: rawCover ? {
+      id: String(rawCover.id || ""),
+      artistName: String(rawCover.artist_name || ""),
+      artistAvatarUrl: String(rawCover.artist_avatar_url || ""),
+      thumbnailUrl: String(rawCover.thumbnail_url || ""),
+      imageUrl: String(rawCover.image_url || ""),
+      largeCardGlassImageUrl: String(rawCover.large_card_glass_image_url || "")
+    } : null,
+    weather: item.weather && typeof item.weather === "object" ? item.weather : null,
     _rawActivityType: rawType
   };
 }
 
 /**
  * @param {object} rawItem - API activity payload
- * @param {Array} typeStyles - from listActivityTypeStyles
+ * @param {Array} typeStyles - optional legacy cache fallback while upgrading existing local data
  * @param {string} myUserId
  * @param {string} myNickname
  * @param {Date} [now]
@@ -321,7 +330,16 @@ function enrichSingleActivity(rawItem, typeStyles, myUserId, myNickname, now) {
   activity.bgVideoUrl = selectedStyle ? (selectedStyle.bgVideoUrl || "") : "";
   activity.largeCardBgImageUrl = selectedStyle ? (selectedStyle.largeCardBgImageUrl || "") : "";
   activity.largeCardGlassImageUrl = selectedStyle ? (selectedStyle.largeCardGlassImageUrl || "") : "";
-  activity.smallCardBgImageUrl = selectedStyle ? (selectedStyle.smallCardBgImageUrl || "") : "";
+  activity.smallCardBgImageUrl = selectedStyle ? (selectedStyle.largeCardBgImageUrl || "") : "";
+
+  if (activity.activityCover && activity.activityCover.imageUrl) {
+    activity.largeCardBgImageUrl = activity.activityCover.imageUrl;
+    activity.smallCardBgImageUrl = activity.activityCover.imageUrl;
+    activity.largeCardGlassImageUrl = activity.activityCover.largeCardGlassImageUrl || "";
+    activity.bgVideoUrl = "";
+    activity.showTypeBadge = false;
+    activity.showAvatarCluster = false;
+  }
 
   const typeEntry = typeStyleMap[normalizedType] || typeStyleMap[DEFAULT_ACTIVITY_TYPE_KEY];
   activity.typeDisplayName = typeEntry ? typeEntry.displayName : "其它";
@@ -392,7 +410,7 @@ function enrichSingleActivity(rawItem, typeStyles, myUserId, myNickname, now) {
   const start = parseDateTime(activity.startTime);
   const end = parseDateTime(activity.endTime);
   let autoStatus = activity.status || "未开始";
-  if (activity.status === "已取消" || activity.status === "已删除") {
+  if (["已取消", "已流局"].includes(activity.status)) {
     autoStatus = activity.status;
   } else if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
     if (nowDate.getTime() < start.getTime()) {
@@ -403,7 +421,7 @@ function enrichSingleActivity(rawItem, typeStyles, myUserId, myNickname, now) {
       autoStatus = "已结束";
     }
   }
-  if (activity.status !== "已取消" && activity.status !== "已删除") {
+  if (!["已取消", "已流局"].includes(activity.status)) {
     activity.status = autoStatus;
   }
 
@@ -423,8 +441,8 @@ function enrichSingleActivity(rawItem, typeStyles, myUserId, myNickname, now) {
 
   if (activity.status === "已取消") {
     activity.detailStatusTag = "已取消";
-  } else if (activity.status === "已删除") {
-    activity.detailStatusTag = "已删除";
+  } else if (activity.status === "已流局") {
+    activity.detailStatusTag = "已流局";
   } else if (activity.status === "已结束") {
     activity.detailStatusTag = "已结束";
   } else if (acceptingLike) {

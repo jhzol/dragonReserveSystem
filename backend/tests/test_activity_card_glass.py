@@ -26,6 +26,12 @@ def test_card_glass_output_keeps_source_size_and_has_no_alpha() -> None:
     assert rendered.getpixel((119, 159)) != (0, 0, 0)
 
 
+def test_card_glass_radius_tracks_the_twelve_pixel_prototype_blur() -> None:
+    reference_width = 530.77 * 420 / 750
+
+    assert glass_service.CARD_GLASS_BLUR_RADIUS_RATIO * reference_width == pytest.approx(6.5)
+
+
 def test_card_glass_cache_reuses_rendered_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     calls = 0
 
@@ -64,7 +70,7 @@ def test_card_glass_route_returns_png(client, tmp_path: Path, monkeypatch: pytes
     )
 
     response = client.get(
-        "/api/v1/activities/type-styles/badminton/badminton-default/glass-image?v=1"
+        "/api/v1/activities/type-styles/badminton/badminton-default/glass-image?v=3"
     )
 
     assert response.status_code == 200
@@ -80,7 +86,7 @@ def test_card_glass_route_returns_404_for_unknown_style(client, monkeypatch: pyt
     monkeypatch.setattr(activities_api, "get_or_create_activity_card_glass", raise_not_found)
 
     response = client.get(
-        "/api/v1/activities/type-styles/badminton/unknown-style/glass-image?v=1"
+        "/api/v1/activities/type-styles/badminton/unknown-style/glass-image?v=3"
     )
 
     assert response.status_code == 404

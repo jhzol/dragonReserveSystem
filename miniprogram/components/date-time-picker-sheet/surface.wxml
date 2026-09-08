@@ -1,0 +1,56 @@
+<view id="qaDateTimePickerSurface" class="picker-sheet-panel">
+  <view class="picker-sheet-header">
+    <text class="picker-sheet-title">{{title}}</text>
+    <view class="picker-sheet-close" bindtap="onClose" aria-role="button" aria-label="关闭">
+      <image class="picker-sheet-close-icon" src="/images/icon-close.svg" mode="aspectFit" />
+    </view>
+  </view>
+  <view class="picker-sheet-divider"></view>
+  <view class="picker-sheet-wheel">
+    <view class="picker-sheet-selection picker-sheet-selection--{{mode}}"></view>
+    <view class="picker-sheet-view picker-sheet-view--{{mode}}">
+      <block wx:if="{{showDate}}">
+        <swiper class="picker-sheet-column picker-sheet-column--year" vertical="{{true}}" display-multiple-items="5" current="{{yearSwiperIndex}}" duration="90" cache-extent="1" data-column="0" bindchange="onFlatColumnChange">
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item wx:for="{{yearLabels}}" wx:key="*this"><view class="picker-sheet-item {{index === pickerValue[0] ? 'picker-sheet-item--selected' : ''}}">{{item}}年</view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+        </swiper>
+        <swiper class="picker-sheet-column picker-sheet-column--month" vertical="{{true}}" display-multiple-items="5" current="{{monthSwiperIndex}}" duration="90" cache-extent="1" data-column="1" bindchange="onFlatColumnChange">
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item wx:for="{{months}}" wx:key="*this"><view class="picker-sheet-item {{index === pickerValue[1] ? 'picker-sheet-item--selected' : ''}}">{{item < 10 ? '0' + item : item}}月</view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+        </swiper>
+        <swiper class="picker-sheet-column picker-sheet-column--day" vertical="{{true}}" display-multiple-items="5" current="{{daySwiperIndex}}" duration="90" cache-extent="1" data-column="2" bindchange="onFlatColumnChange">
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item wx:for="{{dayLabels}}" wx:key="*this"><view class="picker-sheet-item {{index === pickerValue[2] ? 'picker-sheet-item--selected' : ''}}">{{item}}</view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+        </swiper>
+      </block>
+      <block wx:if="{{showTime}}">
+        <swiper class="picker-sheet-column picker-sheet-column--hour" vertical="{{true}}" display-multiple-items="5" current="{{hourSwiperIndex}}" duration="90" cache-extent="1" data-column="{{hourColumnIndex}}" bindchange="onFlatColumnChange">
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item wx:for="{{hours}}" wx:key="*this"><view class="picker-sheet-item {{index === hourPickerIndex ? 'picker-sheet-item--selected' : ''}}">{{item < 10 ? '0' + item : item}}时</view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+        </swiper>
+        <swiper class="picker-sheet-column picker-sheet-column--minute" vertical="{{true}}" display-multiple-items="5" current="{{minuteSwiperIndex}}" duration="90" cache-extent="1" data-column="{{minuteColumnIndex}}" bindchange="onFlatColumnChange">
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item wx:for="{{minutes}}" wx:key="*this"><view class="picker-sheet-item {{index === minutePickerIndex ? 'picker-sheet-item--selected' : ''}}">{{item < 10 ? '0' + item : item}}分</view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+          <swiper-item><view class="picker-sheet-item picker-sheet-item--spacer"></view></swiper-item>
+        </swiper>
+      </block>
+    </view>
+    <view class="picker-sheet-muted-mask picker-sheet-muted-mask--top"></view>
+    <view class="picker-sheet-muted-mask picker-sheet-muted-mask--bottom"></view>
+  </view>
+  <view class="picker-sheet-footer"><view class="picker-sheet-confirm" hover-class="picker-sheet-confirm--pressed" bindtap="onConfirm" aria-role="button">确定</view></view>
+</view>

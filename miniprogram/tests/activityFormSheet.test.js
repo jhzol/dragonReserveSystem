@@ -3,6 +3,13 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
+function readActivityFormWxml() {
+  const root = path.join(__dirname, "../components/activity-form-sheet");
+  return ["index.wxml", "surface.wxml"]
+    .map((name) => fs.readFileSync(path.join(root, name), "utf8"))
+    .join("\n");
+}
+
 function loadComponentDefinition() {
   const componentPath = require.resolve("../components/activity-form-sheet/index.js");
   const previousComponent = global.Component;
@@ -41,11 +48,12 @@ function createContext(definition, overrides = {}) {
   return {
     ...definition.methods,
     data,
-    setData(patch) {
+    setData(patch, callback) {
       for (const [key, value] of Object.entries(patch)) {
         if (key.includes(".")) setByPath(this.data, key, value);
         else this.data[key] = value;
       }
+      if (typeof callback === "function") callback();
     }
   };
 }
@@ -167,6 +175,28 @@ test("all four visible time rows open the expected picker", () => {
   }
 });
 
+test("edit form can delegate all time pickers to a page-root host", () => {
+  const opened = [];
+  const context = createContext(definition);
+  context.properties = { externalDateTimePicker: true };
+  context.triggerEvent = (name, detail) => opened.push({ name, detail });
+
+  definition.methods.openDateTimePicker.call(context, {
+    currentTarget: { dataset: { target: "endDateTime" } }
+  });
+
+  assert.equal(context.data.pickerVisible, true);
+  assert.deepEqual(opened, [{
+    name: "opendatetimepicker",
+    detail: {
+      target: "endDateTime",
+      mode: "datetime",
+      title: "选择结束时间",
+      value: "2026-08-17 22:00"
+    }
+  }]);
+});
+
 test("datetime confirmation updates both date and time and closes picker", () => {
   const startContext = createContext(definition, { pickerTarget: "startDateTime", pickerVisible: true });
   definition.methods.confirmDateTimePicker.call(startContext, {
@@ -188,12 +218,13 @@ test("datetime confirmation updates both date and time and closes picker", () =>
 });
 
 test("form markup keeps prototype labels, placeholders and full-row tap targets", () => {
-  const wxml = fs.readFileSync(path.join(__dirname, "../components/activity-form-sheet/index.wxml"), "utf8");
+  const wxml = readActivityFormWxml();
+  const hostWxml = fs.readFileSync(path.join(__dirname, "../components/activity-form-sheet/index.wxml"), "utf8");
   const js = fs.readFileSync(path.join(__dirname, "../components/activity-form-sheet/index.js"), "utf8");
   const pageWxml = fs.readFileSync(path.join(__dirname, "../pages/activity_list/activity_list.wxml"), "utf8");
   assert.match(js, /submitText:\s*"发布活动"/);
   assert.match(js, /submitText:\s*isEdit \? "保存修改" : "发布活动"/);
-  assert.match(pageWxml, /default-activity-type="{{'badminton'}}"/);
+  assert.match(wxml, />活动封面<\/text>/);
   assert.match(wxml, /data-target="startDateTime"/);
   assert.match(wxml, /data-target="endDateTime"/);
   assert.match(wxml, /data-target="signupDeadlineDate"/);
@@ -204,30 +235,42 @@ test("form markup keeps prototype labels, placeholders and full-row tap targets"
   assert.doesNotMatch(wxml, /活动备注（选填）/);
   assert.match(wxml, /placeholder="请输入活动名称"/);
   assert.match(wxml, /请选择活动地点/);
-  assert.match(wxml, /placeholder="请输入活动备注"/);
+  assert.match(wxml, /<text wx:if="{{!form\.remark}}" class="bento-placeholder-text bento-textarea-placeholder">请输入活动备注<\/text>/);
+  assert.match(wxml, /placeholder="请输入活动名称"[^>]*placeholder-style="color: #9ca3af; font-weight: 400;"/);
   assert.match(wxml, /<textarea[^>]*maxlength="{{maxRemarkLength}}"[^>]*>/);
   assert.match(js, /maxRemarkLength:\s*MAX_REMARK_LENGTH/);
-  assert.match(wxml, /<textarea[^>]*style="height: {{remarkTextareaHeight}}rpx;"[^>]*bindinput="onRemarkInput"[^>]*bindblur="onRemarkBlur"[^>]*bindlinechange="onRemarkLineChange"[^>]*auto-height="{{false}}"[^>]*disable-default-padding="{{true}}"[^>]*\/>/);
+  assert.match(wxml, /class="textarea-input-wrap" style="height: {{remarkTextareaHeight}}rpx;"/);
+  assert.match(wxml, /<textarea[^>]*aria-label="请输入活动备注"[^>]*bindinput="onRemarkInput"[^>]*bindblur="onRemarkBlur"[^>]*bindlinechange="onRemarkLineChange"[^>]*auto-height="{{false}}"[^>]*disable-default-padding="{{true}}"[^>]*\/>/);
+  assert.doesNotMatch(wxml, /<textarea[^>]*placeholder=/);
   assert.match(wxml, /<textarea[^>]*disable-default-padding="{{true}}"[^>]*\/>/);
   assert.match(wxml, /<textarea[^>]*show-confirm-bar="{{false}}"[^>]*\/>/);
   assert.doesNotMatch(wxml, /可设置 1–999 人/);
   assert.doesNotMatch(wxml, /补充活动说明（选填）/);
-  assert.match(wxml, /<view[^>]*class="activity-sheet-root"[^>]*catchtouchmove="stopPropagation"[^>]*>/);
-  assert.match(wxml, /class="activity-sheet-mask"[^>]*catchtap="onClose"/);
-  assert.match(wxml, /<view class="activity-sheet-panel [^"]*activity-sheet-panel--create/);
+  assert.match(hostWxml, /<view class="activity-form-sheet-root [^"]*activity-form-sheet-root--route-embedded[^"]*">[\s\S]*?<block wx:if="{{routeEmbedded && visible}}">[\s\S]*?<include src="\.\/surface\.wxml" \/>/);
+  assert.match(wxml, /id="qaActivityFormContainer"[\s\S]*show="{{containerVisible}}"[\s\S]*position="bottom"/);
+  assert.match(wxml, /overlay="{{true}}"[\s\S]*close-on-slide-down="{{false}}"[\s\S]*bind:clickoverlay="onClose"/);
+  assert.match(wxml, /<scroll-view[^>]*type="list"[^>]*scroll-y="{{true}}"[^>]*class="activity-sheet-body"/);
+  assert.match(wxml, /id="qaActivityFormSurface"[^>]*class="activity-sheet-panel [^"]*activity-sheet-panel--create/);
+  assert.doesNotMatch(wxml, /draggable-sheet|root-portal|worklet:onsizeupdate|associative-container/);
+  assert.doesNotMatch(wxml, /@keyframes|activity-sheet-panel-enter/);
   assert.match(wxml, /class="bento-grid [^"]*bento-grid--create/);
   assert.match(wxml, /create-completed-text/);
   assert.match(wxml, /create-completed-field/);
   assert.match(wxml, /activity-sheet-footer--create/);
   assert.match(wxml, /activity-sheet-footer-actions--create/);
   assert.match(wxml, /sheet-button--primary-create/);
-  const editSignupIndex = wxml.indexOf(">允许报名</text>");
-  const editLimitIndex = wxml.indexOf(">限制报名人数</text>", editSignupIndex);
-  assert.ok(editSignupIndex >= 0 && editLimitIndex > editSignupIndex);
+  assert.match(wxml, /activity-sheet-panel[^>]*pickerVisible \|\| coverPickerVisible[^>]*activity-sheet-panel--covered/);
+  const coverIndex = wxml.indexOf(">活动封面</text>");
+  const limitIndex = wxml.indexOf(">限制报名人数</text>", coverIndex);
+  assert.ok(coverIndex >= 0 && limitIndex > coverIndex);
+  assert.doesNotMatch(wxml, />允许报名<\/text>|>活动类型<\/text>/);
   assert.match(wxml, /participant-limit-card--edit/);
   assert.match(wxml, /activity-sheet-footer-actions--edit/);
   assert.match(wxml, /sheet-button--secondary-edit/);
   assert.match(wxml, /sheet-button--primary-edit/);
+  assert.match(wxml, /wx:if="{{isEdit && activity\.status !== '已取消'}}"[\s\S]*bindtap="onCancelActivity">取消活动<\/button>/);
+  assert.doesNotMatch(wxml, /删除活动|onDeleteActivity/);
+  assert.doesNotMatch(js, /onDeleteActivity|deleteactivity/);
   assert.doesNotMatch(wxml, /activity-sheet-panel" catchtap=/);
   assert.match(wxml, /bindtap="decrementParticipants"/);
   assert.match(wxml, /bindtap="incrementParticipants"/);
@@ -252,14 +295,18 @@ test("form markup keeps prototype labels, placeholders and full-row tap targets"
   assert.doesNotMatch(wxml, /activity-sheet-body-spacer/);
 });
 
-test("activity form sheet geometry follows the prototype measurements", () => {
+test("activity form sheet geometry follows the prototype measurements and gives Skyline scroll-view a real flex height", () => {
   const css = fs.readFileSync(path.join(__dirname, "../components/activity-form-sheet/index.wxss"), "utf8");
-  assert.match(css, /\.activity-sheet-drag-area\s*{[^}]*height:\s*24rpx;[^}]*margin-top:\s*16rpx;/s);
-  assert.match(css, /\.activity-sheet-header\s*{[^}]*height:\s*76.92rpx;[^}]*margin-top:\s*12rpx;[^}]*padding:\s*0 30.77rpx;/s);
-  assert.doesNotMatch(css, /\.activity-sheet-panel\s*{[^}]*height:\s*1316rpx;/s);
-  assert.match(css, /\.activity-sheet-panel\s*{[^}]*max-height:\s*100%;[^}]*padding-bottom:\s*calc\(100rpx \+ env\(safe-area-inset-bottom\)\);[^}]*box-sizing:\s*border-box;/s);
-  assert.match(css, /\.activity-sheet-body\s*{[^}]*flex:\s*none;[^}]*min-height:\s*0;[^}]*height:\s*auto;[^}]*max-height:\s*calc\(100vh - 232rpx - env\(safe-area-inset-bottom\)\);/s);
-  assert.match(css, /\.activity-sheet-footer\s*{[^}]*position:\s*absolute;[^}]*bottom:\s*0;[^}]*height:\s*calc\(153.85rpx \+ env\(safe-area-inset-bottom\)\);/s);
+  const wxml = readActivityFormWxml();
+  assert.doesNotMatch(wxml, /activity-sheet-drag(?:-area)?/);
+  assert.doesNotMatch(css, /\.activity-sheet-drag(?:-area)?\s*{/);
+  assert.match(css, /\.activity-sheet-panel\s*{[^}]*padding-top:\s*30\.77rpx;[^}]*padding-bottom:\s*153\.85rpx;/s);
+  assert.match(css, /\.activity-sheet-header\s*{[^}]*height:\s*76\.92rpx;[^}]*padding:\s*0 30\.77rpx;/s);
+  assert.doesNotMatch(css, /\.activity-sheet-root\s*\{/);
+  assert.match(wxml, /custom-style="height: \{\{panelHeightRpx\}\}rpx;[^\"]*border-radius: 46\.15rpx 46\.15rpx 0 0;[^\"]*overflow: hidden;"/);
+  assert.match(css, /\.activity-sheet-panel\s*{[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*max-height:\s*100%;[^}]*padding-bottom:\s*153\.85rpx;[^}]*box-sizing:\s*border-box;/s);
+  assert.match(css, /\.activity-sheet-body\s*{[^}]*width:\s*100%;[^}]*flex:\s*1 1 0;[^}]*height:\s*0;[^}]*min-height:\s*0;/s);
+  assert.match(css, /\.activity-sheet-footer\s*{[^}]*position:\s*absolute;[^}]*bottom:\s*0;[^}]*height:\s*153.85rpx;[^}]*padding-bottom:\s*46.15rpx;/s);
   assert.match(css, /\.bento-grid\s*{[^}]*padding:\s*15.38rpx 30.77rpx;/s);
   assert.match(css, /\.activity-sheet-close-icon\s*{[^}]*width:\s*38.46rpx;[^}]*height:\s*38.46rpx;/s);
   assert.match(css, /\.compact-card\s*{[^}]*height:\s*100rpx;[^}]*padding:\s*15.38rpx 23.08rpx;/s);
@@ -273,15 +320,20 @@ test("activity form sheet geometry follows the prototype measurements", () => {
   assert.match(css, /\.date-time-row-value--filled\s*\{[^}]*color:\s*#000000;/s);
   assert.match(css, /\.activity-time-card,[\s\S]*?\.deadline-card\s*\{[^}]*gap:\s*15.38rpx;[^}]*padding:\s*15.38rpx 23.08rpx;/s);
   assert.match(css, /\.date-time-row\s*\{[^}]*gap:\s*15.38rpx;/s);
+  assert.match(css, /\.activity-time-grid,\s*\.deadline-grid\s*\{[^}]*gap:\s*15.38rpx;/s);
+  assert.match(css, /\.bento-pair-row\s*\{[^}]*gap:\s*15.38rpx;/s);
   assert.match(css, /\.prototype-switch\s*\{[^}]*border-radius:\s*26.92rpx;/s);
   assert.match(css, /\.input-card\s*\{[^}]*gap:\s*16rpx;/s);
   assert.match(css, /\.activity-sheet-footer\s*\{[^}]*box-shadow:\s*0 -6rpx 24rpx rgba\(0, 0, 0, 0\.07\);/s);
   assert.match(css, /\.sheet-button\s*\{[^}]*border-radius:\s*23.08rpx;/s);
   assert.match(css, /\.activity-type-chevron\s*\{[^}]*width:\s*28rpx;[^}]*height:\s*28rpx;/s);
   assert.match(css, /\.location-value\.bento-placeholder-text\s*{[^}]*color:\s*#9ca3af;/s);
-  assert.match(css, /\.bento-textarea\s*{[^}]*height:\s*40rpx;[^}]*min-height:\s*40rpx;/s);
-  assert.match(css, /\.activity-sheet-panel--create\s*{[^}]*padding-bottom:\s*calc\(153.85rpx \+ env\(safe-area-inset-bottom\)\);/s);
-  assert.match(css, /\.activity-sheet-panel--create \.activity-sheet-body\s*{[^}]*max-height:\s*calc\(100vh - 244rpx - env\(safe-area-inset-bottom\)\);/s);
+  assert.match(css, /\.activity-sheet-panel \.location-value\.bento-placeholder-text\s*{[^}]*color:\s*#9ca3af;[^}]*font-weight:\s*400;/s);
+  assert.match(css, /\.textarea-input-wrap\s*{[^}]*position:\s*relative;[^}]*width:\s*100%;[^}]*min-height:\s*40rpx;/s);
+  assert.match(css, /\.bento-textarea\s*{[^}]*height:\s*100%;[^}]*min-height:\s*40rpx;[^}]*font-size:\s*28rpx;[^}]*line-height:\s*40rpx;[^}]*font-weight:\s*400;/s);
+  assert.match(css, /\.bento-textarea-placeholder\s*{[^}]*position:\s*absolute;[^}]*color:\s*#9ca3af;[^}]*font-size:\s*28rpx;[^}]*line-height:\s*40rpx;[^}]*font-weight:\s*400;[^}]*pointer-events:\s*none;/s);
+  assert.match(css, /\.activity-sheet-panel--create\s*{[^}]*padding-bottom:\s*153\.85rpx;/s);
+  assert.doesNotMatch(css, /\.activity-sheet-panel--(?:create|edit) \.activity-sheet-body\s*{/);
   assert.match(css, /\.bento-grid--create\s*{[^}]*gap:\s*15.38rpx;/s);
   assert.match(css, /\.activity-sheet-panel--create \.compact-card,[\s\S]*?height:\s*100rpx;/s);
   assert.match(css, /\.activity-sheet-panel--create \.compact-select-row\s*\{[^}]*gap:\s*16rpx;/s);
@@ -293,18 +345,18 @@ test("activity form sheet geometry follows the prototype measurements", () => {
   assert.match(css, /\.activity-sheet-panel--create \.participant-limit-card--create\.participant-limit-card--visible\s*\{[^}]*min-height:\s*100rpx;[^}]*height:\s*100rpx;[^}]*opacity:\s*1;[^}]*pointer-events:\s*auto;/s);
   assert.match(css, /\.create-completed-text,[\s\S]*?color:\s*#111827;/s);
   assert.match(css, /\.activity-sheet-panel--create \.location-chevron\s*{[^}]*margin-top:\s*0;[^}]*align-self:\s*center;/s);
-  assert.match(css, /\.activity-sheet-panel--create \.bento-textarea\s*\{[^}]*height:\s*48rpx;[^}]*min-height:\s*48rpx;[^}]*max-height:\s*200rpx;[^}]*padding:\s*0;[^}]*line-height:\s*40rpx;[^}]*overflow-y:\s*auto;/s);
-  assert.match(css, /\.activity-sheet-footer--create\s*{[^}]*height:\s*calc\(153.85rpx \+ env\(safe-area-inset-bottom\)\);[^}]*border-top-width:\s*2rpx;/s);
+  assert.match(css, /\.activity-sheet-panel--create \.bento-textarea\s*\{[^}]*height:\s*100%;[^}]*min-height:\s*48rpx;[^}]*max-height:\s*200rpx;[^}]*padding:\s*0;[^}]*line-height:\s*40rpx;/s);
+  assert.doesNotMatch(css, /overflow-y:\s*auto;/);
+  assert.match(css, /\.activity-sheet-footer--create\s*{[^}]*height:\s*153.85rpx;[^}]*border-top-width:\s*2rpx;/s);
   assert.match(css, /\.activity-sheet-footer-actions--create\s*{[^}]*height:\s*107.69rpx;[^}]*padding:\s*11.54rpx 38.46rpx;/s);
   assert.match(css, /\.sheet-button--primary-create\s*{[^}]*box-shadow:\s*0 4rpx 16rpx rgba\(0, 0, 0, 0\.05\);/s);
-  assert.match(css, /\.activity-sheet-panel--edit\s*{[^}]*padding-bottom:\s*calc\(153.85rpx \+ env\(safe-area-inset-bottom\)\);/s);
-  assert.match(css, /\.activity-sheet-panel--edit \.activity-sheet-body\s*{[^}]*max-height:\s*calc\(100vh - 244rpx - env\(safe-area-inset-bottom\)\);/s);
+  assert.match(css, /\.activity-sheet-panel--edit\s*{[^}]*padding-bottom:\s*153\.85rpx;/s);
   assert.match(css, /\.bento-grid--edit\s*{[^}]*gap:\s*15.38rpx;/s);
   assert.match(css, /\.activity-sheet-panel--edit \.compact-card,[\s\S]*?height:\s*100rpx;/s);
   assert.match(css, /\.activity-sheet-panel--edit \.participant-limit-card--edit\s*{[^}]*min-height:\s*0;[^}]*height:\s*0;[^}]*opacity:\s*0;[^}]*overflow:\s*hidden;[^}]*pointer-events:\s*none;[^}]*transition:/s);
   assert.match(css, /\.activity-sheet-panel--edit \.participant-limit-card--edit\.participant-limit-card--visible\s*{[^}]*min-height:\s*100rpx;[^}]*height:\s*100rpx;[^}]*opacity:\s*1;[^}]*pointer-events:\s*auto;/s);
-  assert.match(css, /\.activity-sheet-panel--edit \.bento-textarea\s*{[^}]*height:\s*48rpx;[^}]*min-height:\s*48rpx;[^}]*max-height:\s*210rpx;[^}]*padding:\s*0;[^}]*line-height:\s*42rpx;[^}]*overflow-y:\s*auto;/s);
-  assert.match(css, /\.activity-sheet-footer--double\s*{[^}]*height:\s*calc\(153.85rpx \+ env\(safe-area-inset-bottom\)\);[^}]*border-top-width:\s*2rpx;/s);
+  assert.match(css, /\.activity-sheet-panel--edit \.bento-textarea\s*{[^}]*height:\s*100%;[^}]*min-height:\s*48rpx;[^}]*max-height:\s*210rpx;[^}]*padding:\s*0;[^}]*line-height:\s*42rpx;/s);
+  assert.match(css, /\.activity-sheet-footer--double\s*{[^}]*height:\s*153.85rpx;[^}]*border-top-width:\s*2rpx;/s);
   assert.match(css, /\.activity-sheet-footer-actions--edit\s*{[^}]*height:\s*107.69rpx;[^}]*padding:\s*11.54rpx 38.46rpx;[^}]*gap:\s*15.38rpx;/s);
   assert.match(css, /\.sheet-button--secondary-edit\s*{[^}]*width:\s*215.38rpx;[^}]*border:\s*2rpx solid #ff9800;[^}]*background:\s*transparent;[^}]*color:\s*#ff9800;[^}]*font-weight:\s*600;/s);
 });
@@ -403,26 +455,21 @@ test("participant number opens numeric input and normalizes typed value", () => 
 });
 
 
-test("activity type field opens its own secondary sheet and confirmation updates the form", () => {
+test("activity cover field opens its own secondary sheet and confirmation updates the form", () => {
   const context = createContext(definition, {
     isEdit: false,
-    activityTypePickerVisible: false,
-    activityTypeIndex: 2,
-    form: { activityType: "other" }
+    coverPickerVisible: false,
+    form: { activityCoverId: "" }
   });
-  context.properties = {
-    activityTypeOptionValues: ["badminton", "boardgame", "other", "eating", "outing", "movie"]
-  };
 
-  definition.methods.openActivityTypePicker.call(context);
-  assert.equal(context.data.activityTypePickerVisible, true);
+  definition.methods.openCoverPicker.call(context);
+  assert.equal(context.data.coverPickerVisible, true);
 
-  definition.methods.confirmActivityTypePicker.call(context, {
-    detail: { value: "movie", label: "电影" }
+  definition.methods.confirmCoverPicker.call(context, {
+    detail: { id: "lam-001", artistName: "LAM" }
   });
-  assert.equal(context.data.activityTypePickerVisible, false);
-  assert.equal(context.data.form.activityType, "movie");
-  assert.equal(context.data.activityTypeIndex, 5);
+  assert.equal(context.data.coverPickerVisible, false);
+  assert.equal(context.data.form.activityCoverId, "lam-001");
 });
 
 test("activity type sheet follows the prototype grouping and preserves temporary selection until confirmation", () => {
@@ -464,90 +511,135 @@ test("activity type sheet follows the prototype grouping and preserves temporary
   assert.deepEqual(events, [{ name: "confirm", detail: { value: "outing", label: "外出", index: 4 } }]);
 });
 
-test("activity type sheet markup and dimensions match the Pencil component", () => {
-  const formWxml = fs.readFileSync(path.join(__dirname, "../components/activity-form-sheet/index.wxml"), "utf8");
-  const typeWxml = fs.readFileSync(path.join(__dirname, "../components/activity-type-picker-sheet/index.wxml"), "utf8");
-  const typeCss = fs.readFileSync(path.join(__dirname, "../components/activity-type-picker-sheet/index.wxss"), "utf8");
+test("activity cover sheet markup and dimensions match the Pencil component", () => {
+  const formWxml = readActivityFormWxml();
+  const coverWxml = fs.readFileSync(path.join(__dirname, "../components/activity-cover-picker-sheet/index.wxml"), "utf8");
+  const coverSurfaceWxml = fs.readFileSync(path.join(__dirname, "../components/activity-cover-picker-sheet/surface.wxml"), "utf8");
+  const coverCss = fs.readFileSync(path.join(__dirname, "../components/activity-cover-picker-sheet/index.wxss"), "utf8");
 
-  assert.match(formWxml, /bindtap="openActivityTypePicker"/);
+  assert.match(formWxml, /bindtap="openCoverPicker"/);
   assert.doesNotMatch(formWxml, /<picker[^>]*mode="selector"/);
-  assert.match(formWxml, /<activity-type-picker-sheet[\s\S]*wx:if="{{activityTypePickerVisible}}"[\s\S]*bindconfirm="confirmActivityTypePicker"/);
-  assert.match(typeWxml, /^<root-portal enable="{{visible}}">/);
-  assert.match(typeWxml, /<view[^>]*class="type-sheet-root"[^>]*catchtouchmove="stopPropagation"[^>]*>/);
-  assert.match(typeWxml, /选择活动类型/);
-  assert.match(typeWxml, /src="\/images\/icon-close\.svg"/);
-  assert.match(typeWxml, /class="type-sheet-option {{option\.value === selectedValue \? 'type-sheet-option--selected' : ''}}"/);
-  assert.match(typeWxml, /class="type-sheet-confirm"[\s\S]*>确定<\/view>/);
-
-  assert.match(typeCss, /\.type-sheet-panel\s*{[\s\S]*?border-radius:\s*48rpx 48rpx 0 0;[\s\S]*?background:\s*#ffffff;/);
-  assert.match(typeCss, /\.type-sheet-header\s*{[\s\S]*?height:\s*112rpx;[\s\S]*?padding:\s*0 32rpx;/);
-  assert.match(typeCss, /\.type-sheet-content\s*{[\s\S]*?padding:\s*32rpx;[\s\S]*?gap:\s*32rpx;/);
-  assert.match(typeCss, /\.type-sheet-group\s*{[\s\S]*?gap:\s*20rpx;/);
-  assert.match(typeCss, /\.type-sheet-group-title\s*{[\s\S]*?font-size:\s*28rpx;[\s\S]*?line-height:\s*40rpx;[\s\S]*?font-weight:\s*600;/);
-  assert.match(typeCss, /\.type-sheet-options\s*{[\s\S]*?flex-wrap:\s*wrap;[\s\S]*?gap:\s*20rpx;/);
-  assert.match(typeCss, /\.type-sheet-option\s*{[\s\S]*?width:\s*calc\(\(100% - 20rpx\) \/ 2\);[\s\S]*?height:\s*96rpx;[\s\S]*?border-radius:\s*24rpx;/);
-  assert.match(typeCss, /\.type-sheet-option--selected\s*{[\s\S]*?border:\s*2rpx solid #ff9800;[\s\S]*?background:\s*#fff3e0;/);
-  assert.match(typeCss, /\.type-sheet-option--selected \.type-sheet-option-label\s*{[\s\S]*?color:\s*#ff9800;[\s\S]*?font-weight:\s*600;/);
-  assert.match(typeCss, /\.type-sheet-footer\s*{[\s\S]*?height:\s*160rpx;[\s\S]*?padding:\s*12rpx 32rpx 60rpx;[\s\S]*?border-top:\s*2rpx solid #e5e7eb;[\s\S]*?box-shadow:\s*0 -6rpx 24rpx rgba\(0, 0, 0, 0\.07\);/);
-  assert.match(typeCss, /\.type-sheet-confirm\s*{[\s\S]*?height:\s*88rpx;[\s\S]*?border-radius:\s*24rpx;[\s\S]*?font-weight:\s*700;/);
+  assert.match(formWxml, /<activity-cover-picker-sheet[\s\S]*visible="{{coverPickerVisible}}"[\s\S]*bindconfirm="confirmCoverPicker"/);
+  assert.match(coverWxml, /<block wx:if="{{embedded && containerRendered}}">/);
+  assert.match(coverWxml, /id="qaActivityCoverPickerContainer"[\s\S]*position="bottom"/);
+  assert.match(coverSurfaceWxml, /选择活动封面/);
+  assert.match(coverSurfaceWxml, /type="list" scroll-x="{{true}}" enable-flex="{{true}}"/);
+  assert.match(coverSurfaceWxml, /cover-artwork--selected/);
+  assert.match(coverCss, /border-radius:\s*42\.31rpx 42\.31rpx 0 0/);
+  assert.match(coverCss, /width:\s*296\.15rpx/);
+  assert.match(coverSurfaceWxml, /<view class="cover-artwork-border"><\/view>/);
+  assert.match(coverCss, /\.cover-artwork--selected \.cover-artwork-border\s*{[\s\S]*?border-width:\s*5\.77rpx;/);
+  assert.match(coverCss, /\.cover-sheet-content\s*{[\s\S]*?margin-top:\s*23\.08rpx;[\s\S]*?margin-bottom:\s*23\.08rpx;/);
+  assert.doesNotMatch(coverWxml, /cover-sheet-embedded-root--suspended/);
+  assert.match(coverWxml, /show="{{containerVisible}}"/);
+  assert.match(coverCss, /\.cover-sheet-footer\s*{[\s\S]*?height:\s*153\.85rpx;/);
+  assert.match(coverCss, /\.cover-sheet-confirm\s*{[\s\S]*?height:\s*84\.62rpx;[\s\S]*?border-radius:\s*23\.08rpx;[\s\S]*?font-weight:\s*700;/);
 });
 
-test("picker sheet is mounted on demand and portaled above the form sheet", () => {
-  const formWxml = fs.readFileSync(path.join(__dirname, "../components/activity-form-sheet/index.wxml"), "utf8");
+test("activity cover confirmation action keeps the prototype full width", () => {
+  const coverCss = fs.readFileSync(path.join(__dirname, "../components/activity-cover-picker-sheet/index.wxss"), "utf8");
+
+  assert.match(coverCss, /padding:\s*11\.54rpx 38\.46rpx 57\.69rpx/);
+  assert.match(coverCss, /justify-content:\s*center/);
+  assert.match(coverCss, /\.cover-sheet-confirm\s*\{[\s\S]*?width:\s*auto;[\s\S]*?min-width:\s*0;[\s\S]*?flex:\s*1;/);
+  assert.match(coverCss, /\.cover-sheet-confirm\s*\{[\s\S]*?display:\s*flex;[\s\S]*?align-items:\s*center;[\s\S]*?justify-content:\s*center;/);
+});
+
+test("create and edit forms embed their pickers in one full-height native container", () => {
+  const formWxml = readActivityFormWxml();
+  const listWxml = fs.readFileSync(path.join(__dirname, "../pages/activity_list/activity_list.wxml"), "utf8");
+  const detailWxml = fs.readFileSync(path.join(__dirname, "../pages/activity_detail/activity_detail.wxml"), "utf8");
   const pickerWxml = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/index.wxml"), "utf8");
-  assert.match(formWxml, /<date-time-picker-sheet[\s\S]*wx:if="{{pickerVisible}}"[\s\S]*visible="{{true}}"/);
-  assert.match(pickerWxml, /^<root-portal enable="{{visible}}">/);
-  assert.match(pickerWxml, /<view[^>]*class="picker-sheet-root"[^>]*catchtouchmove="stopPropagation"[^>]*>/);
-  assert.match(pickerWxml, /class="picker-sheet-mask"[^>]*catchtap="onClose"/);
-  assert.match(pickerWxml, /<view class="picker-sheet-panel">/);
-  assert.doesNotMatch(pickerWxml, /picker-sheet-panel"[^>]*catch(?:tap|touchmove)=/);
+  const pickerSurfaceWxml = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/surface.wxml"), "utf8");
+  assert.match(formWxml, /<date-time-picker-sheet[\s\S]*wx:if="{{!externalDateTimePicker}}"/);
+  assert.match(formWxml, /<date-time-picker-sheet[\s\S]*visible="{{pickerVisible}}"/);
+  assert.match(formWxml, /bottom-offset-rpx="{{routeEmbedded \? 323\.08 : 0}}"/);
+  assert.match(listWxml, /id="qaActivityCreateContainer"[\s\S]*custom-style="height: 100%; background: transparent; border-radius: 0; overflow: hidden;"/);
+  assert.match(listWxml, /<activity-form-sheet[\s\S]*id="qaActivityCreateForm"[\s\S]*style="display: block; width: 100%; height: 100%;"[\s\S]*route-embedded="{{true}}"/);
+  assert.doesNotMatch(listWxml, /external-date-time-picker|openCreateDateTimePicker|qaActivityCreateDateTimePicker/);
+  assert.match(detailWxml, /id="qaActivityEditContainer"[\s\S]*custom-style="height: 100%; background: transparent; border-radius: 0; overflow: hidden;"/);
+  assert.match(detailWxml, /<activity-form-sheet[\s\S]*id="qaActivityFormSheet"[\s\S]*style="display: block; width: 100%; height: 100%;"[\s\S]*route-embedded="{{true}}"[\s\S]*mode="edit"/);
+  assert.doesNotMatch(detailWxml, /external-date-time-picker|openEditDateTimePicker|qaEditDateTimePickerSheet/);
+  assert.match(pickerWxml, /<block wx:if="{{embedded && containerRendered}}">/);
+  assert.match(pickerWxml, /<page-container[\s\S]*wx:if="{{!embedded && containerRendered}}"/);
+  assert.match(pickerWxml, /id="qaDateTimePickerContainer"[\s\S]*show="{{containerVisible}}"[\s\S]*position="bottom"/);
+  assert.match(pickerWxml, /overlay="{{true}}"[\s\S]*close-on-slide-down="{{false}}"[\s\S]*bind:clickoverlay="onClose"/);
+  assert.match(pickerSurfaceWxml, /id="qaDateTimePickerSurface"[^>]*class="picker-sheet-panel"/);
+  assert.doesNotMatch(pickerWxml, /draggable-sheet|root-portal|worklet:onsizeupdate/);
 });
 
 
 
-test("picker structure follows the prototype instead of native indicator styling", () => {
+test("picker uses five flat Skyline swiper columns and prototype clipping geometry", () => {
+  const formCss = fs.readFileSync(path.join(__dirname, "../components/activity-form-sheet/index.wxss"), "utf8");
   const pickerWxml = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/index.wxml"), "utf8");
+  const pickerSurfaceWxml = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/surface.wxml"), "utf8");
   const pickerCss = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/index.wxss"), "utf8");
+  const pickerJs = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/index.js"), "utf8");
 
-  assert.match(pickerWxml, /class="picker-sheet-selection picker-sheet-selection--{{mode}}"/);
-  assert.match(pickerWxml, /indicator-class="picker-sheet-native-indicator"/);
-  assert.match(pickerWxml, /indicator-style="height: 96rpx; background: transparent; border: 0; box-shadow: none;"/);
-  assert.match(pickerWxml, /class="picker-sheet-fade picker-sheet-fade--top"/);
-  assert.match(pickerWxml, /class="picker-sheet-fade picker-sheet-fade--bottom"/);
-  assert.match(pickerWxml, /src="\/images\/icon-close\.svg"/);
-  assert.match(pickerWxml, /<view class="picker-sheet-confirm"[\s\S]*>确定<\/view>/);
-  assert.doesNotMatch(pickerWxml, /<button class="picker-sheet-confirm"/);
-  assert.doesNotMatch(pickerWxml, /picker-sheet-item--selected|selectedHourIndex|selectedMinuteIndex/);
-  assert.doesNotMatch(pickerWxml, /mask-style="background:\s*transparent;"/);
+  assert.match(pickerSurfaceWxml, /class="picker-sheet-selection picker-sheet-selection--{{mode}}"/);
+  assert.equal((pickerSurfaceWxml.match(/<swiper class="picker-sheet-column/g) || []).length, 5);
+  assert.equal((pickerSurfaceWxml.match(/display-multiple-items="5"/g) || []).length, 5);
+  assert.equal((pickerSurfaceWxml.match(/duration="90"/g) || []).length, 5);
+  assert.equal((pickerSurfaceWxml.match(/cache-extent="1"/g) || []).length, 5);
+  assert.match(pickerSurfaceWxml, /vertical="{{true}}"[^>]*display-multiple-items="5"/);
+  assert.match(pickerSurfaceWxml, /bindchange="onFlatColumnChange"/);
+  assert.match(pickerSurfaceWxml, /current="{{yearSwiperIndex}}"/);
+  assert.match(pickerSurfaceWxml, /current="{{minuteSwiperIndex}}"/);
+  assert.doesNotMatch(pickerSurfaceWxml, /current="{{pickerValue\[/);
+  assert.doesNotMatch(pickerSurfaceWxml, /current="{{(?:hour|minute)PickerIndex}}"/);
+  assert.doesNotMatch(pickerSurfaceWxml, /picker-view|picker-view-column|indicator-class|indicator-style/);
+  assert.match(pickerSurfaceWxml, /class="picker-sheet-muted-mask picker-sheet-muted-mask--top"/);
+  assert.match(pickerSurfaceWxml, /class="picker-sheet-muted-mask picker-sheet-muted-mask--bottom"/);
+  assert.match(pickerSurfaceWxml, /src="\/images\/icon-close\.svg"/);
+  assert.match(pickerSurfaceWxml, /<view class="picker-sheet-confirm"[\s\S]*>确定<\/view>/);
+  assert.doesNotMatch(pickerSurfaceWxml, /<button class="picker-sheet-confirm"/);
+  assert.match(pickerSurfaceWxml, /picker-sheet-item--selected/);
+  assert.doesNotMatch(pickerSurfaceWxml, /mask-style="background:\s*transparent;"/);
 
-  assert.match(pickerCss, /\.picker-sheet-panel\s*{[\s\S]*?height:\s*792rpx;[\s\S]*?border-radius:\s*48rpx 48rpx 0 0;/);
-  assert.match(pickerCss, /\.picker-sheet-wheel\s*{[\s\S]*?height:\s*518rpx;/);
-  assert.match(pickerCss, /\.picker-sheet-selection\s*{[\s\S]*?z-index:\s*2;[\s\S]*?top:\s*210rpx;[\s\S]*?height:\s*96rpx;[\s\S]*?background:\s*rgba\(0,\s*0,\s*0,\s*0\.04\);[\s\S]*?pointer-events:\s*none;/);
-  assert.match(pickerCss, /\.picker-sheet-view\s*\{[\s\S]*?top:\s*18rpx;[\s\S]*?height:\s*480rpx;[\s\S]*?transform:\s*scaleY\(1\.45\);[\s\S]*?transform-origin:\s*center center;/);
-  assert.match(pickerCss, /\.picker-sheet-column\s*\{[\s\S]*?height:\s*480rpx;/);
-  assert.match(pickerCss, /\.picker-sheet-item\s*{[\s\S]*?height:\s*96rpx;/);
-  assert.match(pickerCss, /\.picker-sheet-item\s*{[\s\S]*?transform:\s*scaleY\(0\.689655\);[\s\S]*?transform-origin:\s*center center;/);
-  assert.match(pickerCss, /\.picker-sheet-fade--top\s*\{[\s\S]*?height:\s*116rpx;[\s\S]*?rgba\(255, 255, 255, 0\.72\),[\s\S]*?rgba\(255, 255, 255, 0\)/);
-  assert.match(pickerCss, /\.picker-sheet-fade--bottom\s*\{[\s\S]*?top:\s*402rpx;[\s\S]*?height:\s*114rpx;[\s\S]*?rgba\(255, 255, 255, 0\),[\s\S]*?rgba\(255, 255, 255, 0\.72\)/);
-  assert.match(pickerCss, /\.picker-sheet-view--date \.picker-sheet-column--year\s*{[\s\S]*?width:\s*240rpx;[\s\S]*?flex:\s*none;/);
-  assert.match(pickerCss, /\.picker-sheet-view--datetime \.picker-sheet-column--hour,[\s\S]*?width:\s*124rpx;[\s\S]*?flex:\s*none;/);
-  assert.match(pickerCss, /\.picker-sheet-footer\s*{[\s\S]*?position:\s*relative;[\s\S]*?z-index:\s*4;[\s\S]*?height:\s*160rpx;[\s\S]*?padding-bottom:\s*60rpx;[\s\S]*?box-shadow:\s*0 -6rpx 24rpx rgba\(0, 0, 0, 0\.07\);/);
-  assert.match(pickerCss, /\.picker-sheet-confirm\s*{[\s\S]*?width:\s*calc\(100% - 64rpx\);[\s\S]*?margin:\s*0 32rpx;[\s\S]*?border-radius:\s*24rpx;/);
+  assert.doesNotMatch(pickerJs, /getFixedHeightSheetSize|skylineSheet|scrollTo\(/);
+  assert.doesNotMatch(formCss, /\.activity-sheet-panel--covered\s*\{[^}]*filter\s*:/s);
+  assert.match(pickerCss, /\.picker-sheet-embedded-mask\s*\{[^}]*background:\s*rgba\(21, 21, 31, 0\.4\);/s);
+  assert.match(pickerWxml, /custom-style="height: 761\.54rpx; max-height: 92vh; bottom: {{bottomOffsetRpx}}rpx;[^\"]*border-radius: 46\.15rpx 46\.15rpx 0 0;/);
+  assert.match(pickerCss, /\.picker-sheet-panel\s*{[\s\S]*?height:\s*100%;[\s\S]*?max-height:\s*100%;[\s\S]*?border-radius:\s*46\.15rpx 46\.15rpx 0 0;/);
+  assert.match(pickerCss, /\.picker-sheet-wheel\s*{[\s\S]*?height:\s*498\.08rpx;[\s\S]*?flex:\s*none;/);
+  assert.match(pickerCss, /\.picker-sheet-selection\s*{[\s\S]*?z-index:\s*0;[\s\S]*?top:\s*201\.92rpx;[\s\S]*?height:\s*92\.31rpx;[\s\S]*?background:\s*#f5f5f5;[\s\S]*?pointer-events:\s*none;/);
+  assert.match(pickerCss, /\.picker-sheet-view\s*\{[\s\S]*?top:\s*17\.31rpx;[\s\S]*?height:\s*461\.54rpx;/);
+  assert.doesNotMatch(pickerCss, /scaleY\(/);
+  assert.match(pickerCss, /\.picker-sheet-column\s*\{[\s\S]*?height:\s*461\.54rpx;/);
+  assert.match(pickerCss, /\.picker-sheet-item\s*{[\s\S]*?height:\s*92\.31rpx;[\s\S]*?color:\s*#000000;[\s\S]*?font-size:\s*26\.92rpx;[\s\S]*?font-weight:\s*400;/);
+  assert.match(pickerCss, /\.picker-sheet-item--selected\s*\{[^}]*font-weight:\s*600;/s);
+  assert.match(pickerCss, /\.picker-sheet-muted-mask--top\s*\{[\s\S]*?height:\s*201\.92rpx;[\s\S]*?rgba\(255, 255, 255, 0\.58\)/);
+  assert.match(pickerCss, /\.picker-sheet-muted-mask--bottom\s*\{[\s\S]*?top:\s*294\.23rpx;[\s\S]*?height:\s*203\.85rpx;[\s\S]*?rgba\(255, 255, 255, 0\.58\)/);
+  assert.match(pickerCss, /\.picker-sheet-view--date \.picker-sheet-column--year\s*{[\s\S]*?width:\s*192\.31rpx;[\s\S]*?flex:\s*none;/);
+  assert.match(pickerCss, /\.picker-sheet-view--date \.picker-sheet-column--month\s*{[\s\S]*?width:\s*192\.31rpx;[\s\S]*?flex:\s*none;/);
+  assert.match(pickerCss, /\.picker-sheet-view--date \.picker-sheet-column--day\s*{[\s\S]*?min-width:\s*0;[\s\S]*?flex:\s*1;/);
+  assert.match(pickerCss, /\.picker-sheet-view--datetime\s*{[^}]*padding:\s*0 30\.77rpx;/s);
+  assert.match(pickerCss, /\.picker-sheet-view--datetime \.picker-sheet-column--year\s*{[\s\S]*?width:\s*96\.15rpx;[\s\S]*?flex:\s*none;/);
+  assert.match(pickerCss, /\.picker-sheet-view--datetime \.picker-sheet-column--month\s*{[\s\S]*?width:\s*92\.31rpx;[\s\S]*?flex:\s*none;/);
+  assert.match(pickerCss, /\.picker-sheet-view--datetime \.picker-sheet-column--day\s*{[\s\S]*?width:\s*246\.15rpx;[\s\S]*?flex:\s*none;/);
+  assert.match(pickerCss, /\.picker-sheet-view--datetime \.picker-sheet-column--hour,[\s\S]*?width:\s*126\.92rpx;[\s\S]*?flex:\s*none;/);
+  assert.match(pickerCss, /\.picker-sheet-view--datetime \.picker-sheet-column--hour\s*{[^}]*margin-left:\s*0;/s);
+  assert.match(pickerCss, /\.picker-sheet-footer\s*{[\s\S]*?position:\s*relative;[\s\S]*?z-index:\s*4;[\s\S]*?height:\s*153\.85rpx;[\s\S]*?padding-bottom:\s*57\.69rpx;[\s\S]*?box-shadow:\s*0 -6rpx 24rpx rgba\(0, 0, 0, 0\.07\);/);
+  assert.match(pickerCss, /\.picker-sheet-confirm\s*{[\s\S]*?width:\s*calc\(100% - 61\.54rpx\);[\s\S]*?margin:\s*0 30\.77rpx;[\s\S]*?border-radius:\s*23\.08rpx;/);
+  assert.match(pickerCss, /\.picker-sheet-embedded-panel\s*{[\s\S]*?bottom:\s*-761\.54rpx;[\s\S]*?transition:\s*bottom 220ms/);
+  assert.doesNotMatch(pickerCss, /\.picker-sheet-embedded-panel[^}]*transform:/s);
 });
 
 test("activity form typography uses even pixel sizes and picker columns use date units without slash separators", () => {
   const formCss = fs.readFileSync(path.join(__dirname, "../components/activity-form-sheet/index.wxss"), "utf8");
   const pickerCss = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/index.wxss"), "utf8");
   const pickerWxml = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/index.wxml"), "utf8");
+  const pickerSurfaceWxml = fs.readFileSync(path.join(__dirname, "../components/date-time-picker-sheet/surface.wxml"), "utf8");
   const oddPixelRpx = /font-size:\s*(22|26|30|34|42)rpx/;
   assert.doesNotMatch(formCss, oddPixelRpx);
   assert.doesNotMatch(pickerCss, oddPixelRpx);
-  assert.match(pickerWxml, /}}年<\/view>/);
-  assert.match(pickerWxml, /}}月<\/view>/);
-  assert.match(pickerWxml, /}}日<\/view>/);
-  assert.doesNotMatch(pickerWxml, /}}\s*\/<\/view>/);
-  assert.doesNotMatch(pickerWxml, /picker-sheet-item--selected/);
-  assert.match(pickerCss, /\.picker-sheet-item\s*\{[\s\S]*?color:\s*#000000;[\s\S]*?font-weight:\s*600;/);
+  assert.match(pickerSurfaceWxml, /wx:for="{{yearLabels}}"/);
+  assert.match(pickerSurfaceWxml, /}}月<\/view>/);
+  assert.match(pickerSurfaceWxml, /wx:for="{{dayLabels}}"/);
+  assert.doesNotMatch(pickerSurfaceWxml, /}}\s*\/<\/view>/);
+  assert.match(pickerSurfaceWxml, /index === pickerValue\[0\][^\n]*picker-sheet-item--selected/);
+  assert.match(pickerSurfaceWxml, /index === hourPickerIndex[^\n]*picker-sheet-item--selected/);
 });
 
 test("critical custom component hosts keep stable qa ids for runtime validation", () => {
@@ -566,13 +658,34 @@ test("critical custom component hosts keep stable qa ids for runtime validation"
 
   const createFormHost = listWxml.match(/<activity-form-sheet\b[\s\S]*?\/>/)?.[0] || "";
   const editFormHost = detailWxml.match(/<activity-form-sheet\b[\s\S]*?\/>/)?.[0] || "";
-  const typePickerHost = formWxml.match(/<activity-type-picker-sheet\b[\s\S]*?\/>/)?.[0] || "";
+  const coverPickerHost = formWxml.match(/<activity-cover-picker-sheet\b[\s\S]*?\/>/)?.[0] || "";
   const dateTimePickerHost = formWxml.match(/<date-time-picker-sheet\b[\s\S]*?\/>/)?.[0] || "";
 
-  assert.match(createFormHost, /\bid="qaActivityFormSheet"/);
+  assert.match(createFormHost, /\bid="qaActivityCreateForm"/);
   assert.match(createFormHost, /\bmode="create"/);
+  assert.match(createFormHost, /\broute-embedded="{{true}}"/);
+  assert.match(createFormHost, /\bstyle="display: block; width: 100%; height: 100%;"/);
+  assert.doesNotMatch(createFormHost, /\bexternal-date-time-picker/);
+  assert.doesNotMatch(createFormHost, /\bexternal-activity-type-picker/);
   assert.match(editFormHost, /\bid="qaActivityFormSheet"/);
   assert.match(editFormHost, /\bmode="edit"/);
-  assert.match(typePickerHost, /\bid="qaActivityTypePickerSheet"/);
+  assert.match(editFormHost, /\broute-embedded="{{true}}"/);
+  assert.match(editFormHost, /\bstyle="display: block; width: 100%; height: 100%;"/);
+  assert.doesNotMatch(editFormHost, /\bexternal-date-time-picker/);
+  assert.match(coverPickerHost, /\bid="qaActivityCoverPickerSheet"/);
   assert.match(dateTimePickerHost, /\bid="qaDateTimePickerSheet"/);
+  assert.doesNotMatch(listWxml, /\bid="qaActivityCreateDateTimePicker"/);
+  assert.doesNotMatch(detailWxml, /\bid="qaEditDateTimePickerSheet"/);
+});
+
+test("edit activity cancellation uses the shared warning dialog before emitting the action", () => {
+  const componentDir = path.join(__dirname, "../components/activity-form-sheet");
+  const config = JSON.parse(fs.readFileSync(path.join(componentDir, "index.json"), "utf8"));
+  const wxml = fs.readFileSync(path.join(componentDir, "index.wxml"), "utf8");
+  const js = fs.readFileSync(path.join(componentDir, "index.js"), "utf8");
+
+  assert.equal(config.usingComponents["create-access-dialog"], "../create-access-dialog/index");
+  assert.match(wxml, /<create-access-dialog[\s\S]*?id="qaCancelActivityDialog"[\s\S]*?bindconfirm="confirmCancelActivity"/);
+  assert.match(js, /onCancelActivity\(\)[\s\S]*?selectComponent\("#qaCancelActivityDialog"\)[\s\S]*?title:\s*"确认取消活动？"[\s\S]*?confirmText:\s*"确认取消"[\s\S]*?confirmBehavior:\s*"emit"/);
+  assert.match(js, /confirmCancelActivity\(\)[\s\S]*?this\.triggerEvent\("cancelactivity"\)/);
 });

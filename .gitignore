@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.so
 .pytest_cache/
+backend/.pytest_*/
 .mypy_cache/
 .ruff_cache/
 
@@ -25,12 +26,16 @@ backend/.alembic_cache/
 .vscode/
 .cursor/debug-*.log
 .codex-backups/
+/.codex/
+/.tmp/
+/backups/
 
 # Project-local artifacts
 backend/.coverage
 backend/htmlcov/
 backend/deploy/*.generated
 backend/storage/
+/.local-assets/
 
 # Runtime-only backend artifacts
 backend/logs/
@@ -50,3 +55,4 @@ backend/secrets/
 
 # Pencil temporary previews
 /prototype/.tmp-*/
+/prototype/.recovery/

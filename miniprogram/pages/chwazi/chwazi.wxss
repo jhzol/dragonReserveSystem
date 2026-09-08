@@ -54,7 +54,6 @@ page {
 
 .chwazi-title {
   color: #ffffff;
-  font-family: "Noto Sans SC", "PingFang SC", sans-serif;
   font-size: 38.46154rpx;
   font-weight: 700;
   line-height: 1.4;
@@ -138,12 +137,11 @@ page {
   display: block;
   width: auto;
   color: #ffffff;
-  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
   font-size: 32.69rpx;
   font-weight: 600;
   line-height: 1.45;
   text-align: center;
-  white-space: pre-line;
+  white-space: normal;
 }
 
 .chwazi-winner-curtain {
@@ -160,7 +158,10 @@ page {
   position: absolute;
   border-radius: 50%;
   background: #09090b;
-  animation: chwazi-collapse-to-winner 480ms cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-name: chwazi-collapse-to-winner;
+  animation-duration: 480ms;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  animation-fill-mode: both;
   will-change: transform;
 }
 

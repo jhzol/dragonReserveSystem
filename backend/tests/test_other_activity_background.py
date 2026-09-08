@@ -31,9 +31,9 @@ def test_other_activity_background_assets_and_configs_stay_in_sync() -> None:
         "miniprogram/utils/activityEnrich.js",
     ):
         source = (PROJECT_ROOT / relative_path).read_text(encoding="utf-8")
-        assert "/glass-image?v=2" in source
+        assert "/activities/type-styles/" not in source
 
     glass_service = (
         PROJECT_ROOT / "backend/app/services/activity_card_glass_service.py"
     ).read_text(encoding="utf-8")
-    assert 'CARD_GLASS_RENDER_VERSION = "v2"' in glass_service
+    assert 'CARD_GLASS_RENDER_VERSION = "v3"' in glass_service

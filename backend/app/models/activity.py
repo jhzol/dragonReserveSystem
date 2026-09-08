@@ -31,6 +31,11 @@ class Activity(Base):
     signup_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     activity_type: Mapped[Optional[str]] = mapped_column(String(32), nullable=True, default=None)
     activity_style_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True, default=None)
+    activity_cover_id: Mapped[str] = mapped_column(
+        String(96),
+        nullable=False,
+        server_default="aleksey-rico-001",
+    )
     location_name: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     location_address: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     location_latitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
@@ -51,6 +56,11 @@ class Activity(Base):
     participants: Mapped[list["ActivityParticipant"]] = relationship(
         back_populates="activity",
         cascade="all, delete-orphan",
+    )
+    weather_snapshot: Mapped[Optional["ActivityWeatherSnapshot"]] = relationship(
+        back_populates="activity",
+        cascade="all, delete-orphan",
+        uselist=False,
     )
 
 
@@ -73,6 +83,8 @@ class ActivityParticipant(Base):
     checkin_method: Mapped[Optional[str]] = mapped_column(String(16), nullable=True)
     checkin_lat: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     checkin_lng: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    checkin_location_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    checkin_address: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

@@ -1,11 +1,13 @@
 const app = getApp();
 const activityService = require("../../services/activity");
-const { getApiBaseUrl, resolveLocalMediaUrl, isLocalTestMediaUrl } = require("../../services/config");
+const { resolveLocalMediaUrl, isLocalTestMediaUrl } = require("../../services/config");
 const { createTraceId, logInfo, logError, summarizeError } = require("../../services/logger");
 const { enrichSingleActivity } = require("../../utils/activityEnrich");
 const { parseCreatedAtMs, orderParticipantsForRecentAvatarSlice } = require("../../utils/participantSort");
 const cacheManager = require("../../services/cacheManager");
 const { patchTabBarIfNeeded } = require("../../utils/tabBarSync");
+const { createHomeCardMediaLoader } = require("../../utils/homeCardMediaLoader");
+const { createHomePresentationDiagnostics } = require("../../utils/homePresentationDiagnostics");
 const calendarWarmup = require("../../utils/calendarWarmup");
 const { getBottomSafeAreaRpx } = require("../../utils/safeArea");
 
@@ -27,9 +29,11 @@ const DEFAULT_ACTIVITY_TYPE_KEY = "other";
 const CARD_MEDIA_DIAG_WARN_MS = 8000;
 const CARD_MEDIA_DIAG_ERROR_MS = 15000;
 const ENDED_ACTIVITY_PAGE_SIZE = 5;
-const CACHE_METADATA_TTL_MS = 60 * 1000;
 /** 须与 wxml 中 refresher-threshold 一致 */
 const MAIN_REFRESH_THRESHOLD_PX = 80;
+const COLD_START_CARD_ENTRANCE_DELAY_MS = 400;
+const COLD_START_CARD_ENTRANCE_FRAME_MS = 17;
+const CREATED_CARD_ENTRANCE_DURATION_MS = 560;
 const DEFAULT_ACTIVITY_TYPE_STYLES = [
   {
     key: "badminton",
@@ -178,12 +182,6 @@ function normalizeTypeKey(value) {
   return t;
 }
 
-function buildCardGlassImageUrl(typeKey, styleKey) {
-  const apiBaseUrl = String(getApiBaseUrl() || "").replace(/\/$/, "");
-  if (!apiBaseUrl || !typeKey || !styleKey) return "";
-  return `${apiBaseUrl}/activities/type-styles/${encodeURIComponent(typeKey)}/${encodeURIComponent(styleKey)}/glass-image?v=2`;
-}
-
 function buildTypeStyleMap(typeStyles) {
   const source = Array.isArray(typeStyles) && typeStyles.length > 0 ? typeStyles : DEFAULT_ACTIVITY_TYPE_STYLES;
   const map = {};
@@ -202,7 +200,7 @@ function buildTypeStyleMap(typeStyles) {
         showBadge: s.show_badge !== false,
         showAvatarCluster: s.show_avatar_cluster !== false,
         largeCardBgImageUrl: String(s.large_card_bg_image_url || ""),
-        largeCardGlassImageUrl: buildCardGlassImageUrl(key, styleKey),
+        largeCardGlassImageUrl: "",
         smallCardBgImageUrl: String(s.small_card_bg_image_url || ""),
         bgVideoUrl: s.bg_video_url ? String(s.bg_video_url) : ""
       };
@@ -245,48 +243,6 @@ function resolveStyleByTypeAndKey(typeKey, styleKey, typeStyleMap) {
   const firstKey = Object.keys(styleMap)[0];
   return firstKey ? styleMap[firstKey] : null;
 }
-
-// Gesture tuning presets for card swipe vs page vertical scroll.
-const GESTURE_PRESETS = {
-  // Prefer page vertical scroll; horizontal swipe requires clearer intent.
-  verticalFirst: {
-    directionStartPx: 6,
-    verticalDominanceRatio: 1.35,
-    quickFlickDurationMs: 260,
-    quickFlickDistancePx: 18
-  },
-  // Balanced default between horizontal card swipe and vertical page scroll.
-  balanced: {
-    directionStartPx: 4,
-    verticalDominanceRatio: 1.6,
-    quickFlickDurationMs: 280,
-    quickFlickDistancePx: 16
-  },
-  // Prefer horizontal card swipe; easier to trigger card movement.
-  horizontalFirst: {
-    directionStartPx: 3,
-    verticalDominanceRatio: 2.0,
-    quickFlickDurationMs: 300,
-    quickFlickDistancePx: 15
-  }
-};
-const ACTIVE_GESTURE_PRESET = "balanced";
-const GESTURE_TUNING = {
-  ...GESTURE_PRESETS[ACTIVE_GESTURE_PRESET],
-  directionStartPx: 4,
-  // A diagonal drag should remain a page scroll unless its horizontal intent is clear.
-  verticalDominanceRatio: 0.8,
-  quickFlickDurationMs: 320,
-  quickFlickDistancePx: 14
-};
-// Keep a checkpoint of prior smoothness settings for quick rollback.
-const SWIPE_MOVE_SMOOTHING = {
-  // checkpoint-1: { updateIntervalMs: 16, minStepPx: 1, maxStepPxPerFrame: Infinity }
-  // checkpoint-2: { updateIntervalMs: 8, minStepPx: 2, maxStepPxPerFrame: Infinity }
-  updateIntervalMs: 16,
-  minStepPx: 0,
-  maxStepPxPerFrame: Infinity
-};
 
 function normalizeAvatarUrl(url) {
   const value = (url && String(url).trim()) || "";
@@ -364,8 +320,10 @@ function adaptActivity(item) {
   const participants = (item.participants || []).map(adaptParticipant);
   const startTime = formatDateTime(item.start_time);
   const rawType = item.activity_type;
+  const rawCover = item.activity_cover && typeof item.activity_cover === "object" ? item.activity_cover : null;
   return {
     _id: String(item.id),
+    createdBy: item.created_by != null ? String(item.created_by) : "",
     date: startTime.split(" ")[0] || "",
     name: item.name,
     status: item.status || "进行中",
@@ -382,6 +340,15 @@ function adaptActivity(item) {
     signupEnabled: item.signup_enabled !== false,
     activityType: rawType || "other",
     activityStyleKey: item.activity_style_key || "",
+    activityCoverId: item.activity_cover_id || (rawCover && rawCover.id) || "",
+    activityCover: rawCover ? {
+      id: String(rawCover.id || ""),
+      artistName: String(rawCover.artist_name || ""),
+      artistAvatarUrl: String(rawCover.artist_avatar_url || ""),
+      thumbnailUrl: String(rawCover.thumbnail_url || ""),
+      imageUrl: String(rawCover.image_url || ""),
+      largeCardGlassImageUrl: String(rawCover.large_card_glass_image_url || "")
+    } : null,
     _rawActivityType: rawType
   };
 }
@@ -419,20 +386,15 @@ Page({
     activityList: [],
     filteredList: [],
     groupedActivities: { joined: [], accepting: [], notStarted: [], ended: [] },
+    groupSectionVisibility: { joined: false, accepting: false, notStarted: false, ended: false },
     allEndedActivities: [],
     endedHasMore: false,
     endedLoadingMore: false,
     statusBarHeight: 0,
     navBarHeight: 0,
-    groupOffset: { joined: 0, accepting: 0, notStarted: 0, ended: 0 },
     focusedCardIndex: { joined: 0, accepting: 0, notStarted: 0, ended: 0 },
-    groupUseTransition: false,
-    mainScrollEnabled: true,
     mainRefresherTriggered: false,
     mainRefresherHint: "下拉刷新",
-    isGroupSwiping: false,
-    showActivityForm: false,
-    activityFormSubmitting: false,
     myUserId: "", // 当前用户 openid（用于判断能否删除自己的报名）
     myNickname: "", // 当前用户昵称（userId 为空时的回退，兼容旧数据）
     locationDisabled: false,
@@ -441,19 +403,40 @@ Page({
     searchKeyword: "",
     selectedFilter: "我参与的",
     activityTypeStyles: DEFAULT_ACTIVITY_TYPE_STYLES,
-    activityTypeOptionLabels: DEFAULT_ACTIVITY_TYPE_STYLES.map((item) => item.display_name || item.key),
-    activityTypeOptionValues: DEFAULT_ACTIVITY_TYPE_STYLES.map((item) => normalizeTypeKey(item.key)).filter(Boolean),
+    homeListLoading: true,
+    skeletonShimmerRunning: false,
+    createdCardEntranceId: null,
+    createdCardEntranceState: "entered",
+    createFormContainerRendered: false,
+    showCreateForm: false,
+    createFormSubmitting: false,
     bottomSafeAreaRpx: 0
   },
 
   onLoad(options) {
+    this._homeFirstFrameReady = false;
+    this._cardEntranceNotBefore = 0;
+    this._coldStartTabEntrancePending = false;
+    this._cardEntranceTimer = null;
+    this._cardEntranceFrameTimer = null;
+    this._createdCardEntranceFrameTimer = null;
+    this._createdCardEntranceClearTimer = null;
+    this._createdCardDrawerDismissed = false;
+    this._createdCardGlassReady = true;
+    this._createdCardRevealStarted = false;
+    this._loadedCardGlassUrls = new Set();
+    this._homeReadyImages = new Map();
+    this._homeEnteredMediaKeys = new Set();
     const aid = options && options.activityId;
     if (aid) {
+      if (app && app.globalData) app.globalData.homeTabEntrancePending = false;
       wx.redirectTo({
         url: `/pages/activity_detail/activity_detail?id=${encodeURIComponent(String(aid))}`
       });
       return;
     }
+    this._coldStartTabEntrancePending = true;
+    if (app && app.globalData) app.globalData.homeTabEntrancePending = true;
     this.syncGuestState();
     this.setData({ bottomSafeAreaRpx: getBottomSafeAreaRpx() });
     // 计算自定义导航栏高度
@@ -470,78 +453,83 @@ Page({
 
   },
 
+  onReady() {
+    this._homeFirstFrameReady = true;
+    this._cardEntranceNotBefore = Date.now() + COLD_START_CARD_ENTRANCE_DELAY_MS;
+    this._scheduleColdStartCardEntrance();
+    this._startSkeletonShimmer();
+  },
+
   onShow() {
     this._pageVisible = true;
+    this._ensureHomePresentationDiagnostics();
     this._loadGeneration = (this._loadGeneration || 0) + 1;
     this.syncGuestState();
-    /** 上一轮切 Tab 时 onHide 里 getTabBar() 偶发不可用，会变成 hidden:true 一直回不去 */
-    this._setTabBarHidden(false);
+    /** 原生弹层也可能触发 show；一级抽屉仍存续时不得提前恢复 Tab。 */
+    this._setTabBarHidden(!!(
+      this.data.createFormContainerRendered ||
+      this.data.showCreateForm ||
+      app.globalData.pendingOpenCreateActivity ||
+      this._coldStartTabEntrancePending
+    ));
     const isAdmin = app.globalData.userRole === "admin";
     const myUserId = app.globalData.userId || wx.getStorageSync("userId") || "";
     const myNickname = (app.globalData.userProfile?.nickname || wx.getStorageSync("userNickname") || "").trim();
     this.setData({ isAdmin, myUserId, myNickname }, () => {
       this.loadActivityListByCachePolicy();
+      this.consumePendingCreateActivity();
     });
     patchTabBarIfNeeded(this, {
       selected: 0,
       isAdmin: app.globalData.userRole === "admin",
     });
-    this._syncTabBarVisibility();
+    this._scheduleColdStartCardEntrance();
+    this._startSkeletonShimmer();
+  },
+
+  hasCreateActivityPermission() {
+    const role = String(app.globalData.userRole || "");
+    const token = String(app.globalData.accessToken || wx.getStorageSync("accessToken") || "");
+    return !!app.globalData.isAuthenticated && !!token && (role === "user" || role === "admin");
+  },
+
+  consumePendingCreateActivity() {
+    if (!app.globalData.pendingOpenCreateActivity) return;
+    app.globalData.pendingOpenCreateActivity = false;
+    if (!this.hasCreateActivityPermission()) {
+      this._setTabBarHidden(false);
+      return;
+    }
+    wx.nextTick(() => this.showCreateModal());
   },
 
   loadActivityListByCachePolicy() {
-    const metadataAge = Date.now() - cacheManager.getCacheMetadataCheckedAt();
-    const metadataFresh = metadataAge >= 0 && metadataAge < CACHE_METADATA_TTL_MS;
-    const usedCachedStyles = this.loadActivityTypeStylesFromCache();
     const usedCachedList = this.loadActivityListFromCache();
-    const hasCompleteCache = usedCachedStyles && usedCachedList;
-    const refreshMetadata = () => Promise.all([activityService.getClientConfig(), activityService.getActivityStyleSignature()])
-      .then(([cfg, sigRes]) => {
-        const serverVersion = String((cfg && cfg.cache_version) || "1");
-        const serverSignature = String((sigRes && sigRes.signature) || "");
-        const localVersion = cacheManager.getClientCacheVersion();
-        const localSignature = cacheManager.getActivityStyleSignature();
-        const shouldRefresh = !localVersion || !localSignature ||
-          localVersion !== serverVersion || localSignature !== serverSignature;
-        cacheManager.setCacheMetadataCheckedAt();
-
-        if (shouldRefresh) {
-          cacheManager.clearBusinessCaches();
-          cacheManager.setClientCacheVersion(serverVersion);
-          cacheManager.setActivityStyleSignature(serverSignature);
-          if (usedCachedStyles) {
-            return this.loadActivityTypeStyles({ forceNetwork: true })
-              .then(() => this.loadActivityList({ forceNetwork: true }));
-          }
-        }
-      });
-
-    if (hasCompleteCache) {
-      // 缓存先渲染，元数据校验和活动静默刷新均不阻塞首屏。
-      this.loadActivityList({ forceNetwork: false, skipCardMediaDiagnostics: true });
-      if (metadataFresh) return Promise.resolve();
-      return refreshMetadata().catch((err) => console.error(err));
+    if (usedCachedList) {
+      // V2 activities carry their complete cover presentation.  Render the cache
+      // immediately and refresh only the activity payload in the background.
+      return this.loadActivityList({ forceNetwork: false, skipCardMediaDiagnostics: true });
     }
-
-    // 首次进入没有完整缓存时，样式、活动和元数据检查同时开始；页面只等样式与活动。
-    const stylesPromise = usedCachedStyles
-      ? Promise.resolve()
-      : this.loadActivityTypeStyles({ forceNetwork: true });
-    const rawActivitiesPromise = activityService.listActivities();
-    const activitiesPromise = stylesPromise.then(() =>
-      this.loadActivityList({ forceNetwork: true, responsePromise: rawActivitiesPromise })
-    );
-    const metadataPromise = metadataFresh ? Promise.resolve() : refreshMetadata().catch((err) => console.error(err));
-    return Promise.all([stylesPromise, activitiesPromise, metadataPromise]);
+    return this.loadActivityList({ forceNetwork: true });
   },
 
   onHide() {
     this._pageVisible = false;
     this._loadGeneration = (this._loadGeneration || 0) + 1;
+    this._finishColdStartCardEntrance();
+    this._stopHomeCardMedia();
+    this._finishCreatedCardEntrance();
     this._clearCardMediaDiagnostics();
     calendarWarmup.cancelScheduledPrefetch();
+    /**
+     * 页面隐藏时只保留抽屉对 Tab 的隐藏要求；卡片准备状态不影响其他页面的 Tab。
+     */
+    const keepTabBarHidden = !!(
+      this.data.createFormContainerRendered ||
+      this.data.showCreateForm
+    );
     const self = this;
-    const flush = () => self._setTabBarHidden(false);
+    const flush = () => self._setTabBarHidden(keepTabBarHidden);
     if (typeof wx !== "undefined" && typeof wx.nextTick === "function") wx.nextTick(flush);
     else flush();
   },
@@ -549,6 +537,17 @@ Page({
   onUnload() {
     this._pageVisible = false;
     this._loadGeneration = (this._loadGeneration || 0) + 1;
+    this._stopHomeCardMedia();
+    if (this._cardEntranceTimer) clearTimeout(this._cardEntranceTimer);
+    if (this._cardEntranceFrameTimer) clearTimeout(this._cardEntranceFrameTimer);
+    if (this._createdCardEntranceFrameTimer) clearTimeout(this._createdCardEntranceFrameTimer);
+    if (this._createdCardEntranceClearTimer) clearTimeout(this._createdCardEntranceClearTimer);
+    this._cardEntranceTimer = null;
+    this._cardEntranceFrameTimer = null;
+    this._createdCardEntranceFrameTimer = null;
+    this._createdCardEntranceClearTimer = null;
+    this._coldStartTabEntrancePending = false;
+    if (app && app.globalData) app.globalData.homeTabEntrancePending = false;
     calendarWarmup.cancelScheduledPrefetch();
     this._clearCardMediaDiagnostics();
     const self = this;
@@ -557,17 +556,315 @@ Page({
     else flush();
   },
 
-  _setTabBarHidden(hidden) {
+  _setTabBarHidden(hidden, { animate = false } = {}) {
+    const nextHidden = !!hidden;
+    if (app && app.globalData) app.globalData.tabBarHidden = nextHidden;
     if (typeof this.getTabBar !== "function") return;
     const tabBar = this.getTabBar();
     if (!tabBar || typeof tabBar.setData !== "function") return;
-    tabBar.setData({ hidden: !!hidden });
+    if (typeof tabBar.setHidden === "function") {
+      tabBar.setHidden(nextHidden, { animate: !!animate });
+      return;
+    }
+    tabBar.setData({ hidden: nextHidden });
   },
 
-  _syncTabBarVisibility() {
-    this._setTabBarHidden(!!this.data.showActivityForm);
+  _buildGroupSectionVisibility(groupedActivities) {
+    const groups = groupedActivities || {};
+    return Object.keys(groups).reduce((visibility, group) => {
+      visibility[group] = Array.isArray(groups[group]) && groups[group].length > 0;
+      return visibility;
+    }, {});
   },
 
+  _rememberFocusedCard(group, index, groupedActivities = this.data.groupedActivities) {
+    const cards = Array.isArray(groupedActivities && groupedActivities[group])
+      ? groupedActivities[group]
+      : [];
+    const activity = cards[index];
+    if (!activity || activity._id == null) return;
+    this._focusedCardActivityIds = {
+      ...(this._focusedCardActivityIds || {}),
+      [group]: String(activity._id)
+    };
+  },
+
+  _rememberFocusedActivity(activityId) {
+    if (activityId == null) return;
+    const groups = this.data.groupedActivities || {};
+    Object.keys(groups).some((group) => {
+      const cards = Array.isArray(groups[group]) ? groups[group] : [];
+      const index = cards.findIndex((item) => String(item && item._id) === String(activityId));
+      if (index < 0) return false;
+      this._rememberFocusedCard(group, index, groups);
+      return true;
+    });
+  },
+
+  _resolveFocusedCardIndex(groupedActivities) {
+    const previous = this.data.focusedCardIndex || {};
+    const focusedIds = this._focusedCardActivityIds || {};
+    return Object.keys(previous).reduce((nextFocus, group) => {
+      const cards = Array.isArray(groupedActivities && groupedActivities[group])
+        ? groupedActivities[group]
+        : [];
+      const focusedId = focusedIds[group];
+      const matchedIndex = focusedId
+        ? cards.findIndex((item) => String(item && item._id) === focusedId)
+        : -1;
+      const previousIndex = Math.max(0, Math.floor(Number(previous[group]) || 0));
+      nextFocus[group] = matchedIndex >= 0
+        ? matchedIndex
+        : Math.min(previousIndex, Math.max(0, cards.length - 1));
+      return nextFocus;
+    }, {});
+  },
+
+  _cardImageUrls(item, group) {
+    return [group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl,
+      group === "joined" ? item.largeCardGlassImageUrl : ""].filter(Boolean);
+  },
+
+  _cardMediaKey(item, group) {
+    return JSON.stringify([group, String(item._id), ...this._cardImageUrls(item, group), item.bgVideoUrl || ""]);
+  },
+
+  _prepareColdStartCardPresentation(groupedActivities) {
+    const decorated = {};
+    Object.keys(groupedActivities).forEach((group) => {
+      decorated[group] = groupedActivities[group].map((item) => {
+        const key = this._cardMediaKey(item, group);
+        const cover = group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl;
+        return { ...item, _homeMediaKey: key, _homeMediaReady: this._homeEnteredMediaKeys.has(key),
+          _homeCoverSrc: this._homeReadyImages.get(cover) || "",
+          _homeGlassSrc: this._homeReadyImages.get(item.largeCardGlassImageUrl) || "" };
+      });
+    });
+    return {
+      groupedActivities: decorated,
+      groupSectionVisibility: this._buildGroupSectionVisibility(decorated)
+    };
+  },
+
+  _ensureHomePresentationDiagnostics() {
+    if (this._homePresentationDiagnostics || this._pageVisible === false) return;
+    this._homePresentationDiagnostics = createHomePresentationDiagnostics({
+      page: this, wxApi: wx, traceId: createTraceId("home-view"),
+      emit: (event, payload) => logInfo(event, payload)
+    });
+  },
+
+  // Tab entrance is gated only by the page's first frame, never by requests/images.
+  _scheduleColdStartCardEntrance() {
+    if (this._pageVisible === false || !this._homeFirstFrameReady) return;
+    if (this._coldStartTabEntrancePending && !this._cardEntranceTimer) {
+      const waitMs = Math.max(0, this._cardEntranceNotBefore - Date.now());
+      this._cardEntranceTimer = setTimeout(() => {
+        this._cardEntranceTimer = null;
+        if (this._pageVisible === false) return;
+        this._coldStartTabEntrancePending = false;
+        if (app && app.globalData) app.globalData.homeTabEntrancePending = false;
+        if (!this.data.createFormContainerRendered && !this.data.showCreateForm && !app.globalData.pendingOpenCreateActivity) {
+          this._setTabBarHidden(false, { animate: true });
+        }
+      }, waitMs);
+    }
+    this._ensureHomePresentationDiagnostics();
+    this._prepareHomeCardImages();
+    this._scheduleReadyHomeCards();
+    this._startSkeletonShimmer();
+  },
+
+  _prepareHomeCardImages({ retryFailed = false } = {}) {
+    if (this._pageVisible === false) return;
+    if (!this._homeImageLoader) {
+      this._homeImageLoader = createHomeCardMediaLoader({
+        load: (url, ready, failed) => {
+          // Decode independently of swiper item creation. The local file is reused
+          // by the rendered image; native bindload remains a second success path.
+          wx.getImageInfo({ src: url, success: (res) => ready(res.path), fail: failed });
+        },
+        onReady: (url, path) => {
+          this._homePresentationDiagnostics?.media(url, "preload", "loaded");
+          this._markHomeImageReady(url, path);
+        },
+        onError: (url, error) => {
+          this._homePresentationDiagnostics?.media(url, "preload", summarizeError(error));
+          this._homePresentationDiagnostics?.snapshot("preload_error", { url: String(url).split(/[?#]/)[0], summary: summarizeError(error) });
+          logError("activity_card_presentation_pending", {
+            url, summary: summarizeError(error),
+            waitingCards: this._homeCardsWaitingFor(url)
+          });
+        }
+      });
+    }
+    const groups = this.data.groupedActivities || {};
+    // Round-robin by group: prioritize each visible/focused card before the tails.
+    const ordered = Object.keys(groups).map((group) => {
+      const cards = groups[group] || [];
+      const focus = this.data.focusedCardIndex[group] || 0;
+      return cards.slice(focus).concat(cards.slice(0, focus)).map((item) => ({ item, group }));
+    });
+    const urls = [];
+    for (let i = 0; ordered.some((cards) => i < cards.length); i += 1) {
+      ordered.forEach((cards) => {
+        if (cards[i]) urls.push(...this._cardImageUrls(cards[i].item, cards[i].group));
+      });
+    }
+    this._homeImageLoader.enqueue(urls.filter((url) => !this._homeReadyImages.has(url)), { retryFailed });
+  },
+
+  _homeCardsWaitingFor(url) {
+    const result = [];
+    Object.keys(this.data.groupedActivities || {}).forEach((group) => {
+      this.data.groupedActivities[group].forEach((item) => {
+        if (!item._homeMediaReady && this._cardImageUrls(item, group).includes(url)) {
+          result.push({ group, activityId: String(item._id) });
+        }
+      });
+    });
+    return result.slice(0, 6);
+  },
+
+  _markHomeImageReady(url, path) {
+    if (!url || this._pageVisible === false) return;
+    if (!this._homeReadyImages.has(url)) this._homeReadyImages.set(url, path || url);
+    this._loadedCardGlassUrls.add(url);
+    const created = Object.values(this.data.groupedActivities || {}).flat().find(
+      (item) => String(item._id) === String(this.data.createdCardEntranceId)
+    );
+    if (created && created.largeCardGlassImageUrl === url) this._markCreatedCardGlassReady(created._id);
+    const patch = {};
+    Object.keys(this.data.groupedActivities || {}).forEach((group) => {
+      this.data.groupedActivities[group].forEach((item, index) => {
+        const cover = group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl;
+        if (cover === url && path && item._homeCoverSrc !== path) patch[`groupedActivities.${group}[${index}]._homeCoverSrc`] = path;
+        if (group === "joined" && item.largeCardGlassImageUrl === url && path && item._homeGlassSrc !== path) patch[`groupedActivities.${group}[${index}]._homeGlassSrc`] = path;
+      });
+    });
+    if (Object.keys(patch).length) this.setData(patch, () => this._scheduleReadyHomeCards());
+    else this._scheduleReadyHomeCards();
+  },
+
+  _scheduleReadyHomeCards() {
+    if (this._pageVisible === false || !this._homeFirstFrameReady || this._cardEntranceFrameTimer) return;
+    this._cardEntranceFrameTimer = setTimeout(() => {
+      this._cardEntranceFrameTimer = null;
+      if (this._pageVisible === false) return;
+      const patch = {};
+      Object.keys(this.data.groupedActivities || {}).forEach((group) => {
+        this.data.groupedActivities[group].forEach((item, index) => {
+          if (item._homeMediaReady) return;
+          const urls = this._cardImageUrls(item, group);
+          const videoOnlyPending = !urls.length && item.bgVideoUrl && !this._homeReadyImages.has(item.bgVideoUrl);
+          if (videoOnlyPending || !urls.every((url) => this._homeReadyImages.has(url))) return;
+          const key = this._cardMediaKey(item, group);
+          this._homeEnteredMediaKeys.add(key);
+          patch[`groupedActivities.${group}[${index}]._homeMediaReady`] = true;
+          logInfo("activity_card_presentation_ready", { group, activityId: String(item._id) });
+        });
+      });
+      if (Object.keys(patch).length) this.setData(patch, () => this._homePresentationDiagnostics?.check());
+      else this._homePresentationDiagnostics?.check();
+    }, COLD_START_CARD_ENTRANCE_FRAME_MS);
+  },
+
+  _startSkeletonShimmer() {
+    if (!this._homeFirstFrameReady || this._pageVisible === false || this._skeletonShimmerTimer) return;
+    const tick = () => {
+      if (this._pageVisible === false) return;
+      const pending = this.data.homeListLoading || Object.values(this.data.groupedActivities || {})
+        .some((cards) => cards.some((item) => !item._homeMediaReady));
+      if (!pending) {
+        this._skeletonShimmerTimer = null;
+        if (this.data.skeletonShimmerRunning) this.setData({ skeletonShimmerRunning: false });
+        return;
+      }
+      this.setData({ skeletonShimmerRunning: !this.data.skeletonShimmerRunning });
+      this._skeletonShimmerTimer = setTimeout(tick, this.data.skeletonShimmerRunning ? 1500 : 100);
+    };
+    tick();
+  },
+
+  _stopHomeCardMedia() {
+    this._homePresentationDiagnostics?.stop();
+    this._homePresentationDiagnostics = null;
+    if (this._homeImageLoader) this._homeImageLoader.dispose();
+    this._homeImageLoader = null;
+    clearTimeout(this._skeletonShimmerTimer);
+    this._skeletonShimmerTimer = null;
+  },
+
+  _finishColdStartCardEntrance() {
+    clearTimeout(this._cardEntranceTimer);
+    clearTimeout(this._cardEntranceFrameTimer);
+    this._cardEntranceTimer = null;
+    this._cardEntranceFrameTimer = null;
+  },
+
+  _finishCreatedCardEntrance() {
+    if (this._createdCardEntranceFrameTimer) {
+      clearTimeout(this._createdCardEntranceFrameTimer);
+      this._createdCardEntranceFrameTimer = null;
+    }
+    if (this._createdCardEntranceClearTimer) {
+      clearTimeout(this._createdCardEntranceClearTimer);
+      this._createdCardEntranceClearTimer = null;
+    }
+    this._createdCardDrawerDismissed = false;
+    this._createdCardGlassReady = true;
+    this._createdCardRevealStarted = false;
+    if (this.data.createdCardEntranceId != null) {
+      this.setData({
+        createdCardEntranceId: null,
+        createdCardEntranceState: "entered"
+      });
+    }
+  },
+
+  _revealCreatedCard() {
+    if (this.data.createdCardEntranceId == null) return;
+    this._createdCardDrawerDismissed = true;
+    this._tryRevealCreatedCard();
+  },
+
+  _tryRevealCreatedCard() {
+    if (
+      this.data.createdCardEntranceId == null ||
+      !this._createdCardDrawerDismissed ||
+      !this._createdCardGlassReady ||
+      this._createdCardRevealStarted
+    ) return;
+    if (this._pageVisible === false) {
+      this._finishCreatedCardEntrance();
+      return;
+    }
+    this._createdCardRevealStarted = true;
+    if (this._createdCardEntranceFrameTimer) clearTimeout(this._createdCardEntranceFrameTimer);
+    const enter = () => {
+      if (this._pageVisible === false || this.data.createdCardEntranceId == null) return;
+      this._createdCardEntranceFrameTimer = setTimeout(() => {
+        this._createdCardEntranceFrameTimer = null;
+        if (this._pageVisible === false || this.data.createdCardEntranceId == null) return;
+        this.setData({ createdCardEntranceState: "entered" });
+        this._createdCardEntranceClearTimer = setTimeout(() => {
+          this._createdCardEntranceClearTimer = null;
+          this.setData({ createdCardEntranceId: null });
+        }, CREATED_CARD_ENTRANCE_DURATION_MS);
+      }, COLD_START_CARD_ENTRANCE_FRAME_MS);
+    };
+    if (typeof wx !== "undefined" && typeof wx.nextTick === "function") wx.nextTick(enter);
+    else enter();
+  },
+
+  _markCreatedCardGlassReady(activityId) {
+    if (
+      this.data.createdCardEntranceId == null ||
+      String(activityId || "") !== String(this.data.createdCardEntranceId)
+    ) return;
+    this._createdCardGlassReady = true;
+    this._tryRevealCreatedCard();
+  },
 
   _clearCardMediaDiagnostics() {
     if (this._cardMediaDiagWarnTimer) {
@@ -817,80 +1114,6 @@ Page({
     }
   },
 
-  ensureGroupSnapMetrics() {
-    if (this._groupSnapMetricsReady) return;
-    const q = wx.createSelectorQuery();
-    q.selectAll(".large-cards-row .large-card-wrap").boundingClientRect();
-    q.selectAll(".small-cards-row .small-card-wrap").boundingClientRect();
-    q.exec((res) => {
-      const large = (res && res[0]) || [];
-      const small = (res && res[1]) || [];
-
-      const calcStep = (rects, fallback) => {
-        if (!Array.isArray(rects) || rects.length < 2) return fallback;
-        const lefts = rects
-          .map((r) => (r && typeof r.left === "number" ? Math.round(r.left * 100) / 100 : null))
-          .filter((v) => v != null);
-        const unique = Array.from(new Set(lefts)).sort((a, b) => a - b);
-        if (unique.length < 2) return fallback;
-        let minPositive = null;
-        for (let i = 1; i < unique.length; i += 1) {
-          const d = unique[i] - unique[i - 1];
-          if (d > 1 && (minPositive == null || d < minPositive)) {
-            minPositive = d;
-          }
-        }
-        return minPositive != null ? minPositive : fallback;
-      };
-
-      const largeStep = calcStep(large, 287);
-      const smallStep = calcStep(small, 190);
-
-      this._snapMeta = {
-        joined: { step: largeStep, index: 0, lastLeft: 0, maxIndex: Math.max(0, (this.data.groupedActivities.joined || []).length - 1) },
-        accepting: { step: smallStep, index: 0, lastLeft: 0, maxIndex: Math.max(0, (this.data.groupedActivities.accepting || []).length - 1) },
-        notStarted: { step: smallStep, index: 0, lastLeft: 0, maxIndex: Math.max(0, (this.data.groupedActivities.notStarted || []).length - 1) },
-        ended: { step: smallStep, index: 0, lastLeft: 0, maxIndex: Math.max(0, (this.data.groupedActivities.ended || []).length - 1) }
-      };
-      this._groupSnapMetricsReady = true;
-    });
-  },
-
-  onGroupScroll(e) {
-    // Kept for compatibility; gesture-driven paging no longer relies on scroll events.
-  },
-
-  applyGroupSnap(group, source, fallbackLeft) {
-    if (!group) return;
-    if (!this._snapMeta || !this._snapMeta[group]) this.ensureGroupSnapMetrics();
-    const meta = this._snapMeta && this._snapMeta[group];
-    if (!meta) return;
-
-    const currentLeft =
-      (typeof fallbackLeft === "number")
-        ? fallbackLeft
-        : (typeof meta.liveLeft === "number" ? meta.liveLeft : 0);
-    const step = meta.step || 1;
-    let nextIndex = Math.round(currentLeft / step);
-    nextIndex = Math.max(0, Math.min(meta.maxIndex, nextIndex));
-
-    const peekLeft = nextIndex > 0 && nextIndex < meta.maxIndex ? 10 : 0;
-    const nextLeft = Math.max(0, Math.round(nextIndex * step - peekLeft));
-
-    meta.index = nextIndex;
-    meta.lastLeft = nextLeft;
-    this.setData({
-      groupUseTransition: true,
-      [`groupOffset.${group}`]: nextLeft,
-      [`focusedCardIndex.${group}`]: nextIndex
-    });
-
-  },
-
-  onGroupScrollEnd(e) {
-    // Deprecated by gesture-driven paging.
-  },
-
   _syncVideoFocus(group, oldIndex, newIndex) {
     const previousIndex = typeof oldIndex === "number" ? oldIndex : 0;
     const nextIndex = typeof newIndex === "number" ? newIndex : previousIndex;
@@ -907,150 +1130,22 @@ Page({
     }, 30);
   },
 
-  onGroupTouchStart(e) {
-    const group = e.currentTarget && e.currentTarget.dataset ? e.currentTarget.dataset.group : "";
-    if (!group) return;
-    if (!this._snapMeta || !this._snapMeta[group]) {
-      this.ensureGroupSnapMetrics();
-      return;
-    }
-    const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
-    const startX = t && typeof t.clientX === "number" ? t.clientX : null;
-    const startY = t && typeof t.clientY === "number" ? t.clientY : null;
-    const meta = this._snapMeta[group];
-    meta.touchStartX = startX;
-    meta.touchStartY = startY;
-    meta.touchLastX = startX;
-    meta.touchStartTime = Date.now();
-    meta.touchStartOffset = this.data.groupOffset[group] || 0;
-    meta.liveLeft = meta.touchStartOffset;
-    meta.touchMoveThrottleTs = 0;
-    meta.renderedOffset = meta.touchStartOffset;
-    meta.gestureDirection = null;
-    if (this.data.isGroupSwiping) {
-      this.setData({ isGroupSwiping: false });
-    }
-  },
-
-  onGroupTouchMove(e) {
-    const group = e.currentTarget && e.currentTarget.dataset ? e.currentTarget.dataset.group : "";
-    const meta = group && this._snapMeta ? this._snapMeta[group] : null;
-    if (!meta || meta.touchStartX == null) return;
-    const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
-    const currentX = t && typeof t.clientX === "number" ? t.clientX : null;
-    const currentY = t && typeof t.clientY === "number" ? t.clientY : null;
-    if (currentX == null) return;
-    meta.touchLastX = currentX;
-
-    if (meta.gestureDirection == null) {
-      const dx = Math.abs(currentX - meta.touchStartX);
-      const dy = currentY != null && meta.touchStartY != null ? Math.abs(currentY - meta.touchStartY) : 0;
-      if (dx > GESTURE_TUNING.directionStartPx || dy > GESTURE_TUNING.directionStartPx) {
-        meta.gestureDirection = dy > dx * GESTURE_TUNING.verticalDominanceRatio ? "vertical" : "horizontal";
-        if (meta.gestureDirection === "horizontal") {
-          // Rebase at lock point to avoid a first-frame jump.
-          meta.touchStartX = currentX;
-          meta.touchStartOffset = this.data.groupOffset[group] || 0;
-          meta.liveLeft = meta.touchStartOffset;
-          meta.renderedOffset = meta.touchStartOffset;
-          this.setData({ groupUseTransition: false, mainScrollEnabled: false, isGroupSwiping: true });
-        }
-      }
-    }
-
-    if (meta.gestureDirection !== "horizontal") return;
-
-    const deltaX = currentX - meta.touchStartX;
-    const baseOffset = meta.touchStartOffset || 0;
-    const maxOffset = Math.max(0, meta.maxIndex * (meta.step || 1));
-    const newOffset = Math.max(0, Math.min(maxOffset, baseOffset - deltaX));
-    const nextOffset = newOffset;
-    if (meta.renderedOffset == null) {
-      meta.renderedOffset = meta.touchStartOffset || 0;
-    }
-    if (Math.abs(nextOffset - meta.renderedOffset) < 0.25) {
-      return;
-    }
-    const now = Date.now();
-    if (
-      SWIPE_MOVE_SMOOTHING.updateIntervalMs > 0 &&
-      now - (meta.touchMoveThrottleTs || 0) < SWIPE_MOVE_SMOOTHING.updateIntervalMs
-    ) {
-      return;
-    }
-    meta.touchMoveThrottleTs = now;
-    meta.renderedOffset = nextOffset;
-    meta.liveLeft = nextOffset;
-    this.setData({ [`groupOffset.${group}`]: nextOffset });
-
-  },
-
-  onGroupTouchEnd(e) {
-    const group = e.currentTarget && e.currentTarget.dataset ? e.currentTarget.dataset.group : "";
-    const meta = group && this._snapMeta ? this._snapMeta[group] : null;
-    if (!meta) return;
-
-    if (meta.gestureDirection !== "horizontal") {
-      meta.gestureDirection = null;
-      if (this.data.isGroupSwiping) {
-        this.setData({ isGroupSwiping: false });
-      }
-      if (!this.data.mainScrollEnabled) {
-        this.setData({ mainScrollEnabled: true });
-      }
-      return;
-    }
-    meta.gestureDirection = null;
-
-    const t = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]);
-    const endX = t && typeof t.clientX === "number" ? t.clientX : (meta.touchLastX != null ? meta.touchLastX : null);
-    const startX = meta.touchStartX;
-    const touchDuration = Date.now() - (meta.touchStartTime || Date.now());
-    const deltaX = startX != null && endX != null ? endX - startX : 0;
-    const currentOffset = typeof meta.liveLeft === "number" ? meta.liveLeft : (this.data.groupOffset[group] || 0);
-    const step = meta.step || 1;
-
-    let targetIndex;
-    const isQuickFlick =
-      touchDuration < GESTURE_TUNING.quickFlickDurationMs &&
-      Math.abs(deltaX) > GESTURE_TUNING.quickFlickDistancePx;
-
-    if (isQuickFlick) {
-      const dir = deltaX < 0 ? 1 : -1;
-      targetIndex = Math.max(0, Math.min(meta.maxIndex, (meta.index || 0) + dir));
-    } else {
-      targetIndex = Math.round(currentOffset / step);
-      targetIndex = Math.max(0, Math.min(meta.maxIndex, targetIndex));
-    }
-
-    const peekLeft = (targetIndex > 0 && targetIndex < meta.maxIndex) ? 10 : 0;
-    const targetOffset = Math.max(0, Math.round(targetIndex * step - peekLeft));
-
-    const endedCardCount =
-      group === "ended" ? (this.data.groupedActivities.ended || []).length : 0;
-    const slidOntoEndedLoadStrip =
-      group === "ended" &&
-      !!this.data.endedHasMore &&
-      targetIndex === meta.maxIndex &&
-      meta.maxIndex === endedCardCount;
-
-    const prevVideoIndex = this.data.focusedCardIndex[group];
-    meta.index = targetIndex;
-    meta.lastLeft = targetOffset;
-    meta.liveLeft = targetOffset;
-    this.setData({
-      groupUseTransition: true,
-      mainScrollEnabled: true,
-      isGroupSwiping: false,
-      [`groupOffset.${group}`]: targetOffset,
-      [`focusedCardIndex.${group}`]: targetIndex
-    }, () => {
-      this._syncVideoFocus(group, prevVideoIndex, targetIndex);
-      if (slidOntoEndedLoadStrip) {
+  onGroupSwiperChange(e) {
+    const group = e.currentTarget && e.currentTarget.dataset
+      ? String(e.currentTarget.dataset.group || "")
+      : "";
+    if (!group || !Object.prototype.hasOwnProperty.call(this.data.focusedCardIndex, group)) return;
+    const current = Math.max(0, Math.floor(Number(e.detail && e.detail.current) || 0));
+    const previous = Number(this.data.focusedCardIndex[group]) || 0;
+    this._homePresentationDiagnostics?.swipe();
+    this._rememberFocusedCard(group, current);
+    this.setData({ [`focusedCardIndex.${group}`]: current }, () => {
+      this._syncVideoFocus(group, previous, current);
+      const endedCount = (this.data.groupedActivities.ended || []).length;
+      if (group === "ended" && this.data.endedHasMore && current === endedCount) {
         this.loadMoreEndedActivities();
       }
     });
-
   },
 
   /** 「已结束」横向滑到末尾加载格或点击加载格 */
@@ -1140,10 +1235,8 @@ Page({
     const myUserId = app.globalData.userId || wx.getStorageSync("userId") || "";
     const myNickname = (app.globalData.userProfile?.nickname || wx.getStorageSync("userNickname") || "").trim();
     this.setData({ isAdmin: app.globalData.userRole === "admin", myUserId, myNickname });
-    return Promise.all([
-      this.loadActivityTypeStyles({ forceNetwork: true }),
-      this.loadActivityList({ forceNetwork: true, skipPullOverlayLoading: true })
-    ]);
+    this._prepareHomeCardImages({ retryFailed: true });
+    return this.loadActivityList({ forceNetwork: true });
   },
 
   onMainRefresherPulling(e) {
@@ -1183,40 +1276,6 @@ Page({
     return isGuest;
   },
 
-  _applyActivityTypeStyles(styles) {
-    const optionValues = styles.map((item) => normalizeTypeKey(item.key)).filter(Boolean);
-    const optionLabels = styles.map((item) => String(item.display_name || item.key || ""));
-    this.setData({
-      activityTypeStyles: styles,
-      activityTypeOptionValues: optionValues,
-      activityTypeOptionLabels: optionLabels
-    });
-  },
-
-  loadActivityTypeStylesFromCache() {
-    const cached = cacheManager.getCachedActivityTypeStyles();
-    const styles = cached && Array.isArray(cached.styles) ? cached.styles : [];
-    if (!styles.length) return false;
-    this._applyActivityTypeStyles(styles);
-    return true;
-  },
-
-  loadActivityTypeStyles(options = {}) {
-    if (!options.forceNetwork && this.loadActivityTypeStylesFromCache()) {
-      return Promise.resolve();
-    }
-    return activityService
-      .listActivityTypeStyles()
-      .then((res) => {
-        const styles = Array.isArray(res) && res.length > 0 ? res : DEFAULT_ACTIVITY_TYPE_STYLES;
-        cacheManager.setCachedActivityTypeStyles(styles);
-        this._applyActivityTypeStyles(styles);
-      })
-      .catch(() => {
-        this._applyActivityTypeStyles(DEFAULT_ACTIVITY_TYPE_STYLES);
-      });
-  },
-
   buildEndedStreamState(groupedActivities, visibleCount) {
     const grouped = groupedActivities || { joined: [], accepting: [], notStarted: [], ended: [] };
     const allEndedActivities = Array.isArray(grouped.ended) ? grouped.ended : [];
@@ -1250,14 +1309,11 @@ Page({
       ...this.data.groupedActivities,
       ended: visibleEnded
     };
-    this._groupSnapMetricsReady = false;
     this.setData({
-      groupedActivities,
+      groupedActivities: this._prepareColdStartCardPresentation(groupedActivities).groupedActivities,
       endedHasMore,
       endedLoadingMore: false
-    }, () => {
-      this.ensureGroupSnapMetrics();
-    });
+    }, () => this._scheduleColdStartCardEntrance());
   },
 
   loadActivityListFromCache() {
@@ -1271,6 +1327,7 @@ Page({
     if (cacheUserId && (!myUserId || cacheUserId !== String(myUserId))) {
       return false;
     }
+    this._homePresentationDiagnostics?.list("cache");
     const listWithFlags = reapplyListParticipationFlags(list, myUserId, myNickname);
     cacheManager.setCachedActivityList(listWithFlags, myUserId);
     const { selectedFilter, searchKeyword } = this.data;
@@ -1278,23 +1335,21 @@ Page({
     const fullGroupedActivities = this.computeGroupedActivities(listWithFlags);
     const endedStream = this.buildEndedStreamState(fullGroupedActivities, ENDED_ACTIVITY_PAGE_SIZE);
     const groupedActivities = endedStream.groupedActivities;
-    this._groupSnapMetricsReady = false;
-    const focusReset = { joined: 0, accepting: 0, notStarted: 0, ended: 0 };
+    const focusedCardIndex = this._resolveFocusedCardIndex(groupedActivities);
+    const cardPresentation = this._prepareColdStartCardPresentation(groupedActivities);
     // 须在 setData 回调之前创建 session，否则缓存命中的首帧 bindload 可能早于回调，导致事件丢弃并误报 stalled（H1）
-    this._startCardMediaDiagnostics(listWithFlags, groupedActivities, focusReset);
+    this._startCardMediaDiagnostics(listWithFlags, groupedActivities, focusedCardIndex);
     this.setData({
       activityList: listWithFlags,
       filteredList: filtered,
-      groupedActivities,
+      groupedActivities: cardPresentation.groupedActivities,
       allEndedActivities: endedStream.allEndedActivities,
       endedHasMore: endedStream.endedHasMore,
       endedLoadingMore: false,
-      groupOffset: { joined: 0, accepting: 0, notStarted: 0, ended: 0 },
-      focusedCardIndex: focusReset,
-      groupUseTransition: false
-    }, () => {
-      this.ensureGroupSnapMetrics();
-    });
+      focusedCardIndex,
+      homeListLoading: false,
+      groupSectionVisibility: cardPresentation.groupSectionVisibility
+    }, () => this._scheduleColdStartCardEntrance());
     return true;
   },
 
@@ -1302,52 +1357,53 @@ Page({
     const generation = options.generation == null ? (this._loadGeneration || 0) : options.generation;
     if (this._pageVisible === false || generation !== (this._loadGeneration || 0)) return Promise.resolve();
     this._clearCardMediaDiagnostics();
-    if (options.forceNetwork && !options.skipPullOverlayLoading) {
-      wx.showLoading({ title: "加载中..." });
-    }
+    this._homePresentationDiagnostics?.list("request_pending");
     return (options.responsePromise || activityService.listActivities())
-      .then((res) => this.processActivityList(res || [], new Date()))
+      .then((res) => {
+        if (this._pageVisible !== false && generation === (this._loadGeneration || 0)) this._homePresentationDiagnostics?.list("response_received");
+        return this.processActivityList(res || [], new Date());
+      })
       .then(result => {
         if (this._pageVisible === false || generation !== (this._loadGeneration || 0)) return;
         if (result) {
+          this._homePresentationDiagnostics?.list("list_processed");
           const { list } = result;
           const { selectedFilter, searchKeyword } = this.data;
           const filtered = this.computeFilteredList(list, selectedFilter, searchKeyword);
           const fullGroupedActivities = this.computeGroupedActivities(list);
           const endedStream = this.buildEndedStreamState(fullGroupedActivities, ENDED_ACTIVITY_PAGE_SIZE);
           const groupedActivities = endedStream.groupedActivities;
-          this._groupSnapMetricsReady = false;
-          const focusReset = { joined: 0, accepting: 0, notStarted: 0, ended: 0 };
+          const focusedCardIndex = this._resolveFocusedCardIndex(groupedActivities);
+          const cardPresentation = this._prepareColdStartCardPresentation(groupedActivities);
           if (!options.skipCardMediaDiagnostics) {
-            this._startCardMediaDiagnostics(list, groupedActivities, focusReset);
+            this._startCardMediaDiagnostics(list, groupedActivities, focusedCardIndex);
           }
           this.setData({
             activityList: list,
             filteredList: filtered,
-            groupedActivities,
+            groupedActivities: cardPresentation.groupedActivities,
             allEndedActivities: endedStream.allEndedActivities,
             endedHasMore: endedStream.endedHasMore,
             endedLoadingMore: false,
-            groupOffset: { joined: 0, accepting: 0, notStarted: 0, ended: 0 },
-            focusedCardIndex: focusReset,
-            groupUseTransition: false
-          }, () => {
-            this.ensureGroupSnapMetrics();
-          });
+            focusedCardIndex,
+            homeListLoading: false,
+            groupSectionVisibility: cardPresentation.groupSectionVisibility
+          }, () => this._scheduleColdStartCardEntrance());
           cacheManager.setCachedActivityList(list, this.data.myUserId || "");
 
           wx.nextTick(() => {
             calendarWarmup.schedulePrefetchSignedUpList(app);
           });
 
-          if (options.forceNetwork && !options.skipPullOverlayLoading) wx.hideLoading();
-
         }
       })
       .catch(err => {
         if (this._pageVisible === false || generation !== (this._loadGeneration || 0)) return;
+        this._homePresentationDiagnostics?.list("list_failed", summarizeError(err));
+        this._homePresentationDiagnostics?.snapshot("list_error");
         console.error(err);
-        if (options.forceNetwork && !options.skipPullOverlayLoading) wx.hideLoading();
+        // The independent Tab entrance also runs when the request never resolves.
+        this._scheduleColdStartCardEntrance();
         // 测试环境切换后常见：本地缓存 token 对应的用户不在当前库中
         if (err && err.statusCode === 404 && String(err.message || "").includes("User not found")) {
           app.logout();
@@ -1379,7 +1435,16 @@ Page({
       activity.bgVideoUrl = selectedStyle ? (selectedStyle.bgVideoUrl || "") : "";
       activity.largeCardBgImageUrl = selectedStyle ? (selectedStyle.largeCardBgImageUrl || "") : "";
       activity.largeCardGlassImageUrl = selectedStyle ? (selectedStyle.largeCardGlassImageUrl || "") : "";
-      activity.smallCardBgImageUrl = selectedStyle ? (selectedStyle.smallCardBgImageUrl || "") : "";
+      // 首页大小卡统一使用高清原图；小卡仅改变 aspectFill 裁切区域，不加载缩略图。
+      activity.smallCardBgImageUrl = selectedStyle ? (selectedStyle.largeCardBgImageUrl || "") : "";
+      if (activity.activityCover && activity.activityCover.imageUrl) {
+        activity.largeCardBgImageUrl = activity.activityCover.imageUrl;
+        activity.smallCardBgImageUrl = activity.activityCover.imageUrl;
+        activity.largeCardGlassImageUrl = activity.activityCover.largeCardGlassImageUrl || "";
+        activity.bgVideoUrl = "";
+        activity.showTypeBadge = false;
+        activity.showAvatarCluster = false;
+      }
       let signupDeadline = activity.signupDeadline;
       if (!signupDeadline && activity.startTime) {
         const base = new Date(activity.startTime.replace(" ", "T") + ":00");
@@ -1477,12 +1542,12 @@ Page({
       }
       activity.isSignupClosed = isSignupClosed;
 
-      // 基于时间自动更新状态（已取消、已删除、已流局不参与自动推算，避免删除后又显示为未开始）
+      // 基于时间自动更新状态（已取消、已流局是终态，不参与自动推算）
       const parseDateTime = (s) => new Date(s.replace(" ", "T") + ":00");
       const start = parseDateTime(activity.startTime);
       const end = parseDateTime(activity.endTime);
       let autoStatus = activity.status || "未开始";
-      if (activity.status === "已取消" || activity.status === "已删除" || activity.status === "已流局") {
+      if (activity.status === "已取消" || activity.status === "已流局") {
         autoStatus = activity.status;
       } else if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
         if (now.getTime() < start.getTime()) {
@@ -1494,7 +1559,7 @@ Page({
         }
       }
 
-      if (activity.status !== "已取消" && activity.status !== "已删除" && activity.status !== "已流局") {
+      if (activity.status !== "已取消" && activity.status !== "已流局") {
         activity.status = autoStatus;
       }
 
@@ -1516,8 +1581,7 @@ Page({
   },
 
   computeFilteredList(list, selectedFilter, searchKeyword) {
-    // 逻辑删除的活动不在任何 Tab 展示
-    let filtered = list ? list.filter(item => item.status !== "已删除") : [];
+    let filtered = list ? list.slice() : [];
 
     if (selectedFilter === "我参与的") {
       // 只看当前用户参与过的活动（已通过 hasSignedUp 标记）
@@ -1552,10 +1616,12 @@ Page({
       new Date((a.startTime || "").replace(" ", "T") + ":00");
 
     const usedIds = new Set();
-    const valid = (list || []).filter(a => a.status !== "已取消" && a.status !== "已删除" && a.status !== "已流局");
+    const valid = list || [];
 
     // 1. 我参与的：已报名且未结束（已结束的归入下方「已结束」区，避免历史活动占大卡位）
-    const joined = valid.filter((a) => a.hasSignedUp && a.status !== "已结束").sort(sortByStart);
+    const joined = valid
+      .filter((a) => a.hasSignedUp && !["已结束", "已取消", "已流局"].includes(a.status))
+      .sort(sortByStart);
     joined.forEach((a) => usedIds.add(a._id));
 
     // 2. 接受报名：未开始 + 报名未截止 + 开关开启 + 未满员 + 未报名
@@ -1577,91 +1643,140 @@ Page({
 
     // 4. 已结束：按开始时间降序
     const ended = valid
-      .filter(a => !usedIds.has(a._id) && a.status === "已结束")
+      .filter(a => !usedIds.has(a._id) && ["已结束", "已取消", "已流局"].includes(a.status))
       .sort(sortByStartDesc);
 
     return { joined, accepting, notStarted, ended };
   },
 
-  // 管理员：首页只负责创建活动，编辑入口统一放在活动详情页。
+  // 普通用户和管理员均可创建；未登录、游客保持静默。
   showCreateModal() {
-    if (this.data.activityFormSubmitting) return;
-    this.setData({ showActivityForm: true, activityFormSubmitting: false });
+    if (!this.hasCreateActivityPermission()) return;
+    if (this.data.showCreateForm || this.data.createFormSubmitting) return;
     this._setTabBarHidden(true);
+    this.setData({
+      createFormContainerRendered: true,
+      showCreateForm: false,
+      createFormSubmitting: false
+    }, () => {
+      wx.nextTick(() => this.setData({ showCreateForm: true }));
+    });
   },
 
-  closeActivityForm() {
-    if (this.data.activityFormSubmitting) return;
-    this.setData({ showActivityForm: false }, () => this._syncTabBarVisibility());
+  closeCreateForm() {
+    if (this.data.createFormSubmitting) return;
+    this.setData({ showCreateForm: false });
+  },
+
+  onCreateFormAfterLeave() {
+    if (!this.data.showCreateForm) {
+      this.setData({ createFormContainerRendered: false }, () => {
+        this._setTabBarHidden(false, { animate: true });
+        this._revealCreatedCard();
+      });
+    }
+  },
+
+  insertCreatedActivity(rawActivity) {
+    const processed = this.processActivityList([rawActivity], new Date());
+    const createdActivity = processed && Array.isArray(processed.list) ? processed.list[0] : null;
+    if (!createdActivity || createdActivity._id == null) return Promise.resolve(false);
+
+    this._finishCreatedCardEntrance();
+    const activityList = [
+      createdActivity,
+      ...(this.data.activityList || []).filter((item) => String(item._id) !== String(createdActivity._id))
+    ];
+    const filteredList = this.computeFilteredList(
+      activityList,
+      this.data.selectedFilter,
+      this.data.searchKeyword
+    );
+    const fullGroupedActivities = this.computeGroupedActivities(activityList);
+    const currentEndedCount = Math.max(
+      ENDED_ACTIVITY_PAGE_SIZE,
+      ((this.data.groupedActivities && this.data.groupedActivities.ended) || []).length
+    );
+    const endedStream = this.buildEndedStreamState(fullGroupedActivities, currentEndedCount);
+    const groupedActivities = endedStream.groupedActivities;
+    const createdGroup = Object.keys(groupedActivities).find((group) =>
+      (groupedActivities[group] || []).some((item) => String(item._id) === String(createdActivity._id))
+    );
+    const focusedCardIndex = { ...(this.data.focusedCardIndex || {}) };
+    if (createdGroup) {
+      focusedCardIndex[createdGroup] = groupedActivities[createdGroup].findIndex(
+        (item) => String(item._id) === String(createdActivity._id)
+      );
+    }
+    const waitsForGlass = createdGroup === "joined" &&
+      !!createdActivity.largeCardGlassImageUrl &&
+      !this._loadedCardGlassUrls.has(createdActivity.largeCardGlassImageUrl);
+    this._createdCardDrawerDismissed = false;
+    this._createdCardGlassReady = !waitsForGlass;
+    this._createdCardRevealStarted = false;
+
+    return new Promise((resolve) => {
+      this.setData({
+        activityList,
+        filteredList,
+        groupedActivities: this._prepareColdStartCardPresentation(groupedActivities).groupedActivities,
+        allEndedActivities: endedStream.allEndedActivities,
+        endedHasMore: endedStream.endedHasMore,
+        endedLoadingMore: false,
+        focusedCardIndex,
+        groupSectionVisibility: this._buildGroupSectionVisibility(groupedActivities),
+        createdCardEntranceId: createdActivity._id,
+        createdCardEntranceState: "pending"
+      }, () => {
+        this._scheduleColdStartCardEntrance();
+        cacheManager.setCachedActivityList(activityList, this.data.myUserId || "");
+        calendarWarmup.schedulePrefetchSignedUpList(app);
+        resolve(true);
+      });
+    });
   },
 
   submitCreateActivity(e) {
-    if (this.data.activityFormSubmitting) return;
+    if (this.data.createFormSubmitting) return;
     const payload = e && e.detail && e.detail.payload;
     if (!payload) {
       wx.showToast({ title: "活动信息缺失", icon: "none" });
       return;
     }
-    this.setData({ activityFormSubmitting: true });
+    this.setData({ createFormSubmitting: true });
     wx.showLoading({ title: "创建中...", mask: true });
-    activityService
-      .createActivity(payload)
-      .then(() => {
+    activityService.createActivity(payload)
+      .then((createdActivity) => {
         wx.hideLoading();
         wx.showToast({ title: "创建成功", icon: "success" });
-        this.setData({ showActivityForm: false, activityFormSubmitting: false }, () => {
-          this._syncTabBarVisibility();
-          this.loadActivityList();
+        this.setData({
+          showCreateForm: false,
+          createFormSubmitting: false
         });
+        return this.insertCreatedActivity(createdActivity)
+          .then((inserted) => inserted || this.loadActivityList());
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
         wx.hideLoading();
-        this.setData({ activityFormSubmitting: false });
-        wx.showToast({ title: (err && err.message) || "创建失败", icon: "none" });
+        this.setData({ createFormSubmitting: false });
+        wx.showToast({ title: (error && error.message) || "创建失败", icon: "none" });
       });
   },
 
-  // 管理员：逻辑删除已取消的活动（标记为已删除，列表中不再展示）
-  logicalDeleteActivity(e) {
-    const activity = e.currentTarget.dataset.activity;
-    if (!activity || !activity._id) return;
-    if (activity.status !== "已取消") return;
-    wx.showModal({
-      title: "确认删除",
-      content: "确定要删除该活动吗？删除后将不再在列表中展示。",
-      success: (res) => {
-        if (!res.confirm) return;
-        wx.showLoading({ title: "处理中..." });
-        activityService
-          .updateActivity(activity._id, { status: "已删除" })
-          .then(() => {
-            wx.hideLoading();
-            wx.showToast({ title: "已删除", icon: "success" });
-            this.loadActivityList();
-          })
-          .catch((err) => {
-            console.error(err);
-            wx.hideLoading();
-            wx.showToast({ title: (err && err.message) || "操作失败", icon: "none" });
-          });
-      }
-    });
-  },
-
-  // 管理员：从列表卡片取消活动（标记为已取消，不删除数据）
+  // 管理员：从列表卡片取消活动（终态保留在首页历史区域）
   cancelActivityFromCard(e) {
     const activity = e.currentTarget.dataset.activity;
     if (!activity || !activity._id) return;
     if (activity.status === "已取消") return;
     wx.showModal({
       title: "确认取消活动",
-      content: `确定要取消活动"${activity.name}"吗？取消后活动将进入「已取消」列表，不可再报名或签到。`,
+      content: `确定要取消活动"${activity.name}"吗？取消后将归入首页历史活动，不可再报名或签到。`,
       success: (res) => {
         if (!res.confirm) return;
         wx.showLoading({ title: "处理中..." });
         activityService
-          .updateActivity(activity._id, { status: "已取消" })
+          .cancelActivity(activity._id)
           .then(() => {
             wx.hideLoading();
             wx.showToast({ title: "已取消活动", icon: "success" });
@@ -1676,35 +1791,13 @@ Page({
     });
   },
 
-  // 管理员：删除活动（从后端彻底删除，保留用于后续如需恢复）
-  deleteActivity(e) {
-    const activity = e.currentTarget.dataset.activity;
-    wx.showModal({
-      title: "确认删除",
-      content: `确定要删除活动"${activity.name}"吗？`,
-      success: (res) => {
-        if (res.confirm) {
-          wx.showLoading({ title: "删除中..." });
-          activityService
-            .deleteActivity(activity._id)
-            .then(() => {
-              wx.hideLoading();
-              wx.showToast({ title: "删除成功", icon: "success" });
-              this.loadActivityList();
-            })
-            .catch(err => {
-              console.error(err);
-              wx.hideLoading();
-              wx.showToast({ title: (err && err.message) || "删除失败", icon: "none" });
-            });
-        }
-      }
-    });
-  },
-
   showDetail(e) {
     const activity = e.currentTarget.dataset.activity;
-    if (!activity || !activity._id) return;
+    if (!activity || !activity._id || !activity._homeMediaReady) return;
+    // Preserve the visible carousel positions, not the card tapped at the edge.
+    Object.entries(this.data.focusedCardIndex || {}).forEach(([group, index]) => {
+      this._rememberFocusedCard(group, index);
+    });
     wx.navigateTo({
       url: `/pages/activity_detail/activity_detail?id=${activity._id}`
     });
@@ -1731,21 +1824,56 @@ Page({
 
   onCardBgLoaded(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "image");
+    this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "loaded", meta);
     this._markCardMediaEvent(meta, "loaded");
+    this._markHomeImageReady(meta.url);
   },
 
   onCardBgError(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "image");
+    this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "error", meta);
+    this._homePresentationDiagnostics?.snapshot("native_media_error", {
+      url: String(meta.url || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
+    });
     this._markCardMediaEvent(meta, "error", e && e.detail);
+  },
+
+  onCardGlassLoaded(e) {
+    const dataset = e && e.currentTarget && e.currentTarget.dataset;
+    const activityId = String((dataset && dataset.activityId) || "");
+    const url = String((dataset && dataset.url) || "");
+    this._homePresentationDiagnostics?.media(url, "glass", "loaded", { activityId, group: (dataset && dataset.group) || "joined" });
+    this._markHomeImageReady(url);
+    this._markCreatedCardGlassReady(activityId);
+  },
+
+  onCardGlassError(e) {
+    const dataset = e && e.currentTarget && e.currentTarget.dataset;
+    this._homePresentationDiagnostics?.media(dataset && dataset.url, "glass", "error", { activityId: dataset && dataset.activityId, group: (dataset && dataset.group) || "joined" });
+    this._homePresentationDiagnostics?.snapshot("glass_error", {
+      url: String((dataset && dataset.url) || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
+    });
+    logError("activity_card_glass_load_failed", {
+      activityId: String((dataset && dataset.activityId) || ""),
+      url: String((dataset && dataset.url) || ""),
+      summary: summarizeError((e && e.detail) || {})
+    });
+    // Failure never releases a card: keep its own skeleton visible.
   },
 
   onCardVideoLoaded(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "video");
+    this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "loaded", meta);
     this._markCardMediaEvent(meta, "loaded");
+    this._markHomeImageReady(meta.url);
   },
 
   onCardVideoError(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "video");
+    this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "error", meta);
+    this._homePresentationDiagnostics?.snapshot("native_media_error", {
+      url: String(meta.url || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
+    });
     this._markCardMediaEvent(meta, "error", e && e.detail);
   },
 

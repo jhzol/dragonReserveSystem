@@ -1,0 +1,42 @@
+<view class="cover-preview">
+  <view class="cover-preview-nav" style="padding-top: {{previewStatusBarHeightPx}}px;">
+    <view class="cover-preview-titlebar" style="height: {{previewTitleBarHeightPx}}px;">
+      <view class="cover-preview-nav-button" bindtap="closePreview" aria-role="button" aria-label="返回封面列表">
+        <image class="cover-preview-back-icon" src="/images/activity-detail-chevron-left.svg" mode="aspectFit" />
+      </view>
+      <text class="cover-preview-count">{{previewArtworkIndex + 1}} / {{previewArtist.artworks.length}}</text>
+      <view class="cover-preview-nav-spacer"></view>
+    </view>
+  </view>
+
+  <view class="cover-preview-stage" style="top: calc({{previewNavBarHeightPx}}px + 23.08rpx);">
+    <swiper class="cover-preview-swiper" current="{{previewArtworkIndex}}" duration="260" circular="{{previewArtist.artworks.length > 1}}" cache-extent="1" bindchange="onPreviewChange">
+      <swiper-item wx:for="{{previewArtist.artworks}}" wx:key="id">
+        <view class="cover-preview-slide">
+          <image class="cover-preview-image" src="{{item.imageUrl}}" mode="aspectFit" fade-in="{{true}}" />
+        </view>
+      </swiper-item>
+    </swiper>
+    <view wx:if="{{previewArtist.artworks.length > 1}}" class="cover-preview-arrow cover-preview-arrow--left" bindtap="movePreview" data-delta="-1">
+      <image class="cover-preview-arrow-icon" src="/images/icon-cover-preview-chevron-left.svg" mode="aspectFit" />
+    </view>
+    <view wx:if="{{previewArtist.artworks.length > 1}}" class="cover-preview-arrow cover-preview-arrow--right" bindtap="movePreview" data-delta="1">
+      <image class="cover-preview-arrow-icon" src="/images/icon-cover-preview-chevron-right.svg" mode="aspectFit" />
+    </view>
+  </view>
+
+  <view class="cover-preview-info">
+    <view class="cover-preview-artist">
+      <image class="cover-preview-avatar" src="{{previewArtist.avatarUrl}}" mode="aspectFill" />
+      <view class="cover-preview-artist-copy">
+        <text class="cover-preview-artist-name">{{previewArtist.displayName}}</text>
+        <text class="cover-preview-hint">左右滑动查看同作者作品</text>
+      </view>
+    </view>
+    <view class="cover-preview-confirm" bindtap="confirmPreviewCover" aria-role="button" aria-label="设为活动封面">
+      <image class="cover-preview-confirm-icon" src="/images/icon-cover-preview-circle-check.svg" mode="aspectFit" />
+      <text>设为活动封面</text>
+    </view>
+    <view class="cover-preview-safe-area"></view>
+  </view>
+</view>

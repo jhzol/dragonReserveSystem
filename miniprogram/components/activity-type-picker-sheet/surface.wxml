@@ -1,0 +1,20 @@
+<view id="qaActivityTypePickerSurface" class="type-sheet-panel">
+  <view class="type-sheet-header">
+    <text class="type-sheet-title">选择活动类型</text>
+    <view class="type-sheet-close" bindtap="onClose" aria-role="button" aria-label="关闭">
+      <image class="type-sheet-close-icon" src="/images/icon-close.svg" mode="aspectFit" />
+    </view>
+  </view>
+  <view class="type-sheet-divider"></view>
+  <scroll-view type="list" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}" class="type-sheet-content">
+    <view wx:for="{{groups}}" wx:key="key" class="type-sheet-group">
+      <text class="type-sheet-group-title">{{item.title}}</text>
+      <view class="type-sheet-options">
+        <view wx:for="{{item.options}}" wx:key="value" wx:for-item="option" class="type-sheet-option {{option.value === selectedValue ? 'type-sheet-option--selected' : ''}}" hover-class="type-sheet-option--pressed" data-value="{{option.value}}" bindtap="onSelect" aria-role="radio" aria-checked="{{option.value === selectedValue}}">
+          <text class="type-sheet-option-label">{{option.label}}</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+  <view class="type-sheet-footer"><view class="type-sheet-confirm" hover-class="type-sheet-confirm--pressed" bindtap="onConfirm" aria-role="button">确定</view></view>
+</view>

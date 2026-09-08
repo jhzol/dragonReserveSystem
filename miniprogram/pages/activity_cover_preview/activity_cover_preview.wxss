@@ -1,0 +1,26 @@
+@import "../../components/activity-cover-picker-sheet/index.wxss";
+
+page {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #08090b;
+}
+
+/* 独立预览页直接锁定原型几何；操作控件使用 view，避免 Skyline 原生 button 的固有宽度。 */
+.cover-preview-stage {
+  bottom: 345.15rpx;
+}
+
+.cover-preview-info {
+  border: 0;
+  border-top: 0;
+  box-shadow: none;
+}
+
+.cover-preview-confirm {
+  right: 38.46rpx;
+  left: 38.46rpx;
+  width: auto;
+  box-sizing: border-box;
+}

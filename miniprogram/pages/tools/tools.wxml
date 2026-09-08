@@ -7,29 +7,33 @@
     </view>
   </view>
 
-  <view class="tools-list">
-    <view id="qa-tool-boardgames" class="tool-card" bindtap="onBoardGameTap">
-      <view class="tool-card-icon tool-card-icon--boardgame">
-        <image class="tool-icon" src="/images/icon-dice-5.svg" mode="aspectFit" />
+  <scroll-view class="tools-scroll" type="custom" scroll-y show-scrollbar="{{false}}">
+    <view class="tools-list">
+      <view id="qa-tool-boardgames" class="tool-card" bindtap="onBoardGameTap">
+        <view class="tool-card-icon tool-card-icon--boardgame">
+          <image class="tool-icon" src="/images/icon-dice-5.svg" mode="aspectFit" />
+        </view>
+        <view class="tool-card-copy">
+          <text class="tool-card-title">桌游库</text>
+          <text class="tool-card-description">浏览和查找常玩的桌游</text>
+        </view>
+        <image class="tool-card-arrow" src="/images/icon-arrow-up-right.svg" mode="aspectFit" />
       </view>
-      <view class="tool-card-copy">
-        <text class="tool-card-title">桌游库</text>
-        <text class="tool-card-description">浏览和查找常玩的桌游</text>
+
+      <view id="qa-tool-chwazi" class="tool-card" bindtap="onChwaziTap">
+        <view class="tool-card-icon tool-card-icon--chwazi">
+          <image class="tool-icon" src="/images/icon-hand.svg" mode="aspectFit" />
+        </view>
+        <view class="tool-card-copy">
+          <text class="tool-card-title">Chwazi</text>
+          <text class="tool-card-description">随机选择一位参与者开始游戏</text>
+        </view>
+        <image class="tool-card-arrow" src="/images/icon-arrow-up-right.svg" mode="aspectFit" />
       </view>
-      <image class="tool-card-arrow" src="/images/icon-arrow-up-right.svg" mode="aspectFit" />
     </view>
 
-    <view id="qa-tool-chwazi" class="tool-card" bindtap="onChwaziTap">
-      <view class="tool-card-icon tool-card-icon--chwazi">
-        <image class="tool-icon" src="/images/icon-hand.svg" mode="aspectFit" />
-      </view>
-      <view class="tool-card-copy">
-        <text class="tool-card-title">Chwazi</text>
-        <text class="tool-card-description">随机选择一位参与者开始游戏</text>
-      </view>
-      <image class="tool-card-arrow" src="/images/icon-arrow-up-right.svg" mode="aspectFit" />
-    </view>
-  </view>
-
-  <view class="tools-bottom-spacer" style="height: calc(100rpx + {{bottomSafeAreaRpx}}rpx + 24rpx);"></view>
+    <view class="tools-bottom-spacer" style="height: calc(100rpx + {{bottomSafeAreaRpx}}rpx + 24rpx);"></view>
+  </scroll-view>
 </view>
+
+<create-access-dialog id="create-access-dialog" />

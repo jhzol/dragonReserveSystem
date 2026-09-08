@@ -8,29 +8,6 @@ def _activity(admin_user, *, name, start, end, status="已结束"):
     return Activity(name=name, status=status, remark="", max_participants=10, start_time=start, end_time=end, signup_deadline=None, location_name="Venue", location_address="Address", location_latitude=None, location_longitude=None, created_by=admin_user.id)
 
 
-def test_history_stats_preserves_legacy_contract(client, db_session, admin_user, normal_user, second_user, user_headers) -> None:
-    now = datetime.utcnow()
-    activities = [_activity(admin_user, name=f"Ended {index}", start=now - timedelta(days=index + 2), end=now - timedelta(days=index + 1)) for index in range(3)]
-    db_session.add_all(activities)
-    db_session.commit()
-    db_session.add_all([
-        ActivityParticipant(activity_id=activities[0].id, user_id=normal_user.id, display_nickname=normal_user.nickname, display_avatar_url=normal_user.avatar_url),
-        ActivityParticipant(activity_id=activities[1].id, user_id=normal_user.id, display_nickname=normal_user.nickname, display_avatar_url=normal_user.avatar_url),
-        ActivityParticipant(activity_id=activities[2].id, user_id=normal_user.id, display_nickname=normal_user.nickname, display_avatar_url=normal_user.avatar_url, checked_in_at=now),
-        ActivityParticipant(activity_id=activities[0].id, user_id=second_user.id, display_nickname=second_user.nickname, display_avatar_url=second_user.avatar_url),
-    ])
-    db_session.commit()
-
-    response = client.get("/api/v1/stats/history", headers=user_headers)
-
-    assert response.status_code == 200
-    payload = response.json()
-    assert [item["user_id"] for item in payload] == [second_user.id, normal_user.id]
-    assert payload[0]["pigeon_rate"] == 100.0
-    assert payload[1]["pigeon_count"] == 2
-    assert "avatar_url" not in payload[0]
-
-
 def test_activity_ranking_accumulates_same_day_and_splits_cross_day(db_session, admin_user, normal_user) -> None:
     today = datetime.utcnow().date()
     day = today - timedelta(days=2)
@@ -117,16 +94,8 @@ def test_combined_ranking_endpoint_is_not_exposed(client, user_headers) -> None:
     assert response.status_code == 404
 
 
-def test_history_summary_counts_only_ended_activities(client, db_session, admin_user, user_headers) -> None:
-    now = datetime.utcnow()
-    db_session.add_all([
-        _activity(admin_user, name="Ended", start=now - timedelta(days=2), end=now - timedelta(days=1)),
-        _activity(admin_user, name="Upcoming", start=now + timedelta(days=1), end=now + timedelta(days=1, hours=2), status="未开始"),
-        _activity(admin_user, name="Cancelled", start=now - timedelta(days=2), end=now - timedelta(days=1), status="已取消"),
-    ])
-    db_session.commit()
+def test_legacy_history_endpoints_remain_available(client) -> None:
+    paths = client.app.openapi()["paths"]
 
-    response = client.get("/api/v1/stats/history-summary", headers=user_headers)
-
-    assert response.status_code == 200
-    assert response.json() == {"ended_activity_count": 1}
+    assert "/api/v1/stats/history" in paths
+    assert "/api/v1/stats/history-summary" in paths

@@ -1,0 +1,378 @@
+.drawer-sheet {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: #f5f5f5;
+  border-radius: 46.15rpx 46.15rpx 0 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  box-shadow: 0 -9.62rpx 34.62rpx rgba(65, 74, 138, 0.08);
+}
+
+.drawer-handle-zone {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 53.85rpx;
+  padding-top: 32rpx;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+.drawer-handle {
+  width: 72rpx;
+  height: 8rpx;
+  border-radius: 4rpx;
+  background: #d1d5db;
+}
+
+.drawer-header {
+  flex: 0 0 auto;
+  height: 76.92rpx;
+  padding: 0 30.77rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.drawer-title {
+  font-size: 38.46rpx;
+  line-height: 76.92rpx;
+  font-weight: 700;
+  color: #000000;
+}
+
+.drawer-close {
+  width: 61.54rpx;
+  height: 61.54rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-close image {
+  width: 38.46rpx;
+  height: 38.46rpx;
+}
+
+.drawer-body {
+  flex: 1 1 0;
+  height: 0;
+  min-height: 0;
+  width: 100%;
+  padding: 15.38rpx 30.77rpx 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.checkin-progress-card {
+  width: 100%;
+  height: 153.85rpx;
+  padding: 23.08rpx 30.77rpx;
+  background: #ffffff;
+  border-radius: 30.77rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 23.08rpx;
+  box-sizing: border-box;
+}
+
+.progress-title-row,
+.progress-info-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.progress-title-row {
+  height: 38.46rpx;
+  justify-content: space-between;
+}
+
+.progress-title {
+  font-size: 26.92rpx;
+  line-height: 38.46rpx;
+  font-weight: 700;
+  color: #111827;
+}
+
+.progress-count {
+  display: flex;
+  align-items: center;
+  gap: 7.69rpx;
+  color: #4b5563;
+  font-size: 26.92rpx;
+  line-height: 38.46rpx;
+  font-weight: 600;
+}
+
+.progress-count-separator {
+  color: #9ca3af;
+  font-size: 23.08rpx;
+  line-height: 30.77rpx;
+  font-weight: 500;
+}
+
+.progress-count-unlimited {
+  gap: 0;
+}
+
+.progress-info-row {
+  height: 34.62rpx;
+  gap: 23.08rpx;
+}
+
+.progress-message {
+  flex: 0 0 184.62rpx;
+  font-size: 19.23rpx;
+  line-height: 34.62rpx;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.progress-track {
+  flex: 1;
+  height: 11.54rpx;
+  border-radius: 5.77rpx;
+  overflow: hidden;
+  background: #ffe0b2;
+}
+
+.progress-complete {
+  height: 100%;
+  border-radius: 5.77rpx;
+  background: #ff9800;
+}
+
+.participants-table {
+  flex: 1 1 0;
+  height: 0;
+  min-height: 0;
+  width: 100%;
+  margin-top: 15.38rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-table-head {
+  display: flex;
+  width: 100%;
+  height: 61.54rpx;
+  align-items: center;
+  color: #9ca3af;
+  font-size: 23.08rpx;
+  line-height: 30.77rpx;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.head-member,
+.member-cell {
+  flex: 0 0 276.92rpx;
+  width: 276.92rpx;
+  box-sizing: border-box;
+}
+
+.head-member,
+.head-time,
+.head-location {
+  text-align: center;
+}
+
+.head-time,
+.time-cell {
+  /* 适配完整的“08月29日”，与表头共用同一列宽；剩余空间由位置列承接。 */
+  flex: 0 0 153.85rpx;
+  width: 153.85rpx;
+  box-sizing: border-box;
+}
+
+.head-location,
+.location-cell {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.participant-list-scroll {
+  flex: 1 1 0;
+  height: 0;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.participant-row-wrap {
+  position: relative;
+  width: 100%;
+  height: 123.08rpx;
+  overflow: hidden;
+  border-radius: 23.08rpx;
+}
+
+.participant-row-wrap--spaced {
+  margin-bottom: 7.69rpx;
+}
+
+.participant-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 7.69rpx;
+}
+
+.row-action {
+  flex: 0 0 153.85rpx;
+  width: 153.85rpx;
+  height: 123.08rpx;
+  border-radius: 23.08rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 23.08rpx;
+  line-height: 30.77rpx;
+  font-weight: 400;
+}
+
+.row-action-icon {
+  width: 34.62rpx;
+  height: 34.62rpx;
+  margin-bottom: 7.69rpx;
+}
+
+.row-action-retro {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.row-action-cancel {
+  background: #fff8ed;
+  color: #f59e0b;
+}
+
+.row-action-remove {
+  background: #fff5f5;
+  color: #ef4444;
+}
+
+.participant-row {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 123.08rpx;
+  background: #ffffff;
+  border-radius: 23.08rpx;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  transition: transform 0.18s ease-out;
+  will-change: transform;
+}
+
+.member-cell {
+  height: 123.08rpx;
+  padding-left: 23.08rpx;
+  display: flex;
+  align-items: center;
+  gap: 15.38rpx;
+  min-width: 0;
+}
+
+.member-avatar {
+  flex: 0 0 76.92rpx;
+  width: 76.92rpx;
+  height: 76.92rpx;
+  border-radius: 50%;
+  background: #e5e7eb;
+}
+
+.member-name {
+  width: 140.38rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 23.08rpx;
+  line-height: 36.23rpx;
+  font-weight: 500;
+  color: #111827;
+}
+
+.time-cell {
+  height: 123.08rpx;
+  padding: 0 15.38rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  white-space: nowrap;
+  color: #4b5563;
+  font-size: 23.08rpx;
+  line-height: 34.62rpx;
+  font-weight: 400;
+}
+
+.time-cell--empty {
+  align-items: center;
+  text-align: center;
+}
+
+.location-cell {
+  height: 123.08rpx;
+  padding: 0 23.08rpx 0 15.38rpx;
+  display: flex;
+  align-items: center;
+  color: #4b5563;
+  font-size: 23.08rpx;
+  line-height: 34.62rpx;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.location-cell--empty {
+  padding-left: 0;
+  padding-right: 0;
+  justify-content: center;
+  text-align: center;
+}
+
+.drawer-empty {
+  width: 100%;
+  height: 576.92rpx;
+  border-radius: 23.08rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15.38rpx;
+  box-sizing: border-box;
+}
+
+.drawer-empty-title {
+  font-size: 28.85rpx;
+  line-height: 38.46rpx;
+  font-weight: 700;
+  color: #111827;
+}
+
+.drawer-empty-message {
+  width: 550rpx;
+  font-size: 23.08rpx;
+  line-height: 34.62rpx;
+  font-weight: 400;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.drawer-body-bottom {
+  height: 30.77rpx;
+}

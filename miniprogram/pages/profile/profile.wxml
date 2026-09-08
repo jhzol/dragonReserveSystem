@@ -1,19 +1,19 @@
-<view class="container" style="padding-bottom: calc(131.69231rpx + {{bottomSafeAreaRpx}}rpx);">
-  <view class="profile-box">
+<view id="qa-profile-page" class="profile-page">
+  <view class="profile-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="profile-navbar-inner"><text class="profile-navbar-title">我的</text></view>
+  </view>
+
+  <scroll-view class="profile-scroll" type="custom" scroll-y show-scrollbar="{{false}}">
+    <view class="container" style="padding-bottom: calc(131.69231rpx + {{bottomSafeAreaRpx}}rpx);">
+      <view class="profile-box">
     <view class="profile-header">
       <image wx:if="{{hasUser}}" class="avatar" src="{{user.avatarUrl || '/images/default-avatar.svg'}}" mode="aspectFill" binderror="onProfileAvatarError" />
       <view wx:else class="avatar placeholder"></view>
       <view class="info">
-        <view class="nickname">
-          {{hasUser ? (user.nickname || '未命名成员') : '神秘冒险者'}}
-        </view>
+        <view class="nickname"><text>{{hasUser ? (user.nickname || '未命名成员') : '神秘冒险者'}}</text></view>
         <view class="userid">
-          <block wx:if="{{hasUser}}">
-            公会 ID：{{user.userIdShort}}
-          </block>
-          <block wx:else>
-            登录后可查看对应工会活动
-          </block>
+          <text wx:if="{{hasUser}}">公会 ID：{{user.userIdShort}}</text>
+          <text wx:else>登录后可查看对应工会活动</text>
         </view>
       </view>
       <view wx:if="{{hasUser}}" class="header-actions">
@@ -41,41 +41,88 @@
 
     <!-- 仅已登录用户展示访问权限模块 -->
     <view wx:if="{{hasUser}}" class="section">
-      <view class="section-title">访问权限</view>
+      <view class="section-title"><text>访问权限</text></view>
       <view wx:if="{{isGuest}}" class="cell">
-        <view class="cell-title">当前为游客，无法查看相关活动数据</view>
-        <button class="btn primary small" bindtap="openPermissionModal">获取权限</button>
+        <view class="cell-title"><text>当前为游客，无法查看相关活动数据</text></view>
+        <button class="btn primary small" bindtap="openPermissionModal"><text>获取权限</text></button>
       </view>
       <view wx:else class="cell">
-        <view class="cell-title">已获取访问权限</view>
-        <button class="btn default small" bindtap="removePermission">删除权限</button>
+        <view class="cell-title"><text>已获取访问权限</text></view>
+        <button class="btn default small" bindtap="removePermission"><text>删除权限</text></button>
       </view>
     </view>
 
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 添加权限：输入交互弹窗 -->
+  <view
+    wx:if="{{showPermissionModal}}"
+    id="qa-add-permission-dialog-overlay"
+    class="permission-dialog-overlay"
+    bindtap="closePermissionModal"
+    catchtouchmove="stopTouchMove"
+  >
+    <view
+      id="qa-add-permission-dialog"
+      class="permission-dialog"
+      catchtap="stopTap"
+      aria-role="dialog"
+      aria-label="添加权限"
+    >
+      <view class="permission-dialog-copy">
+        <view class="permission-dialog-title-row">
+          <image class="permission-dialog-icon" src="/images/dialog-prompt.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="permission-dialog-title">添加权限</text>
+        </view>
+        <text class="permission-dialog-message">请输入邀请码，验证通过后即可查看相关活动数据。</text>
+      </view>
+      <input
+        id="qa-add-permission-input"
+        class="permission-dialog-input"
+        password
+        maxlength="64"
+        placeholder="请输入邀请码"
+        placeholder-class="permission-dialog-input-placeholder"
+        value="{{permissionInput}}"
+        bindinput="onPermissionInput"
+        confirm-type="done"
+        bindconfirm="submitPermission"
+        cursor-spacing="24"
+      />
+      <view class="permission-dialog-actions">
+        <view class="permission-dialog-button permission-dialog-button--cancel" bindtap="closePermissionModal" aria-role="button">取消</view>
+        <view class="permission-dialog-button permission-dialog-button--primary {{permissionSubmitting ? 'permission-dialog-button--disabled' : ''}}" bindtap="submitPermission" aria-role="button">确认提交</view>
+      </view>
+    </view>
   </view>
 
-  <!-- 获取权限弹窗 -->
-  <view wx:if="{{showPermissionModal}}" class="modal-overlay" bindtap="closePermissionModal">
-    <view class="modal-content" catchtap="stopTap">
-      <view class="modal-header">
-        <text>获取权限</text>
-        <text class="close-btn" bindtap="closePermissionModal">×</text>
-      </view>
-      <view class="modal-body">
-        <view class="form-item">
-          <view class="label">请输入邀请码</view>
-          <input
-            class="input"
-            password
-            placeholder="请联系工会柜台获取邀请码🌹"
-            value="{{permissionInput}}"
-            bindinput="onPermissionInput"
-          />
+  <!-- 删除权限：红色报警弹窗 -->
+  <view
+    wx:if="{{showDeletePermissionModal}}"
+    id="qa-delete-permission-dialog-overlay"
+    class="permission-dialog-overlay"
+    bindtap="closeDeletePermissionModal"
+    catchtouchmove="stopTouchMove"
+  >
+    <view
+      id="qa-delete-permission-dialog"
+      class="permission-dialog"
+      catchtap="stopTap"
+      aria-role="dialog"
+      aria-label="确认删除权限"
+    >
+      <view class="permission-dialog-copy">
+        <view class="permission-dialog-title-row">
+          <image class="permission-dialog-icon" src="/images/dialog-danger.svg" mode="aspectFit" aria-hidden="true" />
+          <text class="permission-dialog-title">确认删除权限？</text>
         </view>
+        <text class="permission-dialog-message">删除后账号将恢复为游客，无法查看相关活动数据。</text>
       </view>
-      <view class="modal-footer">
-        <button class="btn default" bindtap="closePermissionModal">取消</button>
-        <button class="btn primary" bindtap="submitPermission">确认</button>
+      <view class="permission-dialog-actions">
+        <view class="permission-dialog-button permission-dialog-button--cancel" bindtap="closeDeletePermissionModal" aria-role="button">再想想</view>
+        <view class="permission-dialog-button permission-dialog-button--danger {{permissionRemoving ? 'permission-dialog-button--disabled' : ''}}" bindtap="confirmDeletePermission" aria-role="button">确认删除</view>
       </view>
     </view>
   </view>
@@ -89,18 +136,18 @@
       </view>
 
       <view class="modal-body">
-        <view wx:if="{{forceProfileForSignup}}" class="force-profile-hint">{{forceProfileHint}}</view>
+        <view wx:if="{{forceProfileForSignup}}" class="force-profile-hint"><text>{{forceProfileHint}}</text></view>
         <view class="form-item avatar-form-row">
-          <view class="label">头像</view>
+          <view class="label"><text>头像</text></view>
           <view class="avatar-edit-wrap">
             <button class="avatar-edit-btn" bindtap="onChooseAvatar">
               <image wx:if="{{editAvatarUrl}}" class="avatar-edit-img" src="{{editAvatarUrl}}" mode="aspectFill" />
-              <view wx:else class="avatar-edit-placeholder">上传头像</view>
+              <view wx:else class="avatar-edit-placeholder"><text>上传头像</text></view>
             </button>
           </view>
         </view>
         <view class="form-item">
-          <view class="label">昵称</view>
+          <view class="label"><text>昵称</text></view>
           <input
             type="text"
             class="input"
@@ -112,9 +159,11 @@
       </view>
 
       <view class="modal-footer">
-        <button class="btn default" bindtap="closeEditModal">取消</button>
-        <button class="btn primary {{forceProfileForSignup && !forceProfileCanSubmit ? 'btn-disabled' : ''}}" bindtap="saveProfile" disabled="{{forceProfileForSignup && !forceProfileCanSubmit}}">保存</button>
+        <button class="btn default" bindtap="closeEditModal"><text>取消</text></button>
+        <button class="btn primary {{forceProfileForSignup && !forceProfileCanSubmit ? 'btn-disabled' : ''}}" bindtap="saveProfile" disabled="{{forceProfileForSignup && !forceProfileCanSubmit}}"><text>保存</text></button>
       </view>
     </view>
   </view>
 </view>
+
+<create-access-dialog id="create-access-dialog" />

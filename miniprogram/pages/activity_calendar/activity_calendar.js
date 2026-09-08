@@ -4,6 +4,7 @@ const userService = require("../../services/user");
 const myActivitiesCache = require("../../utils/myActivitiesCache");
 const { patchTabBarIfNeeded } = require("../../utils/tabBarSync");
 const { getBottomSafeAreaRpx } = require("../../utils/safeArea");
+const { shared, timing, Easing, runOnJS, cancelAnimation } = wx.worklet;
 
 function ensureSessionParallel(appLocal) {
   return new Promise((resolve) => {
@@ -43,23 +44,20 @@ const WEEKDAY_SHORT = ["日", "一", "二", "三", "四", "五", "六"];
 const WEEKDAY_FULL = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 const HOUR_HEIGHT_RPX = 115.38;
 const MIN_EVENT_HEIGHT_RPX = 115.38;
-const TIMELINE_DEFAULT_START_HOUR = 9;
-const TIMELINE_PADDING_BELOW_STICKY_PX = 14;
-const TIMELINE_SCROLL_TOP_CALIBRATION_PX = 60;
+// Pencil 页面实例：日程网格相对视窗 y=-430；网格原始 y=62，因此 scrollTop=492px。
+const TIMELINE_DEFAULT_SCROLL_TOP_RPX = 946.15385;
 
 /**
- * 时间格采用「长 page 列表 + current 累加」架构（不重建、不重置）：
- *   - timelineSwipePages 总长 = 2*RADIUS + 1 = 31 个 page
- *   - 中心日（anchorDate）位于 pages[CENTER_OFFSET]，初始为今天
- *   - swiper display-multiple-items=3，可见 pages[current..current+2]，锚点/周条高亮 = 左列 pages[current]
- *   - 用户翻页：current ± 1，pages 不变
- *   - 周条翻 7 天：current ± 7，由 swiper 原生 700ms 动画流畅滚动
- *   - 接近边界时（current<EDGE_GUARD 或 current>length-3-EDGE_GUARD）后台扩展
- * 该架构彻底消除了「rebuildWeek 重置 current 触发额外 transition」的根因。
+ * 时间格采用「长日期列表 + 单一横向位移」架构：
+ *   - timelineSwipePages 总长 = 2*RADIUS + 1 = 31 天
+ *   - 标题条和活动网格绑定同一个 SharedValue，拖动中逐帧同步
+ *   - timelineSwiperCurrent 仅记录松手后左列日期，不再驱动第二套原生位移
+ *   - 用户每次手势最多翻一天；周条翻周时程序化移动七天
+ *   - 接近边界时在两端补日期，并同步修正唯一位移
  */
 const TIMELINE_RADIUS = 15;
 const CENTER_OFFSET = TIMELINE_RADIUS;          // 中心日在数组中的下标
-/** swiper 初始 current：左列为锚点日（pages[CENTER_OFFSET]），可见 [15,16,17] */
+/** 初始左列为锚点日（pages[CENTER_OFFSET]），可见 [15,16,17] */
 const INITIAL_CURRENT = TIMELINE_RADIUS;
 const EDGE_GUARD = 3;                           // current 距两端 ≤ 此值时触发扩展
 const EDGE_EXTEND = 14;                         // 每次扩展 14 天
@@ -67,11 +65,11 @@ const EDGE_EXTEND = 14;                         // 每次扩展 14 天
 const TIMELINE_BURST_TOTAL_MS = 700;
 
 const EVENT_COLORS = [
-  { bg: "#fff3e0", border: "#ff9800", text: "#ff9800" },
-  { bg: "#f1f8e9", border: "#7cb342", text: "#558b2f" },
-  { bg: "#e3f2fd", border: "#2196f3", text: "#1565c0" },
-  { bg: "#fff7ed", border: "#f97316", text: "#c2410c" },
-  { bg: "#f5f3ff", border: "#8b5cf6", text: "#6d28d9" }
+  { bg: "#fff3e0", border: "#ff9800", text: "#ff9800", iconTone: "orange" },
+  { bg: "#f1f8e9", border: "#7cb342", text: "#558b2f", iconTone: "green" },
+  { bg: "#e3f2fd", border: "#2196f3", text: "#1565c0", iconTone: "blue" },
+  { bg: "#fff7ed", border: "#f97316", text: "#c2410c", iconTone: "deep-orange" },
+  { bg: "#f5f3ff", border: "#8b5cf6", text: "#6d28d9", iconTone: "purple" }
 ];
 
 function pad(n) {
@@ -121,17 +119,17 @@ function anchorDateFromVisibleTimelinePage(self) {
   return d && !Number.isNaN(d.getTime()) ? d : null;
 }
 
-/** 预览高亮仅允许落在当前 weekStripPages 里有的日期，避免高亮到「下一周」而周条 UI 仍显示上一周导致红圈错位/整行异常 */
-function weekStripPagesContainDateKey(weekStripPages, dateKey) {
-  if (!dateKey || !Array.isArray(weekStripPages)) return false;
+/** 返回日期所在的周条页；预览跨周时用它把对应周页同步移入视口。 */
+function weekStripPageIndexForDateKey(weekStripPages, dateKey) {
+  if (!dateKey || !Array.isArray(weekStripPages)) return -1;
   for (let p = 0; p < weekStripPages.length; p++) {
     const days = weekStripPages[p] && weekStripPages[p].days;
     if (!Array.isArray(days)) continue;
     for (let i = 0; i < days.length; i++) {
-      if (days[i] && days[i].key === dateKey) return true;
+      if (days[i] && days[i].key === dateKey) return p;
     }
   }
-  return false;
+  return -1;
 }
 
 function timeText(date) {
@@ -215,10 +213,6 @@ function buildTimelineLongList(anchorDate, byDate, todayKey, radius) {
   );
 }
 
-function headerBaseOffsetForCurrent(current, cellWidthPx) {
-  return -current * cellWidthPx;
-}
-
 function adaptActivity(item, index) {
   const start = parseDate(item.start_time);
   const end = parseDate(item.end_time);
@@ -227,6 +221,7 @@ function adaptActivity(item, index) {
   const color = EVENT_COLORS[index % EVENT_COLORS.length];
   const status = item.status || "";
   const isCancelled = status === "已取消";
+  const iconTone = isCancelled ? "gray" : color.iconTone;
   const topRpx = Number(((startMinutes / 60) * HOUR_HEIGHT_RPX).toFixed(2));
   const heightRpx = Math.max(
     MIN_EVENT_HEIGHT_RPX,
@@ -243,6 +238,8 @@ function adaptActivity(item, index) {
     end,
     dateKey: start ? dateKey(start) : "",
     timeRange: `${timeText(start)} - ${timeText(end)}`,
+    locationIcon: `/images/calendar-event-location-${iconTone}.svg`,
+    timeIcon: `/images/calendar-event-time-${iconTone}.svg`,
     style: [
       `top:${topRpx}rpx`,
       `height:${heightRpx}rpx`,
@@ -263,30 +260,21 @@ Page({
     empty: false,
     todayDateKey: "",
     selectedDateKey: "",
-    /** 周条高亮（拖动中由 WXS 预览更新，松手后与 selectedDateKey 对齐） */
+    /** 周条高亮（拖动中由 Worklet 预览更新，松手后与 selectedDateKey 对齐） */
     weekStripHighlightKey: "",
     weekNumber: "",
     weekStripPages: [],
     weekStripSwiperIndex: 1,
     weekStripSwiperDuration: 300,
-    weekStripSlideAnim: {},
-    /** 长 page 列表：永不重建（只在加载/点击日期/边界扩展时重建） */
+    /** 长日期列表：只在加载、范围外日期跳转或边界扩展时重建 */
     timelineSwipePages: [],
-    /** swiper current（累加，不重置）。可见 pages[current..current+2]，高亮/业务锚点 = 左列 pages[current] */
+    /** 松手后的左列日期下标；可见 pages[current..current+2] */
     timelineSwiperCurrent: INITIAL_CURRENT,
-    timelineSwiperDuration: 0,
     timelineScrollTop: 0,
-    /** 吸顶标题外层 base 位移：只由 JS 修改 */
     headerCellWidthPx: 0,
-    headerStripBaseOffsetPx: 0,
-    /** 吸顶标题内层 motion 重置 tick：用于清掉 WXS 残留 transform */
-    headerStripMotionResetTick: 0,
-    /** 边界扩展瞬间冻结 WXS（避免 setData 触发的中间帧错位） */
+    timelinePageWidthPx: 0,
+    /** 边界扩展瞬间冻结拖动预览（避免 setData 触发的中间帧错位） */
     timelineFrozen: false,
-    /** 周条触发的 7 格连扫期间为 true：WXS 仍平移吸顶条，但不 callMethod 周条高亮预览 */
-    timelineSuppressDragPreview: false,
-    /** rebuildAll 自增，wx:for 宿主重挂载 swiper，强制 native 从 page 0 初始化到 current=15，避免内部状态停留在 0 */
-    timelineSwiperRemountTick: 0,
     hours: [],
     gridHeight: HOUR_HEIGHT_RPX * 24,
     activities: [],
@@ -305,10 +293,20 @@ Page({
     const today = startOfDay(new Date());
     const winW = info.windowWidth || 390;
     const statusBarPx = info.statusBarHeight || 20;
-    const timeAxisWidthPx = (100 / 750) * winW;
+    const timeAxisWidthPx = (96.15385 / 750) * winW;
     const headerCellWidthPx = (winW - timeAxisWidthPx) / 3;
 
     this._hourHeightPx = (HOUR_HEIGHT_RPX / 750) * winW;
+    this._windowWidthPx = winW;
+    this._timelineTranslateX = shared(-INITIAL_CURRENT * headerCellWidthPx);
+    this._headerTranslateX = this._timelineTranslateX;
+    this._weekStripTranslateX = shared(0);
+    this._timelineGestureBaseCurrent = shared(INITIAL_CURRENT);
+    this._timelineGestureDeltaX = shared(0);
+    this._timelinePreviewIndex = shared(INITIAL_CURRENT);
+    this._timelinePageCount = shared(2 * TIMELINE_RADIUS + 1);
+    this._headerCellWidthPx = shared(headerCellWidthPx);
+    this._timelineFrozen = shared(0);
 
     this.setData({
       statusBarHeight: statusBarPx,
@@ -319,10 +317,34 @@ Page({
       weekStripHighlightKey: dateKey(today),
       hours: Array.from({ length: 24 }, (_, i) => `${pad(i)}:00`),
       headerCellWidthPx,
-      headerStripBaseOffsetPx: headerBaseOffsetForCurrent(INITIAL_CURRENT, headerCellWidthPx),
+      timelinePageWidthPx: headerCellWidthPx,
       timelineSwiperCurrent: INITIAL_CURRENT,
     });
     this.rebuildAll([], today);
+  },
+
+  onReady() {
+    this._calendarReady = true;
+    this._installCalendarWorkletStyles();
+  },
+
+  _installCalendarWorkletStyles() {
+    if (!this._calendarReady || this._calendarWorkletStylesBound) return;
+    const weekStripTranslateX = this._weekStripTranslateX;
+    const timelineTranslateX = this._timelineTranslateX;
+    this.applyAnimatedStyle('#qa-week-strip-slide', () => {
+      'worklet'
+      return { transform: `translateX(${weekStripTranslateX.value}px)` };
+    });
+    this.applyAnimatedStyle('#qa-calendar-day-title-strip', () => {
+      'worklet'
+      return { transform: `translateX(${timelineTranslateX.value}px)` };
+    });
+    this.applyAnimatedStyle('#qa-calendar-day-grid-strip', () => {
+      'worklet'
+      return { transform: `translateX(${timelineTranslateX.value}px)` };
+    });
+    this._calendarWorkletStylesBound = true;
   },
 
   onShow() {
@@ -333,27 +355,10 @@ Page({
     this.loadCalendar();
   },
 
-  _headerBaseOffsetForCurrent(current) {
-    return headerBaseOffsetForCurrent(current, this.data.headerCellWidthPx);
-  },
-
-  _nextHeaderMotionResetTick() {
-    if (typeof this._headerStripMotionResetTick !== "number") {
-      this._headerStripMotionResetTick = this.data.headerStripMotionResetTick || 0;
-    }
-    this._headerStripMotionResetTick += 1;
-    return this._headerStripMotionResetTick;
-  },
-
-  _buildHeaderSettlePatch(current) {
-    return {
-      headerStripBaseOffsetPx: this._headerBaseOffsetForCurrent(current),
-      headerStripMotionResetTick: this._nextHeaderMotionResetTick(),
-    };
-  },
-
   _clearTimelineTouchGestureState() {
-    this._timelineTouchPreviewBaseCurrent = null;
+    if (this._timelinePreviewIndex && this._timelineGestureBaseCurrent) {
+      this._timelinePreviewIndex.value = this._timelineGestureBaseCurrent.value;
+    }
   },
 
   syncGuestState() {
@@ -368,11 +373,7 @@ Page({
   _applyDefaultTimelineScroll() {
     const target = Math.max(
       0,
-      Math.round(
-        TIMELINE_DEFAULT_START_HOUR * (this._hourHeightPx || 60) -
-          TIMELINE_PADDING_BELOW_STICKY_PX -
-          TIMELINE_SCROLL_TOP_CALIBRATION_PX
-      )
+      Math.round((TIMELINE_DEFAULT_SCROLL_TOP_RPX / 750) * (this._windowWidthPx || 390))
     );
     if (typeof this._timelineScrollSeq !== "number") this._timelineScrollSeq = 0;
     this._timelineScrollSeq += 1;
@@ -413,6 +414,21 @@ Page({
     if (typeof d.scrollTop === "number") this._timelineScrollTopPreserve = d.scrollTop;
   },
 
+  onTimelineVerticalScrollEnd(e) {
+    'worklet'
+    const scrollTop = e && e.detail && e.detail.scrollTop;
+    if (typeof scrollTop !== 'number') return;
+    const commitScrollTop = this.commitTimelineScrollTop.bind(this);
+    runOnJS(commitScrollTop)(scrollTop);
+  },
+
+  commitTimelineScrollTop(scrollTop) {
+    const top = Math.max(0, Math.round(Number(scrollTop) || 0));
+    this._timelineScrollTopPreserve = top;
+    if (Math.abs((this.data.timelineScrollTop || 0) - top) < 1) return;
+    this.setData({ timelineScrollTop: top });
+  },
+
   /** 避免 setData 后 Date 序列化失真，周切换始终以这份列表分组 */
   activitiesForRebuild() {
     if (Array.isArray(this._calendarActivitiesCanon)) return this._calendarActivitiesCanon;
@@ -437,12 +453,9 @@ Page({
 
     this._anchorDateKey = dateKey(anchor);
     this._byDateMap = byDate;
-    // 首次手势前 swiper 易吐出异常 dx；待用户 touch 成功翻过一页后再放宽预览（见 onTimelineDragPreview）
-    this._timelineDragPreviewLoose = false;
     this._clearTimelineTouchGestureState();
 
-    const nextRemount = (this.data.timelineSwiperRemountTick || 0) + 1;
-    const headerPatch = this._buildHeaderSettlePatch(INITIAL_CURRENT);
+    this._timelineFrozen.value = 1;
     this.setData({
       selectedDateKey: this._anchorDateKey,
       weekStripHighlightKey: this._anchorDateKey,
@@ -451,13 +464,16 @@ Page({
       weekStripSwiperIndex: 1,
       timelineSwipePages,
       timelineSwiperCurrent: INITIAL_CURRENT,
-      timelineSwiperDuration: 0,
       timelineFrozen: true,
-      timelineSwiperRemountTick: nextRemount,
-      headerStripBaseOffsetPx: headerPatch.headerStripBaseOffsetPx,
-      headerStripMotionResetTick: headerPatch.headerStripMotionResetTick,
-      weekStripSlideAnim: {},
     }, () => {
+      this._installCalendarWorkletStyles();
+      const baseOffset = -INITIAL_CURRENT * this.data.headerCellWidthPx;
+      this._timelineTranslateX.value = baseOffset;
+      this._weekStripTranslateX.value = 0;
+      this._timelineGestureBaseCurrent.value = INITIAL_CURRENT;
+      this._timelineGestureDeltaX.value = 0;
+      this._timelinePreviewIndex.value = INITIAL_CURRENT;
+      this._timelinePageCount.value = timelineSwipePages.length;
       if (!this._timelineInitialScrollDone) {
         this._applyDefaultTimelineScroll();
       } else {
@@ -466,11 +482,11 @@ Page({
           : this.data.timelineScrollTop;
         this._restoreTimelineScroll(top);
       }
-      // 给 swiper 两帧时间就位后再解冻，避免 bindtransition 在首帧读到过期位移。
-      // 同时恢复 timelineSwiperDuration 为非零值，防止后续周条/点击动画因旧值=0 而瞬间完成。
+      // 等视图消费完新列表再解冻，避免边界扩展或数据刷新时读到旧宽度。
       wx.nextTick(() => {
         wx.nextTick(() => {
-          this.setData({ timelineFrozen: false, timelineSwiperDuration: 300 });
+          this._timelineFrozen.value = 0;
+          this.setData({ timelineFrozen: false });
         });
       });
     });
@@ -569,7 +585,8 @@ Page({
     const src = d.source;
     const idxNum = Number(d.current);
     if (this._weekStripSwipeBusy) return;
-    if (src === "autoplay") return;
+    // 时间轴拖动会程序化切换周条可见页；只有用户直接拖周条才提交 ±7 天。
+    if (src !== "touch") return;
     const slideIndex = Number.isFinite(idxNum) ? idxNum : NaN;
     if (slideIndex !== 0 && slideIndex !== 2) return;
 
@@ -581,13 +598,11 @@ Page({
   },
 
   /**
-   * 周条翻周完成：直接 setData(timelineSwiperCurrent ± 7)，由 swiper 用 700ms
-   * 动画原生流畅滚动 7 page。无需 burst pages、无需重建数据。
+   * 周条翻周完成：沿唯一的时间轴位移移动七天，不重建日期数据。
    * 必要时先在前/后扩展 14 天保证 current ± 7 不越界。
    */
   onWeekStripSwiperAnimationFinish(e) {
     const d = (e && e.detail) || {};
-    const role = (e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.role) || "unknown";
     const idxNum = Number(d.current);
     const currentIndex = Number.isFinite(idxNum) ? idxNum : NaN;
     const pending = this._weekStripPendingSlideIndex;
@@ -596,7 +611,7 @@ Page({
 
     if (this._weekStripCommitConsumed) return;
     const gestureRole = this._weekStripGestureRole || "";
-    if (gestureRole !== "week-strip" || role !== "week-strip") return;
+    if (gestureRole !== "week-strip") return;
 
     if (slideIndex !== 0 && slideIndex !== 2) {
       this._weekStripPendingSlideIndex = null;
@@ -627,91 +642,23 @@ Page({
         this._weekStripSwipeBusy = false;
         return;
       }
-      const newSelectedDate = parseDate(newCenterPage.key);
-
-      const newWeekStripPages = buildWeekStripSwipePages(
-        newSelectedDate, dateKey(startOfDay(new Date())), this._byDateMap
-      );
-
-      // 注意：此处不更新 headerStripBaseOffsetPx。
-      // 保持当前（起点）值，让 WXS 以起点为 baseOffset 自然跟随 7 天动画。
-      // 动画完成后由 onTimelineSwiperAnimFinish 更新为终点值。
-      //
-      // 微信 swiper 在同一 setData 中同时修改 duration 和 current 时，
-      // 会使用「旧 duration」执行本次动画。若旧值为 0（rebuildAll 遗留），
-      // 则动画瞬间完成（无动画效果）。
-      // 修复：先 setData 更新 duration 和周条数据，在 callback 里再改 current，
-      // 确保 swiper 看到的旧 duration 已经是目标值（700ms）。
       this.setData({
-        weekStripPages: newWeekStripPages,
         weekStripSwiperIndex: 1,
         weekStripSwiperDuration: 0,
-        timelineSwiperDuration: TIMELINE_BURST_TOTAL_MS,
-        timelineSuppressDragPreview: true,
-        headerStripMotionResetTick: this._nextHeaderMotionResetTick(),
-        selectedDateKey: newCenterPage.key,
-        weekStripHighlightKey: newCenterPage.key,
-        weekNumber: `第${getWeekNumber(newSelectedDate)}周`,
       }, () => {
-        // 此时 timelineSwiperDuration 已更新为 700ms；
-        // 再改 current，swiper 将以「旧值=700ms」执行动画。
-        this.setData({ timelineSwiperCurrent: adjustedTarget }, () => {
-          wx.nextTick(() => {
-            this.setData({ weekStripSwiperDuration: 300 });
-          });
-          this._weekStripSwipeBusy = false;
+        this._animateTimelineToCurrent(adjustedTarget, TIMELINE_BURST_TOTAL_MS);
+        wx.nextTick(() => {
+          this.setData({ weekStripSwiperDuration: 300 });
         });
+        this._weekStripSwipeBusy = false;
       });
     });
   },
 
   /**
-   * 时间格 swiper 翻页：用户拖动一格触发。current 累加，pages 不变。
-   * 注意：这里不要提前推进 header base 位移。
-   * 拖动/吸附阶段应继续使用「旧 base + WXS motion」；
-   * 等 animationfinish 再把 base 一次性锁到新列，避免旧 motion 残留时产生超冲一格。
-   * 同时避免把 selectedDateKey / weekStripPages / weekNumber 这类提交态放在 change 阶段，
-   * 否则连续 change 会让业务状态在一次拖动里被多次推进，看起来像“直接跳到目标态”。
-   */
-  onTimelineSwiperChange(e) {
-    const d = e.detail || {};
-    const src = d.source;
-    const newCurrent = Number(d.current);
-    const oldCurrent = this.data.timelineSwiperCurrent;
-
-
-    if (!Number.isFinite(newCurrent)) return;
-    if (src === "autoplay") return;
-    if (newCurrent === oldCurrent) return;
-    if (src === "touch") {
-      this._timelineDragPreviewLoose = true;
-    }
-
-    const pages = this.data.timelineSwipePages;
-    const newCenterPage = pages[newCurrent];
-    if (!newCenterPage) return;
-
-    const patch = {
-      timelineSwiperCurrent: newCurrent,
-    };
-    if (src !== "touch") {
-      patch.timelineSuppressDragPreview = true;
-      patch.weekStripHighlightKey = newCenterPage.key;
-    } else if (!Number.isFinite(this._timelineTouchPreviewBaseCurrent)) {
-      this._timelineTouchPreviewBaseCurrent = oldCurrent;
-    }
-    this.setData(patch);
-
-    // 非 touch 路径可立即扩展；touch 路径延后到 animationfinish，避免一次拖动里因扩展重排而错位。
-    if (src !== "touch" && (newCurrent <= EDGE_GUARD || newCurrent >= pages.length - 3 - EDGE_GUARD)) {
-      this._ensurePagesCoverCurrent(newCurrent, () => {});
-    }
-  },
-
-  /**
    * 边界扩展：若 targetCurrent 不在 [0, pages.length-3] 之内，或距两端 ≤ EDGE_GUARD，
    * 在前/后补 EDGE_EXTEND 天。前补会改变所有 cell 的 idx，需同步调整 current。
-   * 扩展期间打开 timelineFrozen 让 WXS 跳过本帧 transition，避免 setData 中间帧错位。
+   * 扩展后同时调整 current 与共享 transform，可见日期保持不变。
    */
   _ensurePagesCoverCurrent(targetCurrent, done) {
     const pages = this.data.timelineSwipePages;
@@ -745,18 +692,19 @@ Page({
     }
 
     const newCurrent = this.data.timelineSwiperCurrent + prependCount;
-    const headerPatch = this._buildHeaderSettlePatch(newCurrent);
-
-
+    this._timelineFrozen.value = 1;
     this.setData({
       timelineFrozen: true,
       timelineSwipePages: newPages,
       timelineSwiperCurrent: newCurrent,
-      timelineSwiperDuration: 0,
-      headerStripBaseOffsetPx: headerPatch.headerStripBaseOffsetPx,
-      headerStripMotionResetTick: headerPatch.headerStripMotionResetTick,
     }, () => {
+      this._timelineTranslateX.value = -newCurrent * this.data.headerCellWidthPx;
+      this._timelineGestureBaseCurrent.value = newCurrent;
+      this._timelineGestureDeltaX.value = 0;
+      this._timelinePreviewIndex.value = newCurrent;
+      this._timelinePageCount.value = newPages.length;
       wx.nextTick(() => {
+        this._timelineFrozen.value = 0;
         this.setData({ timelineFrozen: false });
         done && done();
       });
@@ -771,25 +719,8 @@ Page({
     this._clearTimelineTouchGestureState();
     const pages = this.data.timelineSwipePages || [];
     const idx = pages.findIndex((p) => p && p.key === todayKey);
-    const selBefore = this.data.selectedDateKey;
-    const anchorBefore = pages[this.data.timelineSwiperCurrent] && pages[this.data.timelineSwiperCurrent].key;
-    const dSel = parseDate(selBefore);
-    const dToday = parseDate(todayKey);
-    const crossWeekIfAnimFinishUsedSelBefore =
-      dSel && dToday && getMonday(dToday).getTime() !== getMonday(dSel).getTime();
     if (idx >= 0 && idx <= pages.length - 3) {
-      // 勿在动画前写入 selectedDateKey=今天：否则 onTimelineSwiperAnimFinish 里
-      // oldSelectedDate 已是今天，crossWeek 恒为 false，周条不会 rebuild 回本周。
-      this.setData(
-        {
-          timelineSwiperDuration: 300,
-          timelineSuppressDragPreview: true,
-          headerStripMotionResetTick: this._nextHeaderMotionResetTick(),
-        },
-        () => {
-          this.setData({ timelineSwiperCurrent: idx });
-        }
-      );
+      this._animateTimelineToCurrent(idx, 300);
       return;
     }
     this.rebuildAll(this.activitiesForRebuild(), parseDate(todayKey) || new Date());
@@ -809,20 +740,7 @@ Page({
       const targetCurrent = idx;
       // 越界（display=3 要求 current ∈ [0, len-3]）则按 rebuild 处理
       if (targetCurrent >= 0 && targetCurrent <= pages.length - 3) {
-        const newCenterPage = pages[targetCurrent];
-        const newCenterDate = parseDate(newCenterPage.key);
-        // 同周条切换一样的拆分策略：先 setData 更新 duration，再在 callback 改 current，
-        // 确保 swiper 以正确的 300ms duration 执行动画（而非读到 rebuildAll 遗留的旧值 0）。
-        this.setData({
-          timelineSwiperDuration: 300,
-          timelineSuppressDragPreview: true,
-          headerStripMotionResetTick: this._nextHeaderMotionResetTick(),
-          selectedDateKey: newCenterPage.key,
-          weekStripHighlightKey: newCenterPage.key,
-          weekNumber: `第${getWeekNumber(newCenterDate)}周`,
-        }, () => {
-          this.setData({ timelineSwiperCurrent: targetCurrent });
-        });
+        this._animateTimelineToCurrent(targetCurrent, 300);
         return;
       }
     }
@@ -831,98 +749,144 @@ Page({
   },
 
   /**
-   * WXS 在 bindtransition 中 callMethod：根据 dx 与列宽比例预览左列对应日期，驱动周条高亮。
-   * （仅用 C±1 三态会在 current 未变时最多预览相邻一天，长拖时高亮卡住。）
+   * Skyline 单坐标源时间轴：日期栏与活动列共用 timelineTranslateX。
+   * deltaX 是相对上一帧的增量，每帧只写一个 SharedValue，不经过 setData。
    */
-  onTimelineDragPreview(args) {
-    const raw = args || {};
-    const dx = Number(raw.dx);
-    if (Number.isNaN(dx)) return;
-    const pages = this.data.timelineSwipePages;
-    if (!pages || pages.length === 0) return;
-    const cellW = this.data.headerCellWidthPx || 112;
-    if (!(cellW > 0)) return;
-    // rebuild 后首次 touch 翻页前：原生 swiper 仍可能吐出极大 dx；首滑通过后再放宽（用户反馈仅第一次会跳两周）
-    const maxReasonableDx = (this._timelineDragPreviewLoose ? 6 : 2) * cellW;
-    if (Math.abs(dx) > maxReasonableDx) return;
-    // 触摸手势中必须冻结预览基准 current。
-    // 否则同一次拖动里 bindchange 连续推进 current，预览会在“旧 dx + 新 current”下超冲多天再回弹。
-    const Cwxs = Number(raw.swiperCurrent);
-    if (!Number.isFinite(this._timelineTouchPreviewBaseCurrent)) {
-      const gestureBaseCurrent = this.data.timelineSwiperCurrent;
-      if (Number.isFinite(gestureBaseCurrent) && gestureBaseCurrent >= 0 && gestureBaseCurrent < pages.length) {
-        this._timelineTouchPreviewBaseCurrent = gestureBaseCurrent;
+  onTimelineGesture(e) {
+    'worklet'
+    if (this._timelineFrozen.value === 1) return;
+    const state = e.state;
+    const cellWidth = this._headerCellWidthPx.value;
+    if (!(cellWidth > 0)) return;
+
+    if (state === 1) {
+      cancelAnimation(this._timelineTranslateX);
+      this._timelineGestureDeltaX.value = 0;
+      this._timelinePreviewIndex.value = this._timelineGestureBaseCurrent.value;
+      return;
+    }
+
+    if (state === 2) {
+      const deltaX = typeof e.deltaX === 'number' ? e.deltaX : 0;
+      this._timelineGestureDeltaX.value += deltaX;
+      const minTranslate = -Math.max(0, this._timelinePageCount.value - 3) * cellWidth;
+      let nextX = this._timelineTranslateX.value + deltaX;
+      nextX = Math.max(minTranslate, Math.min(0, nextX));
+      this._timelineTranslateX.value = nextX;
+
+      const previewIndex = Math.max(
+        0,
+        Math.min(this._timelinePageCount.value - 3, Math.round(-nextX / cellWidth))
+      );
+      if (previewIndex !== this._timelinePreviewIndex.value) {
+        this._timelinePreviewIndex.value = previewIndex;
+        const preview = this.previewTimelineDate.bind(this);
+        runOnJS(preview)(previewIndex);
       }
+      return;
     }
-    let C = Number.isFinite(this._timelineTouchPreviewBaseCurrent)
-      ? this._timelineTouchPreviewBaseCurrent
-      : this.data.timelineSwiperCurrent;
-    if (!Number.isFinite(C) || C < 0 || C >= pages.length) return;
-    // 非触摸手势或未建立手势基准时，仍保留旧的坐标系保护。
-    if (!Number.isFinite(this._timelineTouchPreviewBaseCurrent)) {
-      // bindchange 已把 JS current 更新后，仍可能收到「上一轮位移」的 dx，而 WXS dataset 的 swiperCurrent 晚一帧；
-      // 此时 dx 与 C 不属于同一坐标系，会算出错误 idx（如 L22：C=14 而 Cwxs=15、dx=-113 → idx=13 即 5/1）
-      if (Number.isFinite(Cwxs) && Cwxs !== C) return;
+
+    if (state !== 3 && state !== 4) return;
+    const baseCurrent = this._timelineGestureBaseCurrent.value;
+    const dragX = this._timelineGestureDeltaX.value;
+    const velocityX = typeof e.velocityX === 'number' ? e.velocityX : 0;
+    let direction = 0;
+    if (state === 3) {
+      if (dragX <= -cellWidth * 0.25 || velocityX <= -350) direction = 1;
+      if (dragX >= cellWidth * 0.25 || velocityX >= 350) direction = -1;
     }
-    // 与原先三态预览一致：dx 为正时 idx 向 C+1 走（与 event.detail.dx 在微信 swiper 中的符号约定一致）
-    const delta = Math.round(dx / cellW);
-    let idx = C + delta;
-    idx = Math.max(0, Math.min(pages.length - 1, idx));
-    const row = pages[idx];
-    const key = row && row.key;
+    const maxCurrent = Math.max(0, this._timelinePageCount.value - 3);
+    const targetCurrent = Math.max(0, Math.min(maxCurrent, baseCurrent + direction));
+    this._timelineGestureBaseCurrent.value = targetCurrent;
+    this._timelineGestureDeltaX.value = 0;
+    this._timelinePreviewIndex.value = targetCurrent;
+    this._timelineTranslateX.value = timing(-targetCurrent * cellWidth, {
+      duration: 240,
+      easing: Easing.ease,
+    });
+    const commit = this.commitTimelineCurrent.bind(this);
+    runOnJS(commit)(targetCurrent);
+  },
+
+  previewTimelineDate(previewIndex) {
+    const idx = Number(previewIndex);
+    const page = this.data.timelineSwipePages[idx];
+    const key = page && page.key;
     if (!key || key === this.data.weekStripHighlightKey) return;
-    if (!weekStripPagesContainDateKey(this.data.weekStripPages, key)) return;
+    if (weekStripPageIndexForDateKey(this.data.weekStripPages, key) < 0) return;
     this.setData({ weekStripHighlightKey: key });
   },
 
-  /** 时间格动画结束：统一提交当前日期/周条/周号，并锁定 header settle 状态。 */
-  onTimelineSwiperAnimFinish(e) {
-    const d = (e && e.detail) || {};
+  _animateTimelineToCurrent(current, duration) {
     const pages = this.data.timelineSwipePages;
-    const detailCurrent = Number(d.current);
-    const cur = Number.isFinite(detailCurrent) ? detailCurrent : this.data.timelineSwiperCurrent;
-    this._clearTimelineTouchGestureState();
+    const maxCurrent = Math.max(0, pages.length - 3);
+    const cur = Math.max(0, Math.min(maxCurrent, Number(current)));
+    if (!Number.isInteger(cur) || !pages[cur]) return;
+    cancelAnimation(this._timelineTranslateX);
+    this._timelineGestureBaseCurrent.value = cur;
+    this._timelineGestureDeltaX.value = 0;
+    this._timelinePreviewIndex.value = cur;
+    this._timelineTranslateX.value = timing(-cur * this.data.headerCellWidthPx, {
+      duration: Math.max(0, Number(duration) || 0),
+      easing: Easing.ease,
+    });
+    this.commitTimelineCurrent(cur);
+  },
+
+  /** 手势和程序化跳转的唯一提交点。 */
+  commitTimelineCurrent(current) {
+    const pages = this.data.timelineSwipePages;
+    const cur = Number(current);
+    if (!Number.isInteger(cur) || !pages[cur]) return;
     const anchorKey = pages[cur] && pages[cur].key;
     const kSel = this.data.selectedDateKey;
     const k = anchorKey || kSel;
-    const before = this.data.weekStripHighlightKey;
     const didSync = this.data.weekStripHighlightKey !== k;
-    const suppressWas = this.data.timelineSuppressDragPreview;
+    const previewedOtherWeek = this.data.weekStripSwiperIndex !== 1;
+    const weekStripPreviewNeedsRestore =
+      previewedOtherWeek || this.data.weekStripSwiperDuration === 0;
     const anchorDate = parseDate(k);
     const oldSelectedDate = parseDate(this.data.selectedDateKey) || anchorDate;
     const crossWeek = anchorDate
       && oldSelectedDate
       && getMonday(anchorDate).getTime() !== getMonday(oldSelectedDate).getTime();
-    const patch = this._buildHeaderSettlePatch(cur);
+    const patch = {};
     patch.timelineSwiperCurrent = cur;
     if (anchorDate) {
       patch.selectedDateKey = k;
       patch.weekNumber = `第${getWeekNumber(anchorDate)}周`;
     }
     if (didSync) patch.weekStripHighlightKey = k;
-    if (suppressWas) patch.timelineSuppressDragPreview = false;
+    if (previewedOtherWeek) {
+      patch.weekStripSwiperIndex = 1;
+      patch.weekStripSwiperDuration = 0;
+    }
     if (crossWeek && anchorDate) {
       const oldMon = getMonday(oldSelectedDate);
       const newMon = getMonday(anchorDate);
       const forward = newMon.getTime() > oldMon.getTime();
-      const initAnim = wx.createAnimation({ duration: 0 });
-      initAnim.translateX(forward ? 600 : -600).step();
+      this._weekStripTranslateX.value = forward ? 600 : -600;
       patch.weekStripPages = buildWeekStripSwipePages(
         anchorDate, dateKey(startOfDay(new Date())), this._byDateMap || new Map()
       );
       patch.weekStripSwiperIndex = 1;
       patch.weekStripSwiperDuration = 0;
-      patch.weekStripSlideAnim = initAnim.export();
     }
     this.setData(patch, () => {
+      this._timelineGestureBaseCurrent.value = cur;
+      this._timelineGestureDeltaX.value = 0;
+      this._timelinePreviewIndex.value = cur;
       if (crossWeek && anchorDate) {
         wx.nextTick(() => {
-          const slideAnim = wx.createAnimation({ duration: 220, timingFunction: "ease" });
-          slideAnim.translateX(0).step();
-          this.setData({
-            weekStripSlideAnim: slideAnim.export(),
-            weekStripSwiperDuration: 300,
+          this._weekStripTranslateX.value = timing(0, {
+            duration: 220,
+            easing: Easing.ease,
           });
+          this.setData({ weekStripSwiperDuration: 300 });
+        });
+      } else if (weekStripPreviewNeedsRestore) {
+        wx.nextTick(() => {
+          this.setData({ weekStripSwiperDuration: 300 });
         });
       }
       if (cur <= EDGE_GUARD || cur >= pages.length - 3 - EDGE_GUARD) {

@@ -1,3 +1,5 @@
+@import "../../styles/dragonChrome.wxss";
+
 /* ============================================================
    微信原生 Light UI — Activity List
    色彩体系（与微信官方设计规范对齐）：
@@ -52,7 +54,7 @@ button.create-btn-fixed {
   display: flex;
   padding: 16rpx 24rpx;
   background-color: #FFFFFF;
-  overflow-x: auto;
+  overflow: hidden;
   white-space: nowrap;
   border-bottom: 1rpx solid #EEEEEE;
 }
@@ -437,7 +439,6 @@ button.create-btn-fixed.create-btn-hover {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: overlayFadeIn 0.2s ease;
 }
 
 /* ── 详情弹窗 ── */
@@ -449,7 +450,6 @@ button.create-btn-fixed.create-btn-hover {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: modalSlideUp 0.25s ease;
 }
 
 .modal-header {
@@ -496,7 +496,6 @@ button.create-btn-fixed.create-btn-hover {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  animation: overlayFadeIn 0.2s ease;
 }
 
 .edit-modal-panel {
@@ -510,7 +509,6 @@ button.create-btn-fixed.create-btn-hover {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: modalSlideUp 0.25s ease;
 }
 
 .edit-modal-header,
@@ -728,19 +726,22 @@ button.create-btn-fixed.create-btn-hover {
    重构新增样式 — 首页分组卡片流
    ============================================================ */
 
-@import "../../styles/dragonChrome.wxss";
-
 /* ── 页面根容器（见上方 page 底色；此处仅占位与 .page-wrap） ── */
 .page-wrap {
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
   background-color: #FFFFFF;
   position: relative;
   width: 100%;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
-/* 背景水印：尺寸位置见 dragonChrome.wxss（.dragon-watermark） */
+/* 背景水印：固定为原型 x=175、y=-29、323×211，不参与 scroll-view 排版。 */
+.page-watermark {
+  position: absolute;
+  pointer-events: none;
+}
 
 /* ── 自定义透明顶部栏 ── */
 .custom-navbar {
@@ -766,7 +767,7 @@ button.create-btn-fixed.create-btn-hover {
 .navbar-title {
   font-size: 46.15rpx;
   font-weight: 600;
-  line-height: 1;
+  line-height: 65.38rpx;
   color: #0a0a0a;
   letter-spacing: 0;
   flex: 1;
@@ -775,6 +776,7 @@ button.create-btn-fixed.create-btn-hover {
 
 /* ── 主滚动区 ── */
 .main-scroll {
+  height: 100%;
   background-color: transparent;
   position: relative;
   z-index: 2;
@@ -823,32 +825,8 @@ button.create-btn-fixed.create-btn-hover {
 .group-title {
   font-size: 38.46rpx;
   font-weight: 700;
+  line-height: 53.85rpx;
   color: #0a0a0a;
-}
-
-.group-create-btn {
-  display: flex;
-  align-items: center;
-  gap: 9.62rpx;
-  width: 184.62rpx;
-  height: 65.38rpx;
-  padding: 0 19.23rpx;
-  box-sizing: border-box;
-  border-radius: 32.69rpx;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.08);
-}
-
-.group-create-icon {
-  width: 32.69rpx;
-  height: 32.69rpx;
-}
-
-.group-create-text {
-  font-size: 26.92rpx;
-  line-height: 1;
-  font-weight: 600;
-  color: #191919;
 }
 
 .group-empty {
@@ -860,43 +838,82 @@ button.create-btn-fixed.create-btn-hover {
   color: #C6C6C6;
 }
 
-/* ── 横向滚动容器 ── */
-.cards-scroll-h {
+/* ── Skyline 原生卡片轮播 ── */
+.cards-swiper {
   width: 100%;
-  white-space: nowrap;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+/* 冷启动首批卡片只做一次轻量入场；不触碰 swiper 内部位移和卡片转场。 */
+.home-card-entrance {
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 560ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 440ms ease-out;
+}
+
+.home-card-entrance--pending {
+  opacity: 0;
+  transform: translateY(23.08rpx);
+}
+
+.home-card-entrance--idle,
+.home-card-entrance--entered {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.large-cards-swiper {
+  height: 823.07rpx;
+}
+
+.small-cards-swiper {
+  height: 488.46rpx;
+}
+
+.large-card-slide,
+.small-card-slide {
   box-sizing: border-box;
   overflow: visible;
 }
 
-.cards-carousel {
-  width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
+.large-card-slide {
+  padding: 23.08rpx 23.08rpx 38.46rpx 0;
 }
 
-/* ── 大卡片行（我参与的） ── */
-.large-cards-row {
-  display: inline-flex;
-  align-items: flex-start;
-  /* scroll-view 会裁剪超出边界的阴影：通过 padding 把阴影包进可视区域 */
-  padding: 23.08rpx 38.46rpx 38.46rpx;
-  gap: 19.23rpx;
+.small-card-slide {
+  /* 将原有 23.08rpx 卡间距均分到左右，卡片 x 坐标和轮播步长保持不变。 */
+  padding: 23.08rpx 11.54rpx 38.46rpx;
 }
 
 .large-card-wrap {
   display: inline-flex;
+  width: 530.77rpx;
   flex-direction: column;
   align-items: flex-start;
-  gap: 19.23rpx;
+  gap: 15.38rpx;
   flex-shrink: 0;
+  background-color: transparent;
 }
 
+.large-card-transition {
+  display: block;
+  width: 530.77rpx;
+  height: 707.69rpx;
+  overflow: visible;
+  border-radius: 30.77rpx;
+  background-color: transparent;
+  box-shadow: 0 11.54rpx 38.46rpx rgba(0, 0, 0, 0.10);
+}
 
 .card-datetime-label {
+  display: block;
   font-size: 26.92rpx;
+  line-height: 38.46rpx;
   font-weight: 400;
   color: #89898d;
   white-space: nowrap;
+  background-color: transparent;
 }
 
 /* 大卡片主体 */
@@ -907,22 +924,7 @@ button.create-btn-fixed.create-btn-hover {
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
-  /* iOS 真机对合成子层的圆角裁切需要显式 mask，不能只依赖 overflow:hidden。 */
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
-  box-shadow: 0 11.54rpx 38.46rpx rgba(0, 0, 0, 0.10);
-}
-
-/* 小卡片行 */
-.small-cards-row {
-  display: inline-flex;
-  align-items: flex-start;
-  /* 同上：预留阴影空间，避免被 scroll-view 裁剪 */
-  padding: 23.08rpx 38.46rpx 38.46rpx;
-  gap: 19.23rpx;
-}
-
-.ended-section .small-cards-row {
-  gap: 19.23rpx;
+  box-shadow: none;
 }
 
 /* 「已结束」横向末尾加载格（宽同 .small-card-wrap，保证横向 snap 步长一致） */
@@ -947,15 +949,52 @@ button.create-btn-fixed.create-btn-hover {
 }
 
 .small-card-wrap {
-  display: inline-flex;
+  display: block;
+  flex-shrink: 0;
+  width: 346.15rpx;
+  background-color: transparent;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * 阴影必须位于 open-container 外层。Skyline 的转场容器会建立独立裁切边界，
+ * 即便后代声明 overflow:visible，外阴影仍可能在左右两侧被截断。
+ */
+.small-card-layout {
+  width: 346.15rpx;
+  position: relative;
+  flex-shrink: 0;
+  background-color: transparent;
+  overflow: visible;
+}
+
+.small-card-content {
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 15.38rpx;
-  flex-shrink: 0;
   width: 346.15rpx;
+  background-color: transparent;
+  overflow: visible;
 }
 
-/* 小卡片主体 */
+/* 小卡阴影与圆角裁切分层：Skyline 会裁掉和 overflow:hidden 同节点的外阴影。 */
+.small-card-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 346.15rpx;
+  height: 346.15rpx;
+  border-radius: 23.08rpx;
+  overflow: visible;
+  box-shadow: 0 11.54rpx 38.46rpx rgba(0, 0, 0, 0.10);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 小卡片主体只负责裁切图片和内部内容。 */
 .small-card {
   width: 346.15rpx;
   height: 346.15rpx;
@@ -966,12 +1005,16 @@ button.create-btn-fixed.create-btn-hover {
 }
 
 .small-card-info {
-  padding: 0 4rpx;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background-color: transparent;
 }
 
 .small-card-name {
   display: block;
   font-size: 23.08rpx;
+  line-height: 32.69rpx;
   font-weight: 500;
   color: #000000;
   white-space: nowrap;
@@ -983,17 +1026,11 @@ button.create-btn-fixed.create-btn-hover {
 .small-card-time {
   display: block;
   font-size: 23.08rpx;
+  line-height: 32.69rpx;
   font-weight: 500;
   color: #8a8a8e;
   margin-top: 0;
   white-space: nowrap;
-}
-
-/* 末尾留白 */
-.cards-row-end-spacer {
-  display: inline-block;
-  width: 0;
-  flex-shrink: 0;
 }
 
 /* ── 卡片背景渐变 ── */
@@ -1057,28 +1094,6 @@ button.create-btn-fixed.create-btn-hover {
   width: 100%;
   height: 100%;
   z-index: 0;
-}
-
-/* ── 类型角标 ── */
-.card-type-label {
-  position: absolute;
-  top: 30.77rpx;
-  right: 30.77rpx;
-  font-size: 30.77rpx;
-  font-weight: 600;
-  color: #ffffff;
-  z-index: 2;
-}
-
-.card-type-label-sm {
-  position: absolute;
-  top: 14rpx;
-  right: 14rpx;
-  font-size: 22rpx;
-  font-weight: 600;
-  color: #ffffff;
-  z-index: 2;
-  text-shadow: 0 1rpx 3rpx rgba(0,0,0,0.25);
 }
 
 /* ── 大卡片头像群 ── */
@@ -1211,8 +1226,6 @@ button.create-btn-fixed.create-btn-hover {
   overflow: hidden;
   border-bottom-left-radius: 30.77rpx;
   border-bottom-right-radius: 30.77rpx;
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
-  isolation: isolate;
 }
 
 /* 模糊视口直接挂在 large-card 上：只显示卡片底部信息区，最终由 large-card 裁切。 */
@@ -1227,6 +1240,7 @@ button.create-btn-fixed.create-btn-hover {
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
   pointer-events: none;
+  background: rgba(31, 41, 55, 0.58);
 }
 
 /*
@@ -1262,7 +1276,6 @@ button.create-btn-fixed.create-btn-hover {
   z-index: 1;
   border-bottom-left-radius: 30.77rpx;
   border-bottom-right-radius: 30.77rpx;
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
   pointer-events: none;
   background: linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.30) 100%);
 }
@@ -1337,58 +1350,29 @@ button.create-btn-fixed.create-btn-hover {
   max-width: 200rpx;
 }
 
-/* ── 自定义底部 Tab ── */
-.custom-tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 300;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8rpx 24rpx;
-  padding-bottom: calc(8rpx + env(safe-area-inset-bottom));
-  gap: 32rpx;
+/* Independent skeletons sit outside the transparent animated content. */
+.home-card-slot { position: relative; }
+.home-card-slot--large { width: 530.77rpx; }
+.home-card-slot--small { width: 346.15rpx; }
+.card-skeleton { position: absolute; top: 0; left: 0; z-index: 2; }
+.card-skeleton--large { width: 530.77rpx; }
+.card-skeleton--small { width: 346.15rpx; }
+.skeleton-block { position: relative; overflow: hidden; background: #e9eaec; }
+.skeleton-large { width: 530.77rpx; height: 761.53rpx; border-radius: 30.77rpx; }
+.skeleton-small { width: 346.15rpx; height: 346.15rpx; border-radius: 23.08rpx; }
+.skeleton-heading { width: 153.85rpx; height: 34.62rpx; border-radius: 19.23rpx; }
+.skeleton-name { width: 246.15rpx; height: 26.92rpx; border-radius: 15.38rpx; margin-top: 15.38rpx; }
+.skeleton-time { width: 184.62rpx; height: 21.15rpx; border-radius: 11.54rpx; margin-top: 9.62rpx; }
+.skeleton-shimmer {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 45%;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.65), rgba(255,255,255,0));
+  transform: translateX(-100%);
 }
-
-.tab-items-wrap {
-  display: flex;
-  align-items: center;
-  padding: 8rpx;
-  border-radius: 999rpx;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(38.46rpx);
-  -webkit-backdrop-filter: blur(38.46rpx);
-  box-shadow: inset 0 -2rpx 4rpx rgba(0,0,0,0.12), inset 0 2rpx 2rpx #fff;
-}
-
-.tab-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 170rpx;
-  height: 108rpx;
-  border-radius: 999rpx;
-  gap: 6rpx;
-  transition: background-color 0.15s ease;
-}
-
-.tab-item-active {
-  background-color: rgba(232,233,233,0.5);
-}
-
-.tab-icon {
-  width: 48rpx;
-  height: 48rpx;
-}
-
-.tab-label {
-  font-size: 20rpx;
-  color: #1a191a;
-}
-
-.tab-label-active {
-  color: #ff001f;
-}
+/* Use Skyline's existing transform-transition path rather than CSS keyframes. */
+.skeleton-shimmer--running { transform: translateX(325%); transition: transform 1400ms linear; }
+.home-loading-shell { overflow: hidden; }
+.skeleton-initial-row { display: flex; flex-direction: row; padding-left: 38.46rpx; padding-top: 23.08rpx; box-sizing: border-box; }
+.skeleton-initial-row--large { height: 823.07rpx; }
+.skeleton-initial-row--small { height: 488.46rpx; }
+.skeleton-initial-large { position: relative; width: 530.77rpx; height: 761.53rpx; margin-right: 23.08rpx; flex-shrink: 0; }
+.skeleton-initial-small { position: relative; width: 346.15rpx; height: 430rpx; margin-right: 23.08rpx; flex-shrink: 0; }

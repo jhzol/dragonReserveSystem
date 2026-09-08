@@ -1,169 +1,53 @@
-<view wx:if="{{visible}}" class="activity-sheet-root" catchtouchmove="stopPropagation">
-  <view class="activity-sheet-mask" catchtouchmove="stopPropagation" catchtap="onClose"></view>
-  <view class="activity-sheet-panel {{isEdit ? 'activity-sheet-panel--edit' : 'activity-sheet-panel--create'}}">
-    <view class="activity-sheet-drag-area">
-      <view class="activity-sheet-drag"></view>
-    </view>
-    <view class="activity-sheet-header">
-      <text class="activity-sheet-title">{{title}}</text>
-      <view class="activity-sheet-close" bindtap="onClose" aria-role="button" aria-label="关闭">
-        <image class="activity-sheet-close-icon" src="/images/icon-close.svg" mode="aspectFit" />
-      </view>
-    </view>
+<view class="activity-form-sheet-root {{routeEmbedded ? 'activity-form-sheet-root--route-embedded' : ''}}">
+  <view wx:if="{{routeEmbedded && visible}}" class="activity-form-sheet-dismiss-area" bindtap="onClose"></view>
 
-    <scroll-view scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}" class="activity-sheet-body">
-      <view class="bento-grid {{isEdit ? 'bento-grid--edit' : 'bento-grid--create'}}">
-        <view class="bento-card bento-card--full activity-time-card">
-          <text class="bento-label">活动时间</text>
-          <view class="activity-time-grid">
-            <view class="date-time-row" hover-class="date-time-row--pressed" bindtap="openDateTimePicker" data-target="startDateTime">
-              <text class="date-time-row-label">开始时间</text>
-              <text class="date-time-row-value {{form.startDate && form.startTime ? 'date-time-row-value--filled' : ''}} {{!isEdit && form.startDate && form.startTime ? 'create-completed-text' : ''}}">{{startDateTimeLabel}}</text>
-            </view>
-            <view class="date-time-row" hover-class="date-time-row--pressed" bindtap="openDateTimePicker" data-target="endDateTime">
-              <text class="date-time-row-label">结束时间</text>
-              <text class="date-time-row-value {{form.endDate && form.endTime ? 'date-time-row-value--filled' : ''}} {{!isEdit && form.endDate && form.endTime ? 'create-completed-text' : ''}}">{{endDateTimeLabel}}</text>
-            </view>
-          </view>
-        </view>
+  <block wx:if="{{routeEmbedded && visible}}">
+    <include src="./surface.wxml" />
+  </block>
 
-        <view class="bento-card bento-card--full deadline-card">
-          <text class="bento-label">报名截止</text>
-          <view class="deadline-grid">
-            <view class="date-time-row" hover-class="date-time-row--pressed" bindtap="openDateTimePicker" data-target="signupDeadlineDate">
-              <text class="date-time-row-label">日期</text>
-              <text class="date-time-row-value {{form.signupDeadlineDate ? 'date-time-row-value--filled' : ''}} {{!isEdit && form.signupDeadlineDate ? 'create-completed-text' : ''}}">{{signupDeadlineDateLabel}}</text>
-            </view>
-            <view class="date-time-row" hover-class="date-time-row--pressed" bindtap="openDateTimePicker" data-target="signupDeadlineTime">
-              <text class="date-time-row-label">时间</text>
-              <text class="date-time-row-value {{form.signupDeadlineTime ? 'date-time-row-value--filled' : ''}} {{!isEdit && form.signupDeadlineTime ? 'create-completed-text' : ''}}">{{form.signupDeadlineTime || '请选择'}}</text>
-            </view>
-          </view>
-        </view>
+  <page-container
+  wx:if="{{!routeEmbedded && containerRendered}}"
+  id="qaActivityFormContainer"
+  show="{{containerVisible}}"
+  position="bottom"
+  overlay="{{true}}"
+  round="{{false}}"
+  duration="240"
+  close-on-slide-down="{{false}}"
+  overlay-style="background: rgba(23, 24, 20, 0.4);"
+  custom-style="height: {{panelHeightRpx}}rpx; background: transparent; border-radius: 46.15rpx 46.15rpx 0 0; overflow: hidden;"
+  bind:clickoverlay="onClose"
+  bind:afterleave="onContainerAfterLeave"
+  >
+    <include src="./surface.wxml" />
+  </page-container>
 
-        <view class="bento-pair-row">
-          <view wx:if="{{!isEdit}}" class="bento-card bento-card--half compact-card compact-select-card" hover-class="compact-select-card--pressed" bindtap="openActivityTypePicker" aria-role="button" aria-label="选择活动类型">
-            <text class="bento-label bento-label--strong">活动类型</text>
-            <view class="compact-select-row">
-              <text class="compact-value {{activityTypeOptionLabels[activityTypeIndex] ? 'compact-value--filled create-completed-text' : ''}}">{{activityTypeOptionLabels[activityTypeIndex] || '请选择'}}</text>
-              <image class="activity-type-chevron" src="/images/icon-chevron-down.svg" mode="aspectFit" />
-            </view>
-          </view>
-
-          <view wx:if="{{isEdit}}" class="bento-card bento-card--half compact-card compact-switch-card">
-            <text class="bento-label bento-label--strong">允许报名</text>
-            <view class="prototype-switch {{form.signupEnabled ? 'prototype-switch--checked' : ''}}" bindtap="onSwitchTap" data-field="signupEnabled" aria-role="switch" aria-checked="{{form.signupEnabled}}">
-              <view class="prototype-switch-thumb"></view>
-            </view>
-          </view>
-
-          <view class="bento-card bento-card--half compact-card compact-switch-card">
-            <text class="bento-label bento-label--strong">限制报名人数</text>
-            <view class="prototype-switch {{form.limitEnabled ? 'prototype-switch--checked' : ''}}" bindtap="onSwitchTap" data-field="limitEnabled" aria-role="switch" aria-checked="{{form.limitEnabled}}">
-              <view class="prototype-switch-thumb"></view>
-            </view>
-          </view>
-        </view>
-
-        <view wx:if="{{!isEdit}}" class="bento-card bento-card--full stepper-card participant-limit-card--create {{form.limitEnabled ? 'participant-limit-card--visible' : ''}}" aria-hidden="{{!form.limitEnabled}}">
-          <text class="bento-label bento-label--strong">人数上限</text>
-          <view class="stepper">
-            <view class="stepper-button {{form.maxParticipants <= minParticipants ? 'stepper-button--disabled' : ''}}" bindtap="decrementParticipants" aria-role="button" aria-label="减少人数上限">
-              <image class="stepper-icon" src="/images/icon-minus.svg" mode="aspectFit" />
-            </view>
-            <input
-              class="stepper-value-input {{participantInputFocused ? 'stepper-value-input--focused' : ''}}"
-              type="number"
-              value="{{form.maxParticipants}}"
-              maxlength="3"
-              focus="{{participantInputFocused}}"
-              adjust-position="{{true}}"
-              cursor-spacing="120"
-              bindtap="focusParticipantInput"
-              bindfocus="onParticipantFocus"
-              bindinput="onParticipantInput"
-              bindblur="onParticipantBlur"
-              bindconfirm="onParticipantConfirm"
-              aria-label="人数上限"
-            />
-            <view class="stepper-button {{form.maxParticipants >= 999 ? 'stepper-button--disabled' : ''}}" bindtap="incrementParticipants" aria-role="button" aria-label="增加人数上限">
-              <image class="stepper-icon" src="/images/icon-plus.svg" mode="aspectFit" />
-            </view>
-          </view>
-        </view>
-
-        <view wx:if="{{isEdit}}" class="bento-card bento-card--full stepper-card participant-limit-card--edit {{form.limitEnabled ? 'participant-limit-card--visible' : ''}}" aria-hidden="{{!form.limitEnabled}}">
-          <text class="bento-label bento-label--strong">人数上限</text>
-          <view class="stepper">
-            <view class="stepper-button {{form.maxParticipants <= minParticipants ? 'stepper-button--disabled' : ''}}" bindtap="decrementParticipants" aria-role="button" aria-label="减少人数上限">
-              <image class="stepper-icon" src="/images/icon-minus.svg" mode="aspectFit" />
-            </view>
-            <text class="stepper-value">{{form.maxParticipants}}</text>
-            <view class="stepper-button {{form.maxParticipants >= 999 ? 'stepper-button--disabled' : ''}}" bindtap="incrementParticipants" aria-role="button" aria-label="增加人数上限">
-              <image class="stepper-icon" src="/images/icon-plus.svg" mode="aspectFit" />
-            </view>
-          </view>
-        </view>
-
-        <view class="bento-card bento-card--full input-card {{!isEdit && form.name ? 'create-completed-field' : ''}}">
-          <text class="bento-label bento-label--strong">活动名称</text>
-          <view class="input-value-row">
-            <input class="bento-input" value="{{form.name}}" maxlength="{{maxNameLength}}" placeholder="请输入活动名称" placeholder-class="bento-placeholder" bindinput="onTextInput" data-field="name" adjust-position="{{true}}" cursor-spacing="100" />
-            <text class="input-count">{{nameCount}}/{{maxNameLength}}</text>
-          </view>
-        </view>
-
-        <view class="bento-card bento-card--full input-card {{locationDisabled ? 'bento-card--disabled' : ''}} {{!isEdit && form.locationName ? 'create-completed-field' : ''}}" bindtap="onChooseLocation">
-          <text class="bento-label bento-label--strong">活动地点</text>
-          <view class="bento-value-row bento-value-row--location {{form.locationAddress || locationDisabled ? 'bento-value-row--with-address' : ''}}">
-            <view class="location-copy">
-              <text class="bento-value location-value {{form.locationName ? (!isEdit ? 'create-completed-text' : '') : 'bento-placeholder-text'}}">{{form.locationName || '请选择活动地点'}}</text>
-              <text wx:if="{{form.locationAddress}}" class="location-address">{{form.locationAddress}}</text>
-              <text wx:elif="{{locationDisabled}}" class="location-address">已有用户签到，地点不可修改</text>
-            </view>
-            <image class="location-chevron" src="{{isEdit ? '/images/icon-chevron-right.svg' : '/images/icon-chevron-right-600.svg'}}" mode="aspectFit" />
-          </view>
-        </view>
-
-        <view class="bento-card bento-card--full input-card textarea-card {{!isEdit && form.remark ? 'create-completed-field' : ''}}">
-          <text class="bento-label bento-label--strong">活动备注</text>
-          <textarea class="bento-textarea" style="height: {{remarkTextareaHeight}}rpx;" value="{{form.remark}}" maxlength="{{maxRemarkLength}}" placeholder="请输入活动备注" placeholder-class="bento-placeholder" bindinput="onRemarkInput" bindblur="onRemarkBlur" bindlinechange="onRemarkLineChange" auto-height="{{false}}" show-confirm-bar="{{false}}" disable-default-padding="{{true}}" adjust-position="{{true}}" cursor-spacing="120" />
-          <view class="textarea-count-row">
-            <text class="input-count">{{remarkCount}}/{{maxRemarkLength}}</text>
-          </view>
-        </view>
-      </view>
-    </scroll-view>
-
-    <view class="activity-sheet-footer {{isEdit ? 'activity-sheet-footer--double' : 'activity-sheet-footer--create'}}">
-      <view class="activity-sheet-footer-actions {{isEdit ? 'activity-sheet-footer-actions--edit' : 'activity-sheet-footer-actions--create'}}">
-        <button wx:if="{{isEdit && activity.status !== '已取消'}}" class="sheet-button sheet-button--danger sheet-button--secondary-edit" disabled="{{submitting}}" bindtap="onCancelActivity">取消活动</button>
-        <button class="sheet-button sheet-button--primary {{isEdit ? 'sheet-button--primary-edit' : 'sheet-button--primary-create'}}" loading="{{submitting}}" disabled="{{submitting}}" bindtap="onSubmit">{{submitting ? '提交中…' : submitText}}</button>
-      </view>
-    </view>
-  </view>
-
-
-  <activity-type-picker-sheet
-    id="qaActivityTypePickerSheet"
-    wx:if="{{activityTypePickerVisible}}"
-    visible="{{true}}"
-    value="{{form.activityType}}"
-    option-values="{{activityTypeOptionValues}}"
-    option-labels="{{activityTypeOptionLabels}}"
-    bindclose="closeActivityTypePicker"
-    bindconfirm="confirmActivityTypePicker"
+  <activity-cover-picker-sheet
+  id="qaActivityCoverPickerSheet"
+  class="activity-cover-picker-host {{coverPickerVisible ? 'activity-cover-picker-host--visible' : ''}}"
+  visible="{{coverPickerVisible}}"
+  embedded="{{routeEmbedded}}"
+  value="{{form.activityCoverId}}"
+  bindclose="closeCoverPicker"
+  bindconfirm="confirmCoverPicker"
   />
 
   <date-time-picker-sheet
-    id="qaDateTimePickerSheet"
-    wx:if="{{pickerVisible}}"
-    visible="{{true}}"
-    mode="{{pickerMode}}"
-    title="{{pickerTitle}}"
-    value="{{pickerValue}}"
-    minute-step="{{5}}"
-    bindclose="closeDateTimePicker"
-    bindconfirm="confirmDateTimePicker"
+  wx:if="{{!externalDateTimePicker}}"
+  id="qaDateTimePickerSheet"
+  visible="{{pickerVisible}}"
+  embedded="{{routeEmbedded}}"
+  mode="{{pickerMode}}"
+  title="{{pickerTitle}}"
+  value="{{pickerValue}}"
+  bottom-offset-rpx="{{routeEmbedded ? 323.08 : 0}}"
+  minute-step="{{5}}"
+  bindclose="closeDateTimePicker"
+  bindconfirm="confirmDateTimePicker"
+  />
+
+  <create-access-dialog
+    id="qaCancelActivityDialog"
+    bindconfirm="confirmCancelActivity"
   />
 </view>

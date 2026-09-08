@@ -19,7 +19,6 @@ const FALLBACK_LABELS = {
   badminton: "羽毛球",
   other: "其他"
 };
-
 function normalizeLabel(value, label) {
   if (value === "other") return "其他";
   return String(label || FALLBACK_LABELS[value] || value);
@@ -55,29 +54,70 @@ Component({
   properties: {
     visible: { type: Boolean, value: false },
     value: { type: String, value: "" },
+    embedded: { type: Boolean, value: false },
     optionValues: { type: Array, value: [] },
     optionLabels: { type: Array, value: [] }
   },
 
   data: {
+    containerRendered: false,
+    containerVisible: false,
     groups: [],
     selectedValue: ""
   },
 
   observers: {
-    "visible, value, optionValues, optionLabels": function (visible) {
-      if (visible) this.initializeOptions();
+    "visible, value, optionValues, optionLabels, embedded": function (visible) {
+      if (visible) {
+        this.initializeOptions(() => this.mountContainer());
+      } else {
+        this.unmountContainer();
+      }
     }
   },
 
   lifetimes: {
     attached() {
-      if (this.properties.visible) this.initializeOptions();
+      if (this.properties.visible) {
+        this.initializeOptions(() => this.mountContainer());
+      }
     }
   },
 
   methods: {
-    initializeOptions() {
+    mountContainer() {
+      if (this._leaveTimer) {
+        clearTimeout(this._leaveTimer);
+        this._leaveTimer = null;
+      }
+      this.setData({ containerRendered: true, containerVisible: false }, () => {
+        wx.nextTick(() => {
+          if (this.properties.visible) this.setData({ containerVisible: true });
+        });
+      });
+    },
+
+    unmountContainer() {
+      this.setData({ containerVisible: false });
+      if (!this.properties.embedded) return;
+      if (this._leaveTimer) clearTimeout(this._leaveTimer);
+      this._leaveTimer = setTimeout(() => {
+        this._leaveTimer = null;
+        if (!this.properties.visible) {
+          this.setData({ containerRendered: false });
+          this.triggerEvent("afterleave");
+        }
+      }, 220);
+    },
+
+    onContainerAfterLeave() {
+      if (!this.properties.visible) {
+        this.setData({ containerRendered: false });
+        this.triggerEvent("afterleave");
+      }
+    },
+
+    initializeOptions(callback) {
       const groups = buildGroupedOptions(this.properties.optionValues, this.properties.optionLabels);
       const availableValues = groups.reduce((result, group) => (
         result.concat(group.options.map((option) => option.value))
@@ -85,7 +125,7 @@ Component({
       const selectedValue = availableValues.includes(this.properties.value)
         ? this.properties.value
         : (availableValues[0] || "");
-      this.setData({ groups, selectedValue });
+      this.setData({ groups, selectedValue }, callback);
     },
 
     stopPropagation() {},

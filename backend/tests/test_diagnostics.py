@@ -19,3 +19,9 @@ def test_client_diagnostic_batch_is_accepted(client, user_headers) -> None:
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok", "stored": True}
+
+
+def test_single_client_diagnostic_log_endpoint_remains_available(client) -> None:
+    methods = client.app.openapi()["paths"]["/api/v1/diagnostics/client-logs"]
+
+    assert "post" in methods

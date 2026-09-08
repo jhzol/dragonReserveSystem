@@ -1,0 +1,27 @@
+<view
+  wx:if="{{visible}}"
+  id="qa-create-access-dialog-overlay"
+  class="create-access-dialog-overlay"
+  bindtap="close"
+  catchtouchmove="stopTouchMove"
+>
+  <view
+    id="qa-create-access-dialog"
+    class="create-access-dialog"
+    catchtap="stopPropagation"
+    aria-role="dialog"
+    aria-label="{{title}}"
+  >
+    <view class="create-access-dialog-copy">
+      <view class="create-access-dialog-title-row">
+        <image class="create-access-dialog-icon" src="/images/dialog-warning.svg" mode="aspectFit" aria-hidden="true" />
+        <text class="create-access-dialog-title">{{title}}</text>
+      </view>
+      <text class="create-access-dialog-message">{{message}}</text>
+    </view>
+    <view class="create-access-dialog-actions">
+      <view id="qa-create-access-dialog-cancel" class="create-access-dialog-button create-access-dialog-button--cancel" bindtap="close" aria-role="button">取消</view>
+      <view id="qa-create-access-dialog-confirm" class="create-access-dialog-button create-access-dialog-button--confirm" bindtap="confirm" aria-role="button">{{confirmText}}</view>
+    </view>
+  </view>
+</view>

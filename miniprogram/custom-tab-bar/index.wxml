@@ -1,27 +1,47 @@
-<view id="qa-custom-tab-bar" class="tab-bar-wrap" hidden="{{hidden}}" style="height: calc(100rpx + {{safeBottomRpx}}rpx); padding-bottom: {{safeBottomRpx}}rpx;">
-  <view id="qa-tab-glass" class="tab-items-wrap">
+<view id="qa-custom-tab-bar" class="tab-bar-wrap {{!hidden && !entering ? 'tab-bar-wrap--visible' : ''}}" hidden="{{hidden}}" style="height: calc(52px + {{safeBottomPx}}px); padding-bottom: {{safeBottomPx}}px;">
+  <view id="qa-tab-glass" class="tab-items-wrap {{modalMaskVisible ? 'tab-items-wrap--modal' : ''}}">
     <view id="qa-tab-glass-blur" class="tab-glass-blur" style="opacity: {{tabGlassBlurOpacity}}; -webkit-backdrop-filter: blur({{tabGlassBlurRadiusRpx}}rpx); backdrop-filter: blur({{tabGlassBlurRadiusRpx}}rpx);"></view>
     <view id="qa-tab-glass-fill" class="tab-glass-fill" style="background: rgba(255, 255, 255, {{tabGlassFillOpacity}});"></view>
     <image id="qa-tab-glass-stroke" class="tab-glass-stroke" src="/images/tab-glass-stroke.svg" mode="scaleToFill" />
-    <view id="qa-tab-home" class="tab-item {{selected === 0 ? 'tab-item--active' : ''}}" bindtap="onTabTap" data-index="0" aria-role="tab" aria-selected="{{selected === 0}}">
-      <image class="tab-icon" src="{{selected === 0 ? '/images/tab-home-material-rounded-active.svg' : '/images/tab-home-material-rounded.svg'}}" mode="aspectFit" />
+    <view id="qa-tab-home" class="tab-item {{selected === 0 ? 'tab-item--active' : ''}}" catchtap="onTabTap" data-index="0" aria-role="tab" aria-selected="{{selected === 0}}">
+      <view class="tab-icon" aria-hidden="true">
+        <image class="tab-icon-glyph {{selected === 0 ? 'tab-icon-glyph--hidden' : ''}}" src="/images/tab-home-material-rounded.svg" mode="scaleToFill" />
+        <image class="tab-icon-glyph {{selected === 0 ? '' : 'tab-icon-glyph--hidden'}}" src="/images/tab-home-material-rounded-active.svg" mode="scaleToFill" />
+      </view>
       <text class="tab-label {{selected === 0 ? 'tab-label--active' : ''}}">首页</text>
     </view>
-    <view id="qa-tab-calendar" class="tab-item {{selected === 1 ? 'tab-item--active' : ''}}" bindtap="onTabTap" data-index="1" aria-role="tab" aria-selected="{{selected === 1}}">
-      <image class="tab-icon" src="{{selected === 1 ? '/images/tab-calendar-month-material-rounded-active.svg' : '/images/tab-calendar-month-material-rounded.svg'}}" mode="aspectFit" />
-      <text class="tab-label {{selected === 1 ? 'tab-label--active' : ''}}">日程</text>
+    <view id="qa-tab-tools" class="tab-item {{selected === 1 ? 'tab-item--active' : ''}}" catchtap="onTabTap" data-index="1" aria-role="tab" aria-selected="{{selected === 1}}">
+      <view class="tab-icon" aria-hidden="true">
+        <image class="tab-icon-glyph {{selected === 1 ? 'tab-icon-glyph--hidden' : ''}}" src="/images/tab-tools-material-rounded.svg" mode="scaleToFill" />
+        <image class="tab-icon-glyph {{selected === 1 ? '' : 'tab-icon-glyph--hidden'}}" src="/images/tab-tools-material-rounded-active.svg" mode="scaleToFill" />
+      </view>
+      <text class="tab-label {{selected === 1 ? 'tab-label--active' : ''}}">工具</text>
     </view>
-    <view id="qa-tab-tools" class="tab-item {{selected === 2 ? 'tab-item--active' : ''}}" bindtap="onTabTap" data-index="2" aria-role="tab" aria-selected="{{selected === 2}}">
-      <image class="tab-icon" src="{{selected === 2 ? '/images/tab-tools-material-rounded-active.svg' : '/images/tab-tools-material-rounded.svg'}}" mode="aspectFit" />
-      <text class="tab-label {{selected === 2 ? 'tab-label--active' : ''}}">工具</text>
+    <view id="qa-tab-create" class="tab-create-item" catchtap="onCreateActivityTap" aria-role="button" aria-label="新建活动">
+      <view class="tab-create-button">
+        <image class="tab-create-icon" src="/images/tab-create-plus.svg" mode="aspectFit" />
+      </view>
     </view>
-    <view id="qa-tab-ranking" class="tab-item {{selected === 3 ? 'tab-item--active' : ''}}" bindtap="onTabTap" data-index="3" aria-role="tab" aria-selected="{{selected === 3}}">
-      <image class="tab-icon" src="{{selected === 3 ? '/images/tab-leaderboard-material-rounded-active.svg' : '/images/tab-leaderboard-material-rounded.svg'}}" mode="aspectFit" />
-      <text class="tab-label {{selected === 3 ? 'tab-label--active' : ''}}">排行</text>
+    <view id="qa-tab-ranking" class="tab-item {{selected === 2 ? 'tab-item--active' : ''}}" catchtap="onTabTap" data-index="2" aria-role="tab" aria-selected="{{selected === 2}}">
+      <view class="tab-icon" aria-hidden="true">
+        <image class="tab-icon-glyph {{selected === 2 ? 'tab-icon-glyph--hidden' : ''}}" src="/images/tab-leaderboard-material-rounded.svg" mode="scaleToFill" />
+        <image class="tab-icon-glyph {{selected === 2 ? '' : 'tab-icon-glyph--hidden'}}" src="/images/tab-leaderboard-material-rounded-active.svg" mode="scaleToFill" />
+      </view>
+      <text class="tab-label {{selected === 2 ? 'tab-label--active' : ''}}">排行</text>
     </view>
-    <view id="qa-tab-profile" class="tab-item {{selected === 4 ? 'tab-item--active' : ''}}" bindtap="onTabTap" data-index="4" aria-role="tab" aria-selected="{{selected === 4}}">
-      <image class="tab-icon" src="{{selected === 4 ? '/images/tab-person-material-rounded-active.svg' : '/images/tab-person-material-rounded.svg'}}" mode="aspectFit" />
-      <text class="tab-label {{selected === 4 ? 'tab-label--active' : ''}}">我的</text>
+    <view id="qa-tab-profile" class="tab-item {{selected === 3 ? 'tab-item--active' : ''}}" catchtap="onTabTap" data-index="3" aria-role="tab" aria-selected="{{selected === 3}}">
+      <view class="tab-icon" aria-hidden="true">
+        <image class="tab-icon-glyph {{selected === 3 ? 'tab-icon-glyph--hidden' : ''}}" src="/images/tab-person-material-rounded.svg" mode="scaleToFill" />
+        <image class="tab-icon-glyph {{selected === 3 ? '' : 'tab-icon-glyph--hidden'}}" src="/images/tab-person-material-rounded-active.svg" mode="scaleToFill" />
+      </view>
+      <text class="tab-label {{selected === 3 ? 'tab-label--active' : ''}}">我的</text>
     </view>
+    <view
+      wx:if="{{modalMaskVisible}}"
+      id="qa-tab-modal-mask"
+      class="tab-modal-mask"
+      catchtap="blockTabInteraction"
+      catchtouchmove="blockTabInteraction"
+    ></view>
   </view>
 </view>

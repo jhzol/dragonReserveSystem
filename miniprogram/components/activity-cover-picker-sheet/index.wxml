@@ -1,0 +1,25 @@
+<block wx:if="{{embedded && containerRendered}}">
+  <view class="cover-sheet-embedded-root" catchtouchmove="stopPropagation">
+    <view class="cover-sheet-mask {{containerVisible ? 'cover-sheet-mask--visible' : ''}}" bindtap="onClose"></view>
+    <view class="cover-sheet-embedded-panel {{containerVisible ? 'cover-sheet-embedded-panel--visible' : ''}}">
+      <include src="./surface.wxml" />
+    </view>
+  </view>
+</block>
+
+<page-container
+  wx:if="{{!embedded && containerRendered}}"
+  id="qaActivityCoverPickerContainer"
+  show="{{containerVisible}}"
+  position="bottom"
+  overlay="{{true}}"
+  round="{{false}}"
+  duration="240"
+  close-on-slide-down="{{false}}"
+  overlay-style="background: rgba(21, 21, 31, 0.4);"
+  custom-style="height: 1384.62rpx; max-height: 92vh; background: transparent; border-radius: 42.31rpx 42.31rpx 0 0; overflow: hidden;"
+  bind:clickoverlay="onClose"
+  bind:afterleave="onContainerAfterLeave"
+>
+  <include src="./surface.wxml" />
+</page-container>

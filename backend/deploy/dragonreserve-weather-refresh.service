@@ -1,0 +1,12 @@
+[Unit]
+Description=Dragon Reserve weather snapshot refresh
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+RuntimeDirectory=dragonreserve-weather-refresh
+WorkingDirectory=/home/ubuntu/apps/dragonReserveSystem/backend
+EnvironmentFile=/home/ubuntu/apps/dragonReserveSystem/backend/.env
+ExecStart=/usr/bin/flock -n /run/dragonreserve-weather-refresh/refresh.lock /home/ubuntu/apps/dragonReserveSystem/backend/.venv/bin/python -m scripts.refresh_activity_weather

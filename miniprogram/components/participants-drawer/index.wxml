@@ -1,0 +1,121 @@
+<page-container
+  wx:if="{{containerRendered}}"
+  id="qaParticipantsDrawer"
+  show="{{containerVisible}}"
+  position="bottom"
+  overlay="{{true}}"
+  round="{{false}}"
+  duration="240"
+  z-index="1230"
+  close-on-slide-down="{{false}}"
+  overlay-style="background: rgba(0, 0, 0, 0.4);"
+  custom-style="height: {{drawerHeightRpx}}rpx; max-height: {{maxHeightRpx}}rpx; background: transparent; border-radius: 46.15rpx 46.15rpx 0 0; overflow: hidden;"
+  bind:clickoverlay="onMaskTap"
+  bind:afterleave="onContainerAfterLeave"
+>
+    <view id="qaParticipantsSurface" class="drawer-sheet" style="padding-bottom: {{safeBottomRpx}}rpx;">
+    <view class="drawer-handle-zone" aria-label="拖拽区">
+      <view class="drawer-handle"></view>
+    </view>
+    <view class="drawer-header">
+      <text class="drawer-title">参与人员</text>
+      <view class="drawer-close" bindtap="onCloseTap" aria-label="关闭">
+        <image src="/images/icon-close.svg" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="drawer-body">
+      <view id="qaParticipantsProgress" class="checkin-progress-card">
+        <view class="progress-title-row">
+          <text class="progress-title">签到进度</text>
+          <view class="progress-count" wx:if="{{participantHasLimit}}">
+            <text class="progress-count-current">{{participantCountText}}</text>
+            <text class="progress-count-separator">/</text>
+            <text class="progress-count-limit">{{participantLimitText}}</text>
+          </view>
+          <text wx:else class="progress-count progress-count-unlimited">{{participantCountText}} 人</text>
+        </view>
+        <view class="progress-info-row">
+          <text class="progress-message">{{progressMessage}}</text>
+          <view class="progress-track" aria-label="签到进度">
+            <view class="progress-complete" style="width: {{progressWidth}}"></view>
+          </view>
+        </view>
+      </view>
+
+      <view id="qaParticipantsTable" class="participants-table">
+        <view class="drawer-table-head">
+          <text class="head-member">成员</text>
+          <text class="head-time">签到时间</text>
+          <text class="head-location">签到位置</text>
+        </view>
+        <scroll-view
+          id="qaParticipantListScroll"
+          class="participant-list-scroll"
+          type="list"
+          scroll-y="{{memberListScrollEnabled}}"
+          enhanced="{{true}}"
+          bounces="{{false}}"
+          min-drag-distance="18"
+          show-scrollbar="{{false}}"
+        >
+          <view wx:if="{{rows.length === 0}}" class="drawer-empty" id="qaParticipantsEmpty">
+            <text class="drawer-empty-title">还没有人报名</text>
+            <text class="drawer-empty-message">有成员报名后，会在这里生成人员名单</text>
+          </view>
+          <view
+            wx:for="{{rows}}"
+            wx:key="rowKey"
+            wx:for-item="row"
+            wx:for-index="index"
+            class="participant-row-wrap {{index < rows.length - 1 ? 'participant-row-wrap--spaced' : ''}}"
+            data-index="{{index}}"
+            bindtouchstart="onTouchStart"
+            bindtouchmove="onTouchMove"
+            bindtouchend="onTouchEnd"
+            bindtouchcancel="onTouchCancel"
+          >
+            <view
+              class="participant-actions"
+              wx:if="{{canManage}}"
+              style="width: {{actionAreaWidthRpx}}rpx"
+            >
+              <view wx:if="{{isAdmin && row.hasCheckedIn}}" class="row-action row-action-cancel" data-index="{{index}}" data-action="cancelcheckin" bindtap="onActionTap">
+                <image src="/images/icon-clipboard-x.svg" mode="aspectFit" class="row-action-icon" />
+                <text>取签</text>
+              </view>
+              <view wx:elif="{{isAdmin}}" class="row-action row-action-retro" data-index="{{index}}" data-action="retrocheckin" bindtap="onActionTap">
+                <image src="/images/icon-assignment-turned-in.svg" mode="aspectFit" class="row-action-icon" />
+                <text>补卡</text>
+              </view>
+              <view class="row-action row-action-remove" data-index="{{index}}" data-action="remove" bindtap="onActionTap">
+                <image src="/images/icon-trash.svg" mode="aspectFit" class="row-action-icon" />
+                <text>删除</text>
+              </view>
+            </view>
+            <view
+              class="participant-row"
+              style="transform: translate3d({{row.offsetX}}rpx, 0, 0)"
+              id="qaParticipantRow-{{index}}"
+            >
+              <view class="member-cell">
+                <image class="member-avatar" src="{{row.avatarUrl}}" mode="aspectFill" />
+                <text class="member-name">{{row.name}}</text>
+              </view>
+              <view class="time-cell {{row.hasCheckedIn ? '' : 'time-cell--empty'}}">
+                <block wx:if="{{row.hasCheckedIn}}">
+                  <text>{{row.checkinDateText}}</text>
+                  <text>{{row.checkinTimeText}}</text>
+                </block>
+                <text wx:else>—</text>
+              </view>
+              <view class="location-cell {{row.hasCheckinLocation ? '' : 'location-cell--empty'}}">
+                <text>{{row.checkinLocationText}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="drawer-body-bottom"></view>
+        </scroll-view>
+      </view>
+    </view>
+    </view>
+</page-container>

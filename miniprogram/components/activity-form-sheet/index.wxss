@@ -1,25 +1,42 @@
-.activity-sheet-root {
-  position: fixed;
-  inset: 0;
-  z-index: 20000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  color: #111827;
+.activity-form-sheet-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-.activity-sheet-mask {
+.activity-form-sheet-root--route-embedded {
+  height: 100vh;
+}
+
+.activity-cover-picker-host {
   position: absolute;
-  inset: 0;
-  background: rgba(23, 24, 20, 0.4);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.activity-cover-picker-host--visible {
+  pointer-events: auto;
+}
+
+.activity-form-sheet-dismiss-area {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .activity-sheet-panel {
   position: relative;
-  z-index: 1;
   width: 100%;
+  height: 100%;
   max-height: 100%;
-  padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
+  padding-top: 30.77rpx;
+  padding-bottom: 153.85rpx;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -27,29 +44,22 @@
   border-radius: 46.15rpx 46.15rpx 0 0;
   background: #f5f5f5;
   box-shadow: 0 -10rpx 36rpx rgba(65, 74, 138, 0.08);
-  animation: activity-sheet-up 180ms ease-out;
 }
 
-.activity-sheet-drag-area {
-  height: 24rpx;
-  flex: none;
-  margin-top: 16rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.activity-sheet-panel--covered {
+  pointer-events: none;
 }
 
-.activity-sheet-drag {
-  width: 76rpx;
-  height: 8rpx;
-  border-radius: 999rpx;
-  background: #9ca3af;
+.activity-sheet-panel--route-embedded {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .activity-sheet-header {
   height: 76.92rpx;
   flex: none;
-  margin-top: 12rpx;
   padding: 0 30.77rpx;
   display: flex;
   align-items: center;
@@ -79,10 +89,10 @@
 }
 
 .activity-sheet-body {
-  flex: none;
+  width: 100%;
+  flex: 1 1 0;
+  height: 0;
   min-height: 0;
-  height: auto;
-  max-height: calc(100vh - 232rpx - env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
@@ -134,7 +144,7 @@
 .activity-time-grid,
 .deadline-grid {
   display: flex;
-  gap: 16rpx;
+  gap: 15.38rpx;
 }
 
 .date-time-row {
@@ -181,7 +191,7 @@
 .bento-pair-row {
   width: 100%;
   display: flex;
-  gap: 7.69rpx;
+  gap: 15.38rpx;
 }
 
 .bento-card--half {
@@ -450,15 +460,35 @@
   min-height: 0;
 }
 
+.textarea-input-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 40rpx;
+  flex: none;
+}
+
 .bento-textarea {
   width: 100%;
-  height: 40rpx;
+  height: 100%;
   min-height: 40rpx;
   color: #272064;
   font-size: 28rpx;
-  line-height: 38rpx;
+  line-height: 40rpx;
   font-weight: 400;
   box-sizing: border-box;
+}
+
+.bento-textarea-placeholder {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 40rpx;
+  color: #9ca3af;
+  font-size: 28rpx;
+  line-height: 40rpx;
+  font-weight: 400;
+  pointer-events: none;
 }
 
 .textarea-count-row {
@@ -471,8 +501,8 @@
   right: 0;
   bottom: 0;
   left: 0;
-  height: calc(153.85rpx + env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
+  height: 153.85rpx;
+  padding-bottom: 46.15rpx;
   box-sizing: border-box;
   border-top: 1rpx solid #e5e7eb;
   background: #ffffff;
@@ -515,22 +545,13 @@
   color: #e34d59;
 }
 
-.sheet-button[disabled] {
+.sheet-button--disabled {
   opacity: 0.56;
-}
-
-@keyframes activity-sheet-up {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
 }
 
 /* 新建活动主抽屉：与最新 Pencil 规范对齐，不影响编辑活动。 */
 .activity-sheet-panel--create {
-  padding-bottom: calc(153.85rpx + env(safe-area-inset-bottom));
-}
-
-.activity-sheet-panel--create .activity-sheet-body {
-  max-height: calc(100vh - 244rpx - env(safe-area-inset-bottom));
+  padding-bottom: 153.85rpx;
 }
 
 .bento-grid--create {
@@ -610,16 +631,15 @@
 
 /* 新建活动备注使用受控的 1～5 行高度，避免真机 auto-height 首帧跳变和删除后不回缩。 */
 .activity-sheet-panel--create .bento-textarea {
-  height: 48rpx;
+  height: 100%;
   min-height: 48rpx;
   max-height: 200rpx;
   padding: 0;
   line-height: 40rpx;
-  overflow-y: auto;
 }
 
 .activity-sheet-footer--create {
-  height: calc(153.85rpx + env(safe-area-inset-bottom));
+  height: 153.85rpx;
   border-top-width: 2rpx;
 }
 
@@ -634,11 +654,7 @@
 
 /* 编辑活动抽屉：复用公共表单结构，仅覆盖编辑态与最新 Pencil 原型的差异。 */
 .activity-sheet-panel--edit {
-  padding-bottom: calc(153.85rpx + env(safe-area-inset-bottom));
-}
-
-.activity-sheet-panel--edit .activity-sheet-body {
-  max-height: calc(100vh - 244rpx - env(safe-area-inset-bottom));
+  padding-bottom: 153.85rpx;
 }
 
 .bento-grid--edit {
@@ -707,22 +723,26 @@
   color: #111827;
 }
 
+.activity-sheet-panel .location-value.bento-placeholder-text {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
 .activity-sheet-panel--edit .location-chevron {
   margin-top: 0;
   align-self: center;
 }
 
 .activity-sheet-panel--edit .bento-textarea {
-  height: 48rpx;
+  height: 100%;
   min-height: 48rpx;
   max-height: 210rpx;
   padding: 0;
   line-height: 42rpx;
-  overflow-y: auto;
 }
 
 .activity-sheet-footer--double {
-  height: calc(153.85rpx + env(safe-area-inset-bottom));
+  height: 153.85rpx;
   border-top-width: 2rpx;
 }
 

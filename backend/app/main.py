@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.v1 import api_router
+from app.api.v2 import api_router as api_v2_router
 from app.core.config import get_settings
 from app.core.exceptions import AppError
 from app.core.logging import error_summary, logger, request_context
@@ -35,6 +36,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.mount(settings.media_url_prefix, StaticFiles(directory=media_root), name="media")
+activity_cover_assets = Path(__file__).resolve().parent / "assets" / "activity-covers"
+app.mount(
+    "/activity-cover-assets",
+    StaticFiles(directory=activity_cover_assets),
+    name="activity-cover-assets",
+)
 
 
 @app.exception_handler(AppError)
@@ -124,3 +131,4 @@ def unhandled_exception_handler(request: Request, exc: Exception) -> JSONRespons
 
 
 app.include_router(api_router, prefix=settings.api_v1_prefix)
+app.include_router(api_v2_router, prefix=settings.api_v2_prefix)

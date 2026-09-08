@@ -73,6 +73,32 @@ test("Android uses the 24px design fallback when the runtime explicitly reports 
   });
 });
 
+test("HarmonyOS simulator uses the same 24px design fallback when no inset is reported", () => {
+  withWx({
+    getWindowInfo() {
+      return {
+        windowWidth: 366,
+        windowHeight: 809,
+        safeArea: { top: 39, bottom: 809, height: 770 }
+      };
+    },
+    getDeviceInfo() {
+      return {
+        platform: "devtools",
+        brand: "devtools",
+        model: "HUAWEI Mate 80",
+        system: "HarmonyOS"
+      };
+    }
+  }, () => {
+    const diagnostic = safeArea.buildSafeAreaDiagnostic();
+    assert.equal(diagnostic.computedBottomPx, 0);
+    assert.equal(diagnostic.resolvedBottomRpx, 46.15);
+    assert.equal(diagnostic.androidFallbackApplied, true);
+    assert.equal(safeArea.getBottomSafeAreaRpx(), 46.15);
+  });
+});
+
 test("Android still prefers a real positive bottom inset", () => {
   withWx({
     getWindowInfo() {

@@ -38,6 +38,11 @@ test("tools page geometry and typography follow the current Pencil frame", () =>
   assert.match(wxss, /\.tool-card-description\s*{[\s\S]*?color:\s*#667085;[\s\S]*?font-size:\s*25rpx/);
 });
 
+test("tools page inherits the runtime system font", () => {
+  const wxss = fs.readFileSync(path.join(toolsDir, "tools.wxss"), "utf8");
+  assert.doesNotMatch(wxss, /font-family\s*:/);
+});
+
 test("tools page uses the Pencil Lucide icon sizes and colors", () => {
   const dice = fs.readFileSync(path.join(imageDir, "icon-dice-5.svg"), "utf8");
   const hand = fs.readFileSync(path.join(imageDir, "icon-hand.svg"), "utf8");

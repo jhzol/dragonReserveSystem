@@ -925,7 +925,7 @@ test("Chwazi page matches the Pencil stage, ring and over-five presentation", ()
   assert.match(wxss, /\.touch-ring-canvas\s*{[\s\S]*?width:\s*230\.77rpx;[\s\S]*?height:\s*230\.77rpx/);
   assert.match(wxss, /\.chwazi-touch-surface\s*{[\s\S]*?overflow:\s*hidden/);
   assert.doesNotMatch(wxss, /chwazi-ring-right|chwazi-ring-left|touch-ring-arc/);
-  assert.match(wxss, /\.chwazi-winner-collapse-disc\s*{[\s\S]*?border-radius:\s*50%;[\s\S]*?animation:\s*chwazi-collapse-to-winner 480ms/);
+  assert.match(wxss, /\.chwazi-winner-collapse-disc\s*{[\s\S]*?border-radius:\s*50%;[\s\S]*?animation-name:\s*chwazi-collapse-to-winner;[\s\S]*?animation-duration:\s*480ms;/);
   assert.doesNotMatch(wxss, /300vmax|150vmax/);
   assert.match(wxss, /@keyframes chwazi-collapse-to-winner\s*{[\s\S]*?from\s*{\s*transform:\s*translate\(-50%, -50%\) scale\(1\);[\s\S]*?to\s*{\s*transform:\s*translate\(-50%, -50%\) scale\(0\);/);
   assert.match(wxss, /\.touch-point--selected::before/);

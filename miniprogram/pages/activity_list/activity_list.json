@@ -1,8 +1,11 @@
 {
   "navigationStyle": "custom",
-  "disableScroll": false,
+  "renderer": "skyline",
+  "componentFramework": "glass-easel",
+  "disableScroll": true,
   "enablePullDownRefresh": false,
   "usingComponents": {
-    "activity-form-sheet": "../../components/activity-form-sheet/index"
+    "activity-form-sheet": "../../components/activity-form-sheet/index",
+    "create-access-dialog": "../../components/create-access-dialog/index"
   }
 }

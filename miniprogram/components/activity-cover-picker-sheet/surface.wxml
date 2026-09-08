@@ -1,0 +1,85 @@
+<view class="cover-sheet-panel">
+  <view class="cover-sheet-header">
+    <text class="cover-sheet-title">选择活动封面</text>
+    <view class="cover-sheet-close" bindtap="onClose" aria-role="button" aria-label="关闭">
+      <image class="cover-sheet-close-icon" src="/images/icon-close.svg" mode="aspectFit" />
+    </view>
+  </view>
+  <view class="cover-sheet-divider"></view>
+
+  <view wx:if="{{loading}}" class="cover-sheet-skeleton" aria-label="封面加载中">
+    <view class="cover-sheet-skeleton-list">
+      <view wx:for="{{skeletonGroups}}" wx:key="*this" class="cover-skeleton-group">
+        <view class="cover-skeleton-header">
+          <view class="cover-skeleton-block cover-skeleton-avatar">
+            <view class="cover-skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+          <view class="cover-skeleton-block cover-skeleton-name">
+            <view class="cover-skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+        <view class="cover-skeleton-track">
+          <view wx:for="{{skeletonCards}}" wx:for-item="skeletonCard" wx:key="*this" class="cover-skeleton-block cover-skeleton-card">
+            <view class="cover-skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view wx:elif="{{loadFailed}}" class="cover-sheet-status">
+    <text>封面加载失败</text>
+    <button class="cover-sheet-retry" bindtap="retryLoad">重新加载</button>
+  </view>
+  <scroll-view wx:else type="list" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}" class="cover-sheet-content">
+    <view wx:for="{{artists}}" wx:key="slug" list-item class="cover-artist-group">
+      <view class="cover-artist-header">
+        <image class="cover-artist-avatar" src="{{item.avatarUrl}}" mode="aspectFill" fade-in="{{true}}" />
+        <text class="cover-artist-name">{{item.displayName}}</text>
+      </view>
+      <scroll-view type="list" scroll-x="{{true}}" enable-flex="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}" class="cover-artwork-track">
+        <view
+          wx:for="{{item.artworks}}"
+          wx:for-item="artwork"
+          wx:for-index="artworkIndex"
+          wx:key="id"
+          list-item
+          class="cover-artwork {{selectedId === artwork.id ? 'cover-artwork--selected' : ''}}"
+          style="animation-delay: {{artwork.enterDelayMs}}ms;"
+          bindtap="onSelect"
+          data-id="{{artwork.id}}"
+        >
+          <open-container
+            id="coverPreviewTransition-{{index}}-{{artworkIndex}}"
+            class="cover-artwork-transition"
+            closed-color="#f5f5f5"
+            closed-elevation="0"
+            closed-border-radius="12"
+            open-color="#08090b"
+            open-elevation="0"
+            open-border-radius="0"
+            transition-type="fadeThrough"
+            transition-duration="{{previewTransitionDuration}}"
+          >
+            <view class="cover-artwork-media">
+              <image class="cover-artwork-image" src="{{artwork.thumbnailUrl}}" mode="aspectFill" fade-in="{{true}}" />
+            </view>
+          </open-container>
+          <view class="cover-artwork-border"></view>
+          <view wx:if="{{selectedId === artwork.id}}" class="cover-artwork-check">
+            <image class="cover-artwork-check-icon" src="/images/icon-check.svg" mode="aspectFit" />
+          </view>
+          <view class="cover-artwork-preview" catchtap="onPreview" data-artist-index="{{index}}" data-artwork-index="{{artworkIndex}}" aria-role="button" aria-label="全屏预览">
+            <image class="cover-artwork-preview-icon" src="/images/icon-expand.svg" mode="aspectFit" />
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </scroll-view>
+
+  <view class="cover-sheet-footer">
+    <view class="cover-sheet-confirm {{loading || loadFailed || !selectedId ? 'cover-sheet-confirm--disabled' : ''}}" bindtap="onConfirm" aria-role="button" aria-label="确定选择活动封面" aria-disabled="{{loading || loadFailed || !selectedId}}">
+      <text class="cover-sheet-confirm-label">确定</text>
+    </view>
+  </view>
+
+</view>

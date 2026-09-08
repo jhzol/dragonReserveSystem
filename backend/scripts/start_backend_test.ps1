@@ -127,10 +127,14 @@ try {
         $apiUrl = "http://$apiHost`:$AppPort/api/v1"
         $env:PUBLIC_BASE_URL = "http://$apiHost`:$AppPort"
         $env:TEST_REQUEST_LOG_FILE = Join-Path $RootDir "test-request.log"
-        $localConfig = "const API_BASE_URL = `"$apiUrl`";" + @'
+        $localConfig = "const API_BASE_URL = `"$apiUrl`";`r`nconst API_ENVIRONMENT = `"test`";" + @'
 
 function getApiBaseUrl() {
   return API_BASE_URL;
+}
+
+function getApiEnvironment() {
+  return API_ENVIRONMENT;
 }
 
 function resolveLocalMediaUrl(url) {
@@ -149,7 +153,9 @@ function isLocalTestMediaUrl(url) {
 
 module.exports = {
   API_BASE_URL,
+  API_ENVIRONMENT,
   getApiBaseUrl,
+  getApiEnvironment,
   resolveLocalMediaUrl,
   isLocalTestMediaUrl
 };

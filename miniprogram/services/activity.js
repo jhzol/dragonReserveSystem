@@ -1,10 +1,14 @@
-const { request } = require("./request");
+const { request: baseRequest } = require("./request");
 const cacheManager = require("./cacheManager");
 const myActivitiesCache = require("../utils/myActivitiesCache");
 const historyStatsCache = require("../utils/historyStatsCache");
 
 let listActivitiesInFlight = null;
 let listMyActivitiesInFlight = null;
+
+function request(options) {
+  return baseRequest({ ...options, apiVersion: 2 });
+}
 
 function invalidateActivityCaches({ clearMyActivities = false } = {}) {
   cacheManager.clearCachedActivityList();
@@ -40,16 +44,8 @@ function listMyActivities() {
   return entry.promise;
 }
 
-function listActivityTypeStyles() {
-  return request({ url: "/activities/type-styles" });
-}
-
-function getActivityStyleSignature() {
-  return request({ url: "/activities/style-signature" });
-}
-
-function getClientConfig() {
-  return request({ url: "/client-config" });
+function listActivityCovers() {
+  return request({ url: "/activity-covers" });
 }
 
 function getActivity(activityId) {
@@ -82,16 +78,6 @@ function updateActivity(activityId, payload) {
   });
 }
 
-function deleteActivity(activityId) {
-  return request({
-    url: `/activities/${activityId}`,
-    method: "DELETE"
-  }).then((result) => {
-    invalidateActivityCaches();
-    return result;
-  });
-}
-
 function signupActivity(activityId) {
   return request({
     url: `/activities/${activityId}/signup`,
@@ -102,10 +88,10 @@ function signupActivity(activityId) {
   });
 }
 
-function cancelSignup(activityId) {
+function cancelActivity(activityId) {
   return request({
-    url: `/activities/${activityId}/signup`,
-    method: "DELETE"
+    url: `/activities/${activityId}/cancel`,
+    method: "POST"
   }).then((result) => {
     invalidateActivityCaches({ clearMyActivities: true });
     return result;
@@ -156,16 +142,13 @@ function adminCancelCheckinParticipant(activityId, participantId) {
 module.exports = {
   listActivities,
   listMyActivities,
-  listActivityTypeStyles,
-  getActivityStyleSignature,
-  getClientConfig,
+  listActivityCovers,
   getActivity,
   getActivitySharePreview,
   createActivity,
   updateActivity,
-  deleteActivity,
+  cancelActivity,
   signupActivity,
-  cancelSignup,
   removeParticipant,
   checkinActivity,
   adminCheckinParticipant,

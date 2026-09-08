@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Dragon Reserve weather snapshot refresh every hour
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1h
+Persistent=true
+RandomizedDelaySec=60
+Unit=dragonreserve-weather-refresh.service
+
+[Install]
+WantedBy=timers.target

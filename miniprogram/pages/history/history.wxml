@@ -1,5 +1,5 @@
 <view class="ranking-page">
-  <scroll-view class="ranking-scroll" scroll-y show-scrollbar="false" lower-threshold="120" bindscrolltolower="loadMoreActivityRanking">
+  <scroll-view class="ranking-scroll" type="custom" scroll-y show-scrollbar="{{false}}" lower-threshold="120" bindscrolltolower="loadMoreActivityRanking">
     <view class="ranking-scroll-body">
       <image class="dragon-watermark dragon-watermark--absolute ranking-watermark" src="../../images/activity-home-logo.png" mode="aspectFit" />
       <view class="ranking-navbar" style="padding-top: {{statusBarHeight}}px">
@@ -13,10 +13,10 @@
         <view class="ranking-switch-item {{activeTab === 'pigeon' ? 'is-active' : ''}}" data-tab="pigeon" bindtap="switchRankingTab"><text>鸽子榜</text></view>
       </view>
 
-      <view wx:if="{{isLoading}}" class="ranking-loading">排行榜加载中</view>
+      <view wx:if="{{isLoading}}" class="ranking-loading"><text>排行榜加载中</text></view>
 
       <block wx:elif="{{activeTab === 'activity'}}">
-        <view class="ranking-section-title">S2赛季冠军</view>
+        <view class="ranking-section-title"><text>S2赛季冠军</text></view>
         <view wx:if="{{activityLeader}}" class="champion-card" id="qa-activity-champion">
           <view class="champion-profile">
             <image class="champion-avatar" src="{{activityLeader.avatarUrl}}" mode="aspectFill" />
@@ -45,12 +45,12 @@
             <text class="champion-joke">冒昧问一句，你没有别的朋友吗？</text>
           </view>
         </view>
-        <view wx:else class="ranking-empty-small">暂无签到数据</view>
+        <view wx:else class="ranking-empty-small"><text>暂无签到数据</text></view>
 
-        <view class="ranking-section-title ranking-section-title--others">其他玩心很重的人</view>
+        <view class="ranking-section-title ranking-section-title--others"><text>其他玩心很重的人</text></view>
         <view wx:if="{{activityPodium.length}}" class="podium-row">
           <view wx:for="{{activityPodium}}" wx:key="userId" class="podium-card podium-rank-{{item.rank}}">
-            <view class="podium-avatar-wrap"><image class="podium-avatar" src="{{item.avatarUrl}}" mode="aspectFill" /><view class="rank-badge">{{item.rank}}</view></view>
+            <view class="podium-avatar-wrap"><image class="podium-avatar" src="{{item.avatarUrl}}" mode="aspectFill" /><view class="rank-badge"><text>{{item.rank}}</text></view></view>
             <text class="podium-name">{{item.name}}</text>
             <view class="podium-value"><text class="podium-number">{{item.checkinCount}}</text><text class="podium-unit">场签到</text></view>
           </view>
@@ -65,25 +65,25 @@
       </block>
 
       <block wx:else>
-        <view class="ranking-section-title">S2赛季鸽子王</view>
+        <view class="ranking-section-title"><text>S2赛季鸽子王</text></view>
         <view wx:if="{{pigeonLeader}}" class="champion-card" id="qa-pigeon-champion">
           <view class="champion-profile"><image class="champion-avatar" src="{{pigeonLeader.avatarUrl}}" mode="aspectFill" /><text class="champion-name">{{pigeonLeader.name}}</text><text class="champion-number">{{pigeonLeader.pigeonCount}}</text><text class="champion-unit">次鸽子</text></view>
           <view class="champion-detail">
             <view class="pigeon-summary">
               <view class="pigeon-summary-header"><text class="pigeon-summary-title">鸽子概率</text><text class="pigeon-summary-total">全部 {{pigeonLeader.signupCount}} 场</text></view>
               <view class="pigeon-summary-content">
-                <view class="pigeon-copy"><text class="pigeon-label">{{pigeonLeader.riskText}}</text><text class="pigeon-description">{{pigeonLeader.riskDescription}}</text></view>
+                <view class="pigeon-copy"><text class="pigeon-label">{{pigeonLeader.riskText}}</text><view class="pigeon-description"><text wx:for="{{pigeonLeader.riskDescriptionLines}}" wx:key="*this" class="pigeon-description-line">{{item}}</text></view></view>
                 <view class="pigeon-ring" style="background: conic-gradient(#ff9800 {{pigeonLeader.ringDegrees}}deg, #ffe2b3 0deg);"><view class="pigeon-ring-inner"><text class="pigeon-rate">{{pigeonLeader.pigeonRateText}}%</text><text class="pigeon-rate-label">鸽子概率</text></view></view>
               </view>
             </view>
             <text class="champion-joke">发了红包就不用出现在这里了</text>
           </view>
         </view>
-        <view wx:else class="ranking-empty-small">暂无鸽子数据</view>
+        <view wx:else class="ranking-empty-small"><text>暂无鸽子数据</text></view>
 
-        <view class="ranking-section-title ranking-section-title--others">其他还没有发红包的人</view>
+        <view class="ranking-section-title ranking-section-title--others"><text>其他还没有发红包的人</text></view>
         <block wx:if="{{pigeonPodium.length || pigeonRest.length}}">
-          <view class="podium-row"><view wx:for="{{pigeonPodium}}" wx:key="userId" class="podium-card podium-rank-{{item.rank}}"><view class="podium-avatar-wrap"><image class="podium-avatar" src="{{item.avatarUrl}}" mode="aspectFill" /><view class="rank-badge">{{item.rank}}</view></view><text class="podium-name">{{item.name}}</text><view class="podium-value"><text class="podium-prefix">鸽了</text><text class="podium-number">{{item.pigeonCount}}</text><text class="podium-unit">场</text></view></view></view>
+          <view class="podium-row"><view wx:for="{{pigeonPodium}}" wx:key="userId" class="podium-card podium-rank-{{item.rank}}"><view class="podium-avatar-wrap"><image class="podium-avatar" src="{{item.avatarUrl}}" mode="aspectFill" /><view class="rank-badge"><text>{{item.rank}}</text></view></view><text class="podium-name">{{item.name}}</text><view class="podium-value"><text class="podium-prefix">鸽了</text><text class="podium-number">{{item.pigeonCount}}</text><text class="podium-unit">场</text></view></view></view>
           <view class="ranking-list"><view wx:for="{{pigeonRest}}" wx:key="userId" class="ranking-row"><text class="ranking-row-rank">{{item.rank}}</text><image class="ranking-row-avatar" src="{{item.avatarUrl}}" mode="aspectFill" /><view class="ranking-row-main"><text class="ranking-row-name">{{item.name}}</text><view class="ranking-progress"><view class="ranking-progress-fill" style="width: {{item.progressPercent}}%"></view></view></view><view class="pigeon-row-value"><text>鸽了</text><text class="pigeon-row-number">{{item.pigeonCount}}</text><text>场</text></view></view></view>
         </block>
         <view wx:else class="ranking-empty"><image class="ranking-empty-image" src="../../images/ranking-empty-box.svg" mode="aspectFit" /><text>看起来都发红包了</text></view>
@@ -92,3 +92,5 @@
     </view>
   </scroll-view>
 </view>
+
+<create-access-dialog id="create-access-dialog" />

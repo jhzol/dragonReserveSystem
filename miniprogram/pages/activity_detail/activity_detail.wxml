@@ -1,12 +1,100 @@
 <view class="page-wrap">
+  <view wx:if="{{loading || detailSkeletonLeaving}}" id="qaActivityDetailSkeleton" class="detail-skeleton-screen {{detailSkeletonLeaving ? 'detail-skeleton-screen--leaving' : ''}}" aria-label="活动详情加载中">
+    <view class="detail-skeleton-hero">
+      <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px">
+        <view class="navbar-inner">
+          <view class="nav-back" hover-class="nav-back-hover" hover-stay-time="80" bindtap="onTapBack">
+            <image class="nav-back-icon" src="/images/activity-detail-chevron-left.svg" mode="aspectFit" />
+          </view>
+          <view class="nav-placeholder"></view>
+        </view>
+      </view>
+
+      <view class="detail-skeleton-hero-copy">
+        <view class="detail-skeleton-status-row">
+          <view class="detail-skeleton-block detail-skeleton-block-dark detail-skeleton-status-pill"><view class="detail-skeleton-shimmer detail-skeleton-shimmer-dark"></view></view>
+          <view class="detail-skeleton-block detail-skeleton-block-dark detail-skeleton-hero-meta"><view class="detail-skeleton-shimmer detail-skeleton-shimmer-dark"></view></view>
+        </view>
+        <view class="detail-skeleton-title-group">
+          <view class="detail-skeleton-block detail-skeleton-block-dark detail-skeleton-title-primary"><view class="detail-skeleton-shimmer detail-skeleton-shimmer-dark"></view></view>
+          <view class="detail-skeleton-block detail-skeleton-block-dark detail-skeleton-title-secondary"><view class="detail-skeleton-shimmer detail-skeleton-shimmer-dark"></view></view>
+        </view>
+        <view class="detail-skeleton-remark-row">
+          <view class="detail-skeleton-block detail-skeleton-block-dark detail-skeleton-remark"><view class="detail-skeleton-shimmer detail-skeleton-shimmer-dark"></view></view>
+          <view class="detail-skeleton-block detail-skeleton-block-dark detail-skeleton-expand"><view class="detail-skeleton-shimmer detail-skeleton-shimmer-dark"></view></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-skeleton-panel">
+      <view class="detail-skeleton-block detail-skeleton-section-title"><view class="detail-skeleton-shimmer"></view></view>
+
+      <view class="detail-skeleton-facts-row">
+        <view class="detail-skeleton-fact detail-skeleton-fact-date">
+          <view class="detail-skeleton-block detail-skeleton-fact-label"><view class="detail-skeleton-shimmer"></view></view>
+          <view class="detail-skeleton-block detail-skeleton-fact-value detail-skeleton-fact-value-date"><view class="detail-skeleton-shimmer"></view></view>
+        </view>
+        <view class="detail-skeleton-divider"></view>
+        <view class="detail-skeleton-fact detail-skeleton-fact-time">
+          <view class="detail-skeleton-block detail-skeleton-fact-label"><view class="detail-skeleton-shimmer"></view></view>
+          <view class="detail-skeleton-block detail-skeleton-fact-value detail-skeleton-time-value"><view class="detail-skeleton-shimmer"></view></view>
+        </view>
+        <view class="detail-skeleton-divider"></view>
+        <view class="detail-skeleton-fact detail-skeleton-fact-people">
+          <view class="detail-skeleton-block detail-skeleton-fact-label detail-skeleton-people-label"><view class="detail-skeleton-shimmer"></view></view>
+          <view class="detail-skeleton-block detail-skeleton-fact-value detail-skeleton-fact-value-people"><view class="detail-skeleton-shimmer"></view></view>
+        </view>
+      </view>
+
+      <view class="detail-skeleton-location-card">
+        <view class="detail-skeleton-block detail-skeleton-map"><view class="detail-skeleton-shimmer"></view></view>
+        <view class="detail-skeleton-location-meta">
+          <view class="detail-skeleton-location-copy">
+            <view class="detail-skeleton-block detail-skeleton-location-name"><view class="detail-skeleton-shimmer"></view></view>
+            <view class="detail-skeleton-block detail-skeleton-location-address"><view class="detail-skeleton-shimmer"></view></view>
+          </view>
+          <view class="detail-skeleton-block detail-skeleton-navigation"><view class="detail-skeleton-shimmer"></view></view>
+        </view>
+      </view>
+
+      <view class="detail-skeleton-weather-card">
+        <view class="detail-skeleton-weather-content">
+          <view class="detail-skeleton-weather-summary">
+            <view class="detail-skeleton-block detail-skeleton-weather-icon"><view class="detail-skeleton-shimmer"></view></view>
+            <view class="detail-skeleton-temperature-copy">
+              <view class="detail-skeleton-block detail-skeleton-temperature"><view class="detail-skeleton-shimmer"></view></view>
+              <view class="detail-skeleton-block detail-skeleton-condition"><view class="detail-skeleton-shimmer"></view></view>
+            </view>
+          </view>
+          <view class="detail-skeleton-weather-divider"></view>
+          <view class="detail-skeleton-weather-metrics">
+            <view wx:for="{{[0, 1, 2]}}" wx:key="*this" class="detail-skeleton-weather-metric">
+              <view class="detail-skeleton-block detail-skeleton-metric-icon"><view class="detail-skeleton-shimmer"></view></view>
+              <view class="detail-skeleton-block detail-skeleton-metric-value"><view class="detail-skeleton-shimmer"></view></view>
+              <view class="detail-skeleton-block detail-skeleton-metric-label"><view class="detail-skeleton-shimmer"></view></view>
+            </view>
+          </view>
+        </view>
+        <view class="detail-skeleton-weather-source">
+          <view class="detail-skeleton-block detail-skeleton-source-text"><view class="detail-skeleton-shimmer"></view></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-skeleton-bottom-bar" style="height: calc(107.69rpx + {{safeBottomRpx}}rpx); padding-bottom: {{safeBottomRpx}}rpx">
+      <view class="detail-skeleton-bottom-inner">
+        <view class="detail-skeleton-block detail-skeleton-share-button"><view class="detail-skeleton-shimmer"></view></view>
+        <view class="detail-skeleton-block detail-skeleton-primary-button"><view class="detail-skeleton-shimmer"></view></view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{activity || loadError}}" class="detail-content-layer {{activity && !detailContentVisible ? 'detail-content-layer--hidden' : 'detail-content-layer--visible'}}">
   <view
     class="main-scroll"
     style="height: calc(100vh - {{bottomBarHeightRpx}}rpx)"
   >
-    <view wx:if="{{loading}}" class="state-block state-block-full">
-      <text class="state-text">加载中…</text>
-    </view>
-    <view wx:elif="{{loadError}}" class="state-block state-block-full">
+    <view wx:if="{{loadError}}" class="state-block state-block-full">
       <text class="state-text">{{loadError}}</text>
       <button class="retry-btn" bindtap="refreshDetail">重试</button>
     </view>
@@ -50,7 +138,6 @@
             <view class="nav-back" hover-class="nav-back-hover" hover-stay-time="80" bindtap="onTapBack">
               <image class="nav-back-icon" src="/images/activity-detail-chevron-left.svg" mode="aspectFit" />
             </view>
-            <text class="navbar-title">活动详情</text>
             <view class="nav-placeholder"></view>
           </view>
         </view>
@@ -62,20 +149,39 @@
           </view>
           <text class="hero-title">{{activityTitleText}}</text>
           <view wx:if="{{activity.remark}}" class="hero-remark-row" bindtap="toggleRemark">
-            <text class="hero-remark {{remarkExpanded ? 'hero-remark-expanded' : ''}}">{{activity.remark}}</text>
+            <view
+              class="hero-remark-viewport"
+              style="height: {{remarkViewportHeightPx > 0 ? remarkViewportHeightPx + 'px' : '37.69rpx'}};"
+            >
+              <text
+                class="hero-remark"
+                overflow="ellipsis"
+                max-lines="{{remarkExpanded ? 999 : 1}}"
+              >{{activity.remark}}</text>
+            </view>
             <view wx:if="{{remarkExpandable}}" class="remark-toggle">
-              <text class="remark-toggle-text">{{remarkExpanded ? '收起' : '展开'}}</text>
-              <image
-                class="remark-chevron"
-                src="{{remarkExpanded ? '/images/activity-detail-chevron-up.svg' : '/images/activity-detail-chevron-down.svg'}}"
-                mode="aspectFit"
-              />
+              <view class="remark-toggle-label">
+                <text class="remark-toggle-text {{remarkExpanded ? 'remark-toggle-text-out-up' : 'remark-toggle-text-active'}}">展开</text>
+                <text class="remark-toggle-text {{remarkExpanded ? 'remark-toggle-text-active' : 'remark-toggle-text-out-down'}}">收起</text>
+              </view>
+              <view class="remark-chevron-rotator" style="transform: rotate({{remarkToggleRotationDeg}}deg);">
+                <view class="remark-chevron"></view>
+              </view>
             </view>
           </view>
-          <text wx:if="{{activity.remark}}" class="hero-remark-measure">{{activity.remark}}</text>
-          <view wx:if="{{activity.remark}}" class="remark-toggle-measure">
-            <text class="remark-toggle-text">展开</text>
-            <image class="remark-chevron" src="/images/activity-detail-chevron-down.svg" mode="aspectFit" />
+        </view>
+
+        <!-- 测量节点必须放在 hero-copy 外，避免 Skyline 将隐藏节点计入纵向 gap。 -->
+        <text wx:if="{{activity.remark}}" class="hero-remark-measure">{{activity.remark}}</text>
+        <text
+          wx:if="{{activity.remark}}"
+          class="hero-remark-full-measure"
+          style="width: {{remarkTextWidthPx}}px;"
+        >{{activity.remark}}</text>
+        <view wx:if="{{activity.remark}}" class="remark-toggle-measure">
+          <text class="remark-toggle-text">展开</text>
+          <view class="remark-chevron-rotator">
+            <view class="remark-chevron"></view>
           </view>
         </view>
       </view>
@@ -92,7 +198,7 @@
           <view class="fact-divider"></view>
           <view class="fact-item fact-item-time">
             <text class="fact-label">时间</text>
-            <text class="fact-value fact-value-time">{{activityTimeText}}</text>
+            <text class="fact-value">{{activityTimeText}}</text>
           </view>
           <view class="fact-divider"></view>
           <view class="fact-item fact-participants" bindtap="openParticipantsDrawer">
@@ -186,7 +292,7 @@
   <view wx:if="{{activity}}" id="qaActivityDetailBottomBar" class="bottom-bar" style="padding-bottom: {{safeBottomRpx}}rpx">
     <view class="bottom-inner">
       <button
-        class="bottom-icon-button bottom-icon-button-share {{(!isAdmin || activity.status === '已取消') ? 'bottom-icon-button-wide' : ''}} {{sharePreviewLoading ? 'bottom-icon-button-disabled' : ''}}"
+        class="bottom-icon-button bottom-icon-button-share {{(!canManageActivity || activity.status === '已结束') ? 'bottom-icon-button-wide' : ''}} {{sharePreviewLoading ? 'bottom-icon-button-disabled' : ''}}"
         open-type="{{sharePreviewLoading ? '' : 'share'}}"
         disabled="{{sharePreviewLoading}}"
         hover-class="bottom-button-hover"
@@ -194,7 +300,7 @@
         <image class="bottom-button-icon" src="/images/icon-share.svg" mode="aspectFit" />
       </button>
       <button
-        wx:if="{{isAdmin && activity.status !== '已取消'}}"
+        wx:if="{{canManageActivity && activity.status !== '已结束'}}"
         class="bottom-icon-button bottom-icon-button-edit"
         hover-class="bottom-button-hover"
         bindtap="openAdminEdit"
@@ -202,92 +308,60 @@
         <image class="bottom-button-icon" src="/images/icon-edit.svg" mode="aspectFit" />
       </button>
       <button
-        class="bottom-primary {{primaryActionDisabled ? 'bottom-primary-disabled' : ''}}"
+        class="bottom-primary {{primaryActionType === 'cancel' ? 'bottom-primary-cancel' : ''}} {{primaryActionDisabled ? 'bottom-primary-disabled' : ''}}"
         disabled="{{primaryActionDisabled}}"
         hover-class="bottom-primary-hover"
         bindtap="onTapPrimaryAction"
       >{{primaryActionLabel}}</button>
     </view>
   </view>
-
-  <activity-form-sheet
-    id="qaActivityFormSheet"
-    wx:if="{{showActivityForm && isAdmin && activity}}"
-    visible="{{true}}"
-    mode="edit"
-    activity="{{activity}}"
-    participant-count="{{activityParticipantCount}}"
-    location-disabled="{{locationDisabled}}"
-    submitting="{{activityFormSubmitting}}"
-    bindclose="closeActivityForm"
-    bindsubmit="submitActivityForm"
-    bindcancelactivity="cancelActivityFromForm"
-  />
-
-  <view wx:if="{{showParticipantsDrawer && activity}}" class="participants-drawer-root">
-    <view class="participants-drawer-mask" catchtouchmove="stopPropagation" bindtap="closeParticipantsDrawer"></view>
-    <view
-      class="participants-drawer-sheet"
-      catchtap="stopPropagation"
-      catchtouchmove="stopPropagation"
-      style="padding-bottom: {{safeBottomRpx}}rpx"
-    >
-      <view class="participants-drawer-header">
-        <view class="participants-drawer-title-block">
-          <text class="participants-drawer-title">参与人</text>
-          <text class="participants-drawer-sub">已报名 {{activity.participants.length}}，已签到 {{activity.checkinCount || 0}}</text>
-        </view>
-        <text class="close-btn" bindtap="closeParticipantsDrawer">×</text>
-      </view>
-      <scroll-view scroll-y="{{true}}" class="participants-drawer-body">
-        <view wx:if="{{participantDrawerList.length === 0}}" class="empty-participants">暂无报名人员</view>
-        <view
-          wx:for="{{participantDrawerList}}"
-          wx:key="rowKey"
-          wx:for-item="row"
-          class="participant-drawer-row"
-        >
-          <image class="participant-drawer-avatar" src="{{row.avatarUrl}}" mode="aspectFill" />
-          <view class="participant-drawer-main">
-            <text class="participant-drawer-name">{{row.name}}</text>
-            <text wx:if="{{row.checkedInAt}}" class="participant-drawer-status participant-drawer-status-in">已签到</text>
-            <text wx:elif="{{activity.status === '已结束'}}" class="participant-drawer-status participant-drawer-status-pigeon">鸽子</text>
-          </view>
-          <view class="participant-drawer-actions">
-            <text
-              wx:if="{{isAdmin && !row.checkedInAt && activity.status === '已结束'}}"
-              class="participant-retro-checkin"
-              hover-class="participant-btn-hover"
-              hover-stay-time="80"
-              bindtap="adminRetroCheckin"
-              data-id="{{row.id}}"
-              data-name="{{row.name}}"
-            >补签</text>
-            <text
-              wx:elif="{{isAdmin && row.checkedInAt}}"
-              class="participant-retro-checkin"
-              hover-class="participant-btn-hover"
-              hover-stay-time="80"
-              bindtap="adminCancelCheckin"
-              data-id="{{row.id}}"
-              data-name="{{row.name}}"
-            >取消签到</text>
-            <text
-              wx:if="{{isAdmin || (!activity.signupDeadlinePassed && ((row.userId && row.userId === myUserId) || (!row.userId && row.name === myNickname)))}}"
-              class="participant-delete"
-              hover-class="participant-btn-hover"
-              hover-stay-time="80"
-              bindtap="removeParticipant"
-              data-id="{{row.id}}"
-              data-name="{{row.name}}"
-              data-self="{{(!isAdmin && ((row.userId && row.userId === myUserId) || (!row.userId && row.name === myNickname))) ? '1' : ''}}"
-            >{{(!isAdmin && ((row.userId && row.userId === myUserId) || (!row.userId && row.name === myNickname))) ? '取消' : '删除'}}</text>
-          </view>
-        </view>
-        <view class="participants-drawer-body-pad"></view>
-      </scroll-view>
-    </view>
   </view>
+
+  <page-container
+    wx:if="{{activityFormContainerRendered && canManageActivity && activity && activity.status !== '已结束'}}"
+    id="qaActivityEditContainer"
+    show="{{showActivityForm}}"
+    position="bottom"
+    overlay="{{true}}"
+    round="{{false}}"
+    duration="240"
+    close-on-slide-down="{{false}}"
+    overlay-style="background: rgba(23, 24, 20, 0.4);"
+    custom-style="height: 100%; background: transparent; border-radius: 0; overflow: hidden;"
+    bind:clickoverlay="closeActivityForm"
+    bind:afterleave="onActivityFormAfterLeave"
+  >
+    <activity-form-sheet
+      id="qaActivityFormSheet"
+      style="display: block; width: 100%; height: 100%;"
+      visible="{{showActivityForm}}"
+      route-embedded="{{true}}"
+      mode="edit"
+      activity="{{activity}}"
+      participant-count="{{activityParticipantCount}}"
+      location-disabled="{{locationDisabled}}"
+      submitting="{{activityFormSubmitting}}"
+      bindclose="closeActivityForm"
+      bindsubmit="submitActivityForm"
+      bindcancelactivity="cancelActivityFromForm"
+    />
+  </page-container>
+
+  <participants-drawer
+    id="qaParticipantsDrawer"
+    visible="{{showParticipantsDrawer}}"
+    participants="{{participantDrawerList}}"
+    participant-count="{{activityParticipantCount}}"
+    checkin-count="{{activity.checkinCount || 0}}"
+    max-participants="{{activity.maxParticipants}}"
+    can-manage="{{canManageActivity}}"
+    is-admin="{{isAdmin}}"
+    safe-bottom-rpx="{{safeBottomRpx}}"
+    bindclose="closeParticipantsDrawer"
+    bindretrocheckin="adminRetroCheckin"
+    bindcancelcheckin="adminCancelCheckin"
+    bindremove="removeParticipant"
+  />
 
   <view wx:if="{{showSignupProfileModal}}" class="signup-profile-overlay" catchtouchmove="stopPropagation">
     <view class="signup-profile-modal-bg" bindtap="closeSignupProfileModal"></view>
@@ -296,7 +370,7 @@
         <text class="signup-profile-modal-title">修改个人资料</text>
         <text class="signup-profile-close-btn" bindtap="closeSignupProfileModal">×</text>
       </view>
-      <view class="signup-profile-modal-body">
+      <scroll-view class="signup-profile-modal-body" type="list" scroll-y="{{true}}">
         <view class="signup-profile-hint">{{signupProfileHint}}</view>
         <view class="signup-profile-form-row">
           <view class="signup-profile-label">头像</view>
@@ -311,7 +385,7 @@
           <view class="signup-profile-label">昵称</view>
           <input type="text" class="signup-profile-input" placeholder="请输入昵称" value="{{signupProfileNickname}}" bindinput="onSignupProfileNicknameInput" />
         </view>
-      </view>
+      </scroll-view>
       <view class="signup-profile-modal-footer">
         <button class="signup-profile-btn signup-profile-btn-default" bindtap="closeSignupProfileModal">取消</button>
         <button class="signup-profile-btn signup-profile-btn-primary {{!signupProfileCanSubmit ? 'signup-profile-btn-disabled' : ''}}" bindtap="saveSignupProfile" disabled="{{!signupProfileCanSubmit}}">保存</button>

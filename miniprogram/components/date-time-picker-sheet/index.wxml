@@ -1,52 +1,25 @@
-<root-portal enable="{{visible}}">
-  <view wx:if="{{visible}}" class="picker-sheet-root" catchtouchmove="stopPropagation">
-    <view class="picker-sheet-mask" catchtouchmove="stopPropagation" catchtap="onClose"></view>
-
-    <view class="picker-sheet-panel">
-      <view class="picker-sheet-header">
-        <text class="picker-sheet-title">{{title}}</text>
-        <view class="picker-sheet-close" bindtap="onClose" aria-role="button" aria-label="关闭">
-          <image class="picker-sheet-close-icon" src="/images/icon-close.svg" mode="aspectFit" />
-        </view>
-      </view>
-      <view class="picker-sheet-divider"></view>
-
-      <view class="picker-sheet-wheel">
-        <view class="picker-sheet-selection picker-sheet-selection--{{mode}}"></view>
-        <picker-view
-          class="picker-sheet-view picker-sheet-view--{{mode}}"
-          value="{{pickerValue}}"
-          bindchange="onPickerChange"
-          indicator-class="picker-sheet-native-indicator"
-          indicator-style="height: 96rpx; background: transparent; border: 0; box-shadow: none;"
-        >
-          <block wx:if="{{showDate}}">
-            <picker-view-column class="picker-sheet-column picker-sheet-column--year">
-              <view wx:for="{{years}}" wx:key="*this" wx:for-index="index" class="picker-sheet-item">{{item}}年</view>
-            </picker-view-column>
-            <picker-view-column class="picker-sheet-column picker-sheet-column--month">
-              <view wx:for="{{months}}" wx:key="*this" wx:for-index="index" class="picker-sheet-item">{{item < 10 ? '0' + item : item}}月</view>
-            </picker-view-column>
-            <picker-view-column class="picker-sheet-column picker-sheet-column--day">
-              <view wx:for="{{days}}" wx:key="*this" wx:for-index="index" class="picker-sheet-item">{{item < 10 ? '0' + item : item}}日</view>
-            </picker-view-column>
-          </block>
-          <block wx:if="{{showTime}}">
-            <picker-view-column class="picker-sheet-column picker-sheet-column--hour">
-              <view wx:for="{{hours}}" wx:key="*this" wx:for-index="index" class="picker-sheet-item">{{item < 10 ? '0' + item : item}}时</view>
-            </picker-view-column>
-            <picker-view-column class="picker-sheet-column picker-sheet-column--minute">
-              <view wx:for="{{minutes}}" wx:key="*this" wx:for-index="index" class="picker-sheet-item">{{item < 10 ? '0' + item : item}}分</view>
-            </picker-view-column>
-          </block>
-        </picker-view>
-        <view class="picker-sheet-fade picker-sheet-fade--top"></view>
-        <view class="picker-sheet-fade picker-sheet-fade--bottom"></view>
-      </view>
-
-      <view class="picker-sheet-footer">
-        <view class="picker-sheet-confirm" hover-class="picker-sheet-confirm--pressed" bindtap="onConfirm" aria-role="button">确定</view>
-      </view>
+<block wx:if="{{embedded && containerRendered}}">
+  <view class="picker-sheet-embedded-root" catchtouchmove="stopPropagation">
+    <view class="picker-sheet-embedded-mask {{containerVisible ? 'picker-sheet-embedded-mask--visible' : ''}}" bindtap="onClose"></view>
+    <view class="picker-sheet-embedded-panel {{containerVisible ? 'picker-sheet-embedded-panel--visible' : ''}}">
+      <include src="./surface.wxml" />
     </view>
   </view>
-</root-portal>
+</block>
+
+<page-container
+  wx:if="{{!embedded && containerRendered}}"
+  id="qaDateTimePickerContainer"
+  show="{{containerVisible}}"
+  position="bottom"
+  overlay="{{true}}"
+  round="{{false}}"
+  duration="220"
+  close-on-slide-down="{{false}}"
+  overlay-style="background: rgba(21, 21, 31, 0.4);"
+  custom-style="height: 761.54rpx; max-height: 92vh; bottom: {{bottomOffsetRpx}}rpx; background: transparent; border-radius: 46.15rpx 46.15rpx 0 0; overflow: hidden;"
+  bind:clickoverlay="onClose"
+  bind:afterleave="onContainerAfterLeave"
+>
+  <include src="./surface.wxml" />
+</page-container>

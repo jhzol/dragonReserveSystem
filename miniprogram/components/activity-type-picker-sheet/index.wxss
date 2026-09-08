@@ -1,23 +1,7 @@
-.type-sheet-root {
-  position: fixed;
-  inset: 0;
-  z-index: 22000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  color: #111827;
-}
-
-.type-sheet-mask {
-  position: absolute;
-  inset: 0;
-  background: rgba(21, 21, 31, 0.4);
-}
-
 .type-sheet-panel {
   position: relative;
-  z-index: 1;
   width: 100%;
+  height: 100%;
   max-height: 100%;
   display: flex;
   flex-direction: column;
@@ -25,7 +9,47 @@
   border-radius: 48rpx 48rpx 0 0;
   background: #ffffff;
   box-sizing: border-box;
-  animation: type-sheet-up 180ms ease-out;
+}
+
+.type-sheet-embedded-root {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.type-sheet-embedded-mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(21, 21, 31, 0.4);
+  opacity: 0;
+  transition: opacity 220ms ease-out;
+}
+
+.type-sheet-embedded-mask--visible {
+  opacity: 1;
+}
+
+.type-sheet-embedded-panel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 914rpx;
+  max-height: 100%;
+  transform: translateY(100%);
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.type-sheet-embedded-panel--visible {
+  transform: translateY(0);
 }
 
 .type-sheet-header {
@@ -70,7 +94,9 @@
 
 .type-sheet-content {
   width: 100%;
-  flex: none;
+  flex: 1 1 0;
+  height: 0;
+  min-height: 0;
   padding: 32rpx;
   display: flex;
   flex-direction: column;
@@ -83,6 +109,10 @@
   display: flex;
   flex-direction: column;
   gap: 20rpx;
+}
+
+.type-sheet-group + .type-sheet-group {
+  margin-top: 32rpx;
 }
 
 .type-sheet-group-title {
@@ -159,9 +189,4 @@
 
 .type-sheet-confirm--pressed {
   opacity: 0.82;
-}
-
-@keyframes type-sheet-up {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
 }

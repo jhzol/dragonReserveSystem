@@ -137,6 +137,7 @@ test("pigeon percentage stays inside the ring while its angle keeps source preci
   assert.equal(item.ringDegrees, 120);
   assert.equal(item.riskText, "中风险");
   assert.equal(item.riskDescription, "答应得快\n消失得更快");
+  assert.deepEqual(Array.from(item.riskDescriptionLines), ["答应得快", "消失得更快"]);
 });
 
 test("ranking page preserves champion jokes and follows the Pencil layout fixes", () => {
@@ -147,6 +148,7 @@ test("ranking page preserves champion jokes and follows the Pencil layout fixes"
   assert.match(wxml, /<text class="ranking-navbar-title">排行榜<\/text>/);
   assert.match(wxml, /冒昧问一句，你没有别的朋友吗？/);
   assert.match(wxml, /发了红包就不用出现在这里了/);
+  assert.match(wxml, /wx:for="{{pigeonLeader\.riskDescriptionLines}}"[^>]*class="pigeon-description-line"/);
   assert.match(wxml, /class="heatmap-calendar"/);
   assert.match(wxml, /bindscrolltolower="loadMoreActivityRanking"/);
   assert.doesNotMatch(wxml, /ranking-switch-sticky/);
@@ -170,6 +172,9 @@ test("ranking page preserves champion jokes and follows the Pencil layout fixes"
   assert.match(wxss, /\.ranking-row:nth-child\(n \+ 4\) \.ranking-progress-fill\s*\{[^}]*background:\s*#ffe0b2;/s);
   assert.match(wxss, /\.champion-joke\s*\{[^}]*width:\s*398\.08rpx;[^}]*height:\s*32\.69rpx;/s);
   assert.match(wxss, /\.pigeon-ring\s*\{[^}]*box-shadow:\s*0 7\.69rpx 23\.08rpx rgba\(184,74,0,\.1\);/s);
+  assert.match(wxss, /\.pigeon-description\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;/s);
+  assert.doesNotMatch(wxss, /font-family\s*:/);
+  assert.match(wxss, /\.pigeon-description-line\s*\{[^}]*display:\s*block;[^}]*height:\s*28\.85rpx;[^}]*line-height:\s*28\.85rpx;/s);
   assert.match(wxss, /\.ranking-navbar-row\s*\{[^}]*max-width:\s*480px;[^}]*margin:\s*0 auto;/s);
   assert.match(wxss, /\.ranking-content\s*\{[^}]*max-width:\s*480px;[^}]*margin:\s*0 auto;[^}]*padding:\s*15\.38rpx 38\.46rpx;/s);
   assert.match(wxss, /\.ranking-watermark\s*\{[^}]*left:\s*calc\(50% - 25rpx\);/s);

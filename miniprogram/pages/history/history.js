@@ -73,6 +73,7 @@ function formatPigeonRanking(list) {
       pigeonRateText: String(Math.round(pigeonRate)),
       riskText: risk.text,
       riskDescription: risk.description,
+      riskDescriptionLines: risk.description.split("\n"),
       ringDegrees: Math.max(0, Math.min(360, Math.round(pigeonRate * 3.6))),
       progressPercent: leaderCount ? Math.max(8, Math.round((Number(item.pigeon_count || 0) / leaderCount) * 100)) : 0
     };
@@ -115,7 +116,7 @@ Page({
 
   onShow() {
     patchTabBarIfNeeded(this, {
-      selected: 3,
+      selected: 2,
       isAdmin: app.globalData.userRole === "admin"
     });
     this.loadRankings();

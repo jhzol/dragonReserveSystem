@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, get_optional_current_user, require_admin
+from app.api.deps import get_current_user, get_optional_current_user, require_admin, require_activity_signup_permission
 from app.core.config import get_settings
 from app.core.database import get_db
 from app.core.logging import logger
@@ -12,6 +12,7 @@ from app.models import User
 from app.schemas.activity import (
     ActivityCheckinRequest,
     ActivityCreateRequest,
+    ActivityDetailResponse,
     ActivityResponse,
     ActivitySharePreviewResponse,
     ActivitySignupResponse,
@@ -24,6 +25,7 @@ from app.services.activity_card_glass_service import (
     get_or_create_activity_card_glass,
 )
 from app.services.activity_type_style_service import list_activity_type_styles
+from app.services.activity_weather_service import get_activity_weather_snapshot
 from app.services.activity_share_preview_service import get_or_create_activity_share_preview
 from app.services.activity_service import (
     admin_cancel_checkin_participant,
@@ -125,16 +127,17 @@ def get_my_activities(
     return [ActivityResponse.model_validate(activity, from_attributes=True) for activity in activities]
 
 
-@router.get("/{activity_id}", response_model=ActivityResponse, summary="Get activity detail")
+@router.get("/{activity_id}", response_model=ActivityDetailResponse, summary="Get activity detail")
 def get_activity(
     activity_id: int,
     db: Session = Depends(get_db),
     _: User | None = Depends(get_optional_current_user),
-) -> ActivityResponse:
-    """Return a single activity."""
+) -> ActivityDetailResponse:
+    """Return one activity together with its persisted weather snapshot only."""
 
     activity = get_activity_by_id(db, activity_id)
-    return ActivityResponse.model_validate(activity, from_attributes=True)
+    payload = ActivityResponse.model_validate(activity, from_attributes=True).model_dump()
+    return ActivityDetailResponse(**payload, weather=get_activity_weather_snapshot(db, activity.id))
 
 
 @router.get(
@@ -206,26 +209,13 @@ def remove_activity(
 def post_signup(
     activity_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_activity_signup_permission),
 ) -> ActivitySignupResponse:
-    """Sign the current user up for an activity."""
+    """Sign the current member or admin up for an activity."""
 
     activity = get_activity_by_id(db, activity_id)
     participant = signup_activity(db, activity, current_user)
     return ActivitySignupResponse(activity_id=activity.id, participant_id=participant.id, status="signed_up")
-
-
-@router.delete("/{activity_id}/signup", status_code=status.HTTP_204_NO_CONTENT, summary="Cancel signup")
-def delete_signup(
-    activity_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-) -> Response:
-    """Cancel the current user's signup."""
-
-    activity = get_activity_by_id(db, activity_id)
-    cancel_signup(db, activity, current_user)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.delete(
@@ -293,4 +283,17 @@ def delete_admin_checkin_participant(
 
     activity = get_activity_by_id(db, activity_id)
     admin_cancel_checkin_participant(db, activity, participant_id, current_user)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.delete("/{activity_id}/signup", status_code=status.HTTP_204_NO_CONTENT, summary="Cancel signup")
+def delete_signup(
+    activity_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Response:
+    """Cancel the current user's signup."""
+
+    activity = get_activity_by_id(db, activity_id)
+    cancel_signup(db, activity, current_user)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -79,6 +79,17 @@ function formatTime(hour, minute) {
   return `${pad(hour)}:${pad(minute)}`;
 }
 
+const WEEKDAY_LABELS = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+
+function formatDayWithWeekday(year, month, day) {
+  const weekdayIndex = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day))).getUTCDay();
+  return `${pad(day)}日 · ${WEEKDAY_LABELS[weekdayIndex]}`;
+}
+
+function buildDayLabels(year, month) {
+  return range(1, daysInMonth(year, month)).map((day) => formatDayWithWeekday(year, month, day));
+}
+
 function buildPickerState(options = {}) {
   const mode = ["date", "time", "datetime"].includes(options.mode) ? options.mode : "datetime";
   const now = options.now instanceof Date ? options.now : new Date();
@@ -100,6 +111,8 @@ function buildPickerState(options = {}) {
   const dayIndex = safeDay - 1;
   const hourIndex = clamp(timePart.hour, 0, 23);
   const minuteIndex = Math.max(0, minutes.indexOf(timePart.minute));
+  const yearLabels = years.map((year) => mode === "datetime" ? pad(year % 100) : String(year));
+  const dayLabels = buildDayLabels(datePart.year, safeMonth);
   let pickerValue;
   if (mode === "date") pickerValue = [yearIndex, monthIndex, dayIndex];
   else if (mode === "time") pickerValue = [hourIndex, minuteIndex];
@@ -108,8 +121,10 @@ function buildPickerState(options = {}) {
   return {
     mode,
     years,
+    yearLabels,
     months,
     days,
+    dayLabels,
     hours,
     minutes,
     pickerValue,
@@ -129,5 +144,7 @@ module.exports = {
   roundUpToMinuteStep,
   formatDate,
   formatTime,
+  formatDayWithWeekday,
+  buildDayLabels,
   buildPickerState
 };

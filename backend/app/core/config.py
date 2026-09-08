@@ -3,7 +3,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/ — load .env then .env.test when present so WECHAT_* work without relying on
@@ -25,23 +25,25 @@ class Settings(BaseSettings):
 
     app_name: str = "Dragon Reserve Backend"
     app_version: str = "0.1.0"
+    environment: str = Field(default="development", validation_alias="APP_ENV")
     api_v1_prefix: str = "/api/v1"
+    api_v2_prefix: str = "/api/v2"
     debug: bool = Field(default=False, validation_alias="APP_DEBUG")
 
     database_url: str = Field(
-        default="mysql+pymysql://root:password@127.0.0.1:3306/dragon_reserve?charset=utf8mb4",
+        default="sqlite:///./dragon_reserve_dev.db",
         description="SQLAlchemy database URL",
     )
 
     jwt_secret_key: str = Field(
-        default="change-me-in-production",
+        default="dev-only-change-me",
         description="JWT signing secret",
     )
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24 * 30
     checkin_radius_meters: int = 1000
-    user_invite_code: str = "dragon"
-    admin_invite_code: str = "manage"
+    user_invite_code: str = ""
+    admin_invite_code: str = ""
     wechat_app_id: str = ""
     wechat_app_secret: str = ""
     wechat_code2session_url: str = "https://api.weixin.qq.com/sns/jscode2session"
@@ -54,6 +56,15 @@ class Settings(BaseSettings):
     qweather_private_key_path: str = "secrets/qweather-ed25519-private.pem"
     qweather_timeout_seconds: float = 8.0
     qweather_cache_seconds: int = 1800
+    qweather_refresh_far_hours: int = 12
+    qweather_refresh_near_hours: int = 6
+    qweather_air_refresh_near_hours: int = 3
+    qweather_stale_max_hours: int = 24
+    qweather_refresh_batch_size: int = 100
+    qweather_refresh_max_concurrency: int = 2
+    amap_web_service_key: str = ""
+    amap_regeocode_url: str = "https://restapi.amap.com/v3/geocode/regeo"
+    amap_timeout_seconds: float = 5.0
     public_base_url: str = ""
     media_root: str = "storage"
     media_url_prefix: str = "/media"
@@ -67,6 +78,23 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore",
     )
+
+    @model_validator(mode="after")
+    def reject_insecure_production_defaults(self) -> "Settings":
+        if self.environment.strip().lower() != "production":
+            return self
+        insecure = {
+            "DATABASE_URL": self.database_url.startswith("sqlite:") or "password@" in self.database_url,
+            "JWT_SECRET_KEY": not self.jwt_secret_key or "change-me" in self.jwt_secret_key,
+            "USER_INVITE_CODE": not self.user_invite_code,
+            "ADMIN_INVITE_CODE": not self.admin_invite_code,
+        }
+        invalid = [name for name, failed in insecure.items() if failed]
+        if invalid:
+            raise ValueError(
+                "Production configuration is missing secure values for: " + ", ".join(invalid)
+            )
+        return self
 
 
 @lru_cache

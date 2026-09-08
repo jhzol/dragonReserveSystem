@@ -1,4 +1,18 @@
 const WEEKDAYS = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+const ENGLISH_MONTH_NAMES = [
+  "JANUARY",
+  "FEBRUARY",
+  "MARCH",
+  "APRIL",
+  "MAY",
+  "JUNE",
+  "JULY",
+  "AUGUST",
+  "SEPTEMBER",
+  "OCTOBER",
+  "NOVEMBER",
+  "DECEMBER"
+];
 
 function parseLocalDateTime(value) {
   if (!value) return null;
@@ -36,19 +50,10 @@ function truncateActivityTitle(value, maxLength = 10) {
 
 function formatHeroMeta(activity) {
   const start = parseLocalDateTime(activity && activity.startTime);
-  const isOther = activity && String(activity.activityType || "").trim().toLowerCase() === "other";
-  const typeName = isOther
-    ? "OTHER"
-    : String(
-      (activity && activity.typeBadgeLabel) ||
-      (activity && activity.typeDisplayName) ||
-      "OTHER"
-    ).trim();
-  const typeText = /^[a-z\s]+$/i.test(typeName) ? typeName.toUpperCase() : typeName;
-  if (!start) return typeText;
-  const month = String(start.getMonth() + 1).padStart(2, "0");
+  if (!start) return "";
+  const month = ENGLISH_MONTH_NAMES[start.getMonth()];
   const day = String(start.getDate()).padStart(2, "0");
-  return `${typeText} · ${month}/${day}`;
+  return `${month} · ${day}`;
 }
 
 function toRadians(value) {
@@ -122,11 +127,12 @@ function buildWeatherView(payload) {
   };
 }
 
-function resolvePrimaryAction(activity, isCheckinWindowOpen) {
+function resolvePrimaryAction(activity) {
   if (!activity) return { label: "已停止报名", disabled: true, action: "none" };
+  if (activity.status === "已结束") return { label: "活动已结束", disabled: true, action: "none" };
   if (activity.hasCheckedIn) return { label: "已签到", disabled: true, action: "none" };
-  if (activity.hasSignedUp && isCheckinWindowOpen && (activity.status === "未开始" || activity.status === "进行中")) {
-    return { label: "签到", disabled: false, action: "checkin" };
+  if (activity.hasSignedUp && activity.status === "进行中") {
+    return { label: "立即签到", disabled: false, action: "checkin" };
   }
   if (activity.hasSignedUp && activity.status === "未开始" && !activity.signupDeadlinePassed) {
     return { label: "取消报名", disabled: false, action: "cancel" };

@@ -1,7 +1,5 @@
 const { roundUpToMinuteStep, formatDate, formatTime } = require("./dateTimePicker");
 
-const DEFAULT_ACTIVITY_TYPE = "other";
-const DEFAULT_CREATE_ACTIVITY_TYPE = "badminton";
 const DEFAULT_MAX_PARTICIPANTS = 12;
 const MAX_NAME_LENGTH = 10;
 const MAX_REMARK_LENGTH = 120;
@@ -28,7 +26,7 @@ function dateParts(date) {
   };
 }
 
-function buildCreateForm(now = new Date(), defaultType = DEFAULT_CREATE_ACTIVITY_TYPE) {
+function buildCreateForm(now = new Date()) {
   const start = roundUpToMinuteStep(new Date(now.getTime() + 2 * 60 * 60 * 1000), 5);
   const end = new Date(start.getTime() + 60 * 60 * 1000);
   const deadline = new Date(start.getTime() - 60 * 60 * 1000);
@@ -53,7 +51,7 @@ function buildCreateForm(now = new Date(), defaultType = DEFAULT_CREATE_ACTIVITY
     signupEnabled: true,
     limitEnabled: true,
     maxParticipants: DEFAULT_MAX_PARTICIPANTS,
-    activityType: String(defaultType || DEFAULT_CREATE_ACTIVITY_TYPE)
+    activityCoverId: ""
   };
 }
 
@@ -87,7 +85,7 @@ function buildEditForm(activity = {}) {
     signupEnabled: activity.signupEnabled !== false,
     limitEnabled: activity.maxParticipants != null,
     maxParticipants,
-    activityType: String(activity.activityType || DEFAULT_ACTIVITY_TYPE)
+    activityCoverId: String(activity.activityCoverId || activity.activity_cover_id || "")
   };
 }
 
@@ -124,6 +122,7 @@ function validateActivityForm(form, options = {}) {
   if (name.length > MAX_NAME_LENGTH) return { ok: false, message: `活动名称不能超过 ${MAX_NAME_LENGTH} 个字` };
   if (!remark) return { ok: false, message: "请输入活动备注" };
   if (remark.length > MAX_REMARK_LENGTH) return { ok: false, message: `活动备注不能超过 ${MAX_REMARK_LENGTH} 个字` };
+  if (!String(form && form.activityCoverId || "").trim()) return { ok: false, message: "请选择活动封面" };
 
   const start = toLocalDateTime(form.startDate, form.startTime);
   const end = toLocalDateTime(form.endDate, form.endTime);
@@ -153,10 +152,8 @@ function validateActivityForm(form, options = {}) {
 }
 
 function buildActivityPayload(form, options = {}) {
-  const mode = options.mode === "edit" ? "edit" : "create";
   const payload = {
     name: String(form.name || "").trim(),
-    status: String(form.status || "未开始"),
     remark: String(form.remark || "").trim(),
     start_time: `${form.startDate}T${form.startTime}:00`,
     end_time: `${form.endDate}T${form.endTime}:00`,
@@ -166,15 +163,13 @@ function buildActivityPayload(form, options = {}) {
     location_latitude: form.locationLatitude == null ? null : form.locationLatitude,
     location_longitude: form.locationLongitude == null ? null : form.locationLongitude,
     max_participants: form.limitEnabled ? Number(form.maxParticipants) : null,
-    signup_enabled: form.signupEnabled !== false
+    signup_enabled: form.signupEnabled !== false,
+    activity_cover_id: String(form.activityCoverId || "").trim()
   };
-  if (mode === "create") payload.activity_type = String(form.activityType || DEFAULT_CREATE_ACTIVITY_TYPE);
   return payload;
 }
 
 module.exports = {
-  DEFAULT_ACTIVITY_TYPE,
-  DEFAULT_CREATE_ACTIVITY_TYPE,
   DEFAULT_MAX_PARTICIPANTS,
   MAX_NAME_LENGTH,
   MAX_REMARK_LENGTH,

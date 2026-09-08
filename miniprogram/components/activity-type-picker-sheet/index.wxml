@@ -1,40 +1,25 @@
-<root-portal enable="{{visible}}">
-  <view wx:if="{{visible}}" class="type-sheet-root" catchtouchmove="stopPropagation">
-    <view class="type-sheet-mask" catchtouchmove="stopPropagation" catchtap="onClose"></view>
-
-    <view class="type-sheet-panel">
-      <view class="type-sheet-header">
-        <text class="type-sheet-title">选择活动类型</text>
-        <view class="type-sheet-close" bindtap="onClose" aria-role="button" aria-label="关闭">
-          <image class="type-sheet-close-icon" src="/images/icon-close.svg" mode="aspectFit" />
-        </view>
-      </view>
-      <view class="type-sheet-divider"></view>
-
-      <view class="type-sheet-content">
-        <view wx:for="{{groups}}" wx:key="key" class="type-sheet-group">
-          <text class="type-sheet-group-title">{{item.title}}</text>
-          <view class="type-sheet-options">
-            <view
-              wx:for="{{item.options}}"
-              wx:key="value"
-              wx:for-item="option"
-              class="type-sheet-option {{option.value === selectedValue ? 'type-sheet-option--selected' : ''}}"
-              hover-class="type-sheet-option--pressed"
-              data-value="{{option.value}}"
-              bindtap="onSelect"
-              aria-role="radio"
-              aria-checked="{{option.value === selectedValue}}"
-            >
-              <text class="type-sheet-option-label">{{option.label}}</text>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <view class="type-sheet-footer">
-        <view class="type-sheet-confirm" hover-class="type-sheet-confirm--pressed" bindtap="onConfirm" aria-role="button">确定</view>
-      </view>
+<block wx:if="{{embedded && containerRendered}}">
+  <view class="type-sheet-embedded-root" catchtouchmove="stopPropagation">
+    <view class="type-sheet-embedded-mask {{containerVisible ? 'type-sheet-embedded-mask--visible' : ''}}" bindtap="onClose"></view>
+    <view class="type-sheet-embedded-panel {{containerVisible ? 'type-sheet-embedded-panel--visible' : ''}}">
+      <include src="./surface.wxml" />
     </view>
   </view>
-</root-portal>
+</block>
+
+<page-container
+  wx:if="{{!embedded && containerRendered}}"
+  id="qaActivityTypePickerContainer"
+  show="{{containerVisible}}"
+  position="bottom"
+  overlay="{{true}}"
+  round="{{false}}"
+  duration="220"
+  close-on-slide-down="{{false}}"
+  overlay-style="background: rgba(21, 21, 31, 0.4);"
+  custom-style="height: 914rpx; max-height: 92vh; background: transparent; border-radius: 48rpx 48rpx 0 0; overflow: hidden;"
+  bind:clickoverlay="onClose"
+  bind:afterleave="onContainerAfterLeave"
+>
+  <include src="./surface.wxml" />
+</page-container>
