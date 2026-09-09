@@ -66,6 +66,7 @@ class Settings(BaseSettings):
     amap_regeocode_url: str = "https://restapi.amap.com/v3/geocode/regeo"
     amap_timeout_seconds: float = 5.0
     public_base_url: str = ""
+    activity_cover_cdn_base_url: str = ""
     media_root: str = "storage"
     media_url_prefix: str = "/media"
     client_cache_version: str = Field(default="1", validation_alias="CLIENT_CACHE_VERSION")

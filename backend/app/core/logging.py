@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import time
 import uuid
 from pathlib import Path
@@ -35,7 +36,7 @@ def ensure_trace_id(request: Request) -> str:
     """Get or create a trace id for the current request."""
 
     trace_id = getattr(request.state, "trace_id", "") or request.headers.get("x-request-id")
-    if not trace_id:
+    if not isinstance(trace_id, str) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", trace_id):
         trace_id = uuid.uuid4().hex
     request.state.trace_id = trace_id
     return trace_id

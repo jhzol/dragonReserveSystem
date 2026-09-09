@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 
 from app.api.deps import get_current_user, require_admin
 from app.models import User
@@ -76,3 +76,21 @@ def get_client_diagnostic_logs(
     """Return recent client diagnostic events for debugging."""
 
     return read_recent_client_diagnostic_logs(limit=limit)
+
+
+@router.post("/anonymous-client-logs/batch", response_model=ClientDiagnosticLogResponse)
+def post_anonymous_diagnostics(payload: ClientDiagnosticLogBatchRequest):
+    """Limited unauthenticated home diagnostics. Never attributed to an account."""
+    if len(payload.events) > 8 or any(event.event not in {
+        "home_presentation_snapshot", "home_media_attempt"
+    } for event in payload.events):
+        raise HTTPException(status_code=422, detail="Unsupported anonymous diagnostic batch")
+    for event in payload.events:
+        append_client_diagnostic_log({
+            "user_id": None, "user_role": "anonymous", "event": event.event,
+            "trace_id": event.trace_id, "session_id": event.session_id,
+            "page": event.page, "level": event.level,
+            "client_version": event.client_version, "base_lib_version": event.base_lib_version,
+            "system_type": event.system_type, "payload": event.payload,
+        })
+    return ClientDiagnosticLogResponse(stored=bool(payload.events))

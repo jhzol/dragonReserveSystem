@@ -558,7 +558,8 @@ Page({
         if (!rowRect || !textRect || !toggleRect) return;
         const rowWidth = Math.max(0, Number(rowRect.width) || 0);
         const naturalTextWidth = Math.max(0, Number(textRect.width) || 0);
-        const collapsedHeight = Math.max(0, Number(textRect.height) || 0);
+        // Measure a line-box container, not native text glyph bounds; round outward.
+        const collapsedHeight = Math.ceil(Math.max(0, Number(textRect.height) || 0, Number(toggleRect.height) || 0));
         // 先按完整一行可用宽度判断真实溢出；不能提前为“展开”预留空间，
         // 否则 iOS/Skyline 会把本可单行展示的备注误判成可展开。
         const naturalTextOverflowsRow = naturalTextWidth > rowWidth + 0.5;
@@ -586,10 +587,10 @@ Page({
           fullQuery.select(".hero-remark-full-measure").boundingClientRect();
           fullQuery.exec((fullRects) => {
             const fullRect = fullRects && fullRects[0];
-            const expandedHeight = Math.max(
+            const expandedHeight = Math.ceil(Math.max(
               collapsedHeight,
               Number(fullRect && fullRect.height) || collapsedHeight
-            );
+            ));
             const expandByDefault = !!(
               this.data.activity &&
               this.data.activity.status === "已结束"
@@ -850,6 +851,27 @@ Page({
     });
   },
 
+  onSignupLoginConfirm() {
+    wx.showLoading({ title: "登录中...", mask: true });
+    authService.loginWithWechat(app)
+      .then(() => {
+        wx.hideLoading();
+        this.syncUser();
+        // Keep the existing login-and-resume flow on the current detail page.
+        this.refreshDetail({ silent: true }).finally(() => {
+          if (this.data.activity) this.directSignup(this.data.activity);
+        });
+      })
+      .catch((err) => {
+        wx.hideLoading();
+        wx.showToast({
+          title: (err && err.message) || "微信登录失败",
+          icon: "none",
+          duration: 3000
+        });
+      });
+  },
+
   directSignup(activity) {
     if (activity.status === "已结束" || activity.status === "已取消" || activity.status === "已流局") {
       wx.showToast({ title: "该活动已结束、取消或流局", icon: "none" });
@@ -867,33 +889,12 @@ Page({
     const userId = app.globalData.userId || wx.getStorageSync("userId") || "";
     const profile = app.globalData.userProfile || null;
     if (!accessToken || !userId || !profile) {
-      wx.showModal({
+      this.selectComponent("#signup-login-dialog").open({
+        type: "login",
         title: "提示",
-        content: "当前尚未登录，请登录后重试",
-        cancelText: "取消",
+        message: "当前尚未登录，请登录后重试",
         confirmText: "去登录",
-        success: (res) => {
-          if (!res.confirm) return;
-          wx.showLoading({ title: "登录中...", mask: true });
-          authService
-            .loginWithWechat(app)
-            .then(() => {
-              wx.hideLoading();
-              const userInfo = this.syncUser();
-              // 登录成功后先刷新当前详情，再在当前触发点继续执行报名逻辑
-              this.refreshDetail({ silent: true }).finally(() => {
-                this.directSignup(this.data.activity || activity);
-              });
-            })
-            .catch((err) => {
-              wx.hideLoading();
-              wx.showToast({
-                title: (err && err.message) || "微信登录失败",
-                icon: "none",
-                duration: 3000
-              });
-            });
-        }
+        confirmBehavior: "emit"
       });
       return;
     }

@@ -140,7 +140,7 @@ test("activity remark uses measured one-line overflow and restores the prototype
   assert.match(wxml, /<\/view>\s*<\/view>\s*<!-- 测量节点必须放在 hero-copy 外/);
 });
 
-function measureRemarkOverflow({ rowWidth, naturalTextWidth, toggleWidth, expandedHeight, status = "未开始" }) {
+function measureRemarkOverflow({ rowWidth, naturalTextWidth, toggleWidth, expandedHeight, textHeight = 20, toggleHeight = 20, status = "未开始" }) {
   const vm = require("node:vm");
   let page;
   let fullMeasureRequested = false;
@@ -159,8 +159,8 @@ function measureRemarkOverflow({ rowWidth, naturalTextWidth, toggleWidth, expand
           }
           callback([
             { width: rowWidth },
-            { width: naturalTextWidth, height: 20 },
-            { width: toggleWidth }
+            { width: naturalTextWidth, height: textHeight },
+            { width: toggleWidth, height: toggleHeight }
           ]);
         }
       };
@@ -594,6 +594,14 @@ test("signup executes the real page handler for each role without contacting a s
       },
       console
     });
+    page.selectComponent = (id) => {
+      assert.equal(id, "#signup-login-dialog");
+      return { open(options) {
+        assert.equal(options.confirmBehavior, "emit");
+        assert.equal(options.confirmText, "去登录");
+        events.push("modal");
+      } };
+    };
     page.showSignupPermissionDenied = () => events.push("denied");
     page.refreshDetail = async () => {};
     const activity = { _id: 1, status: "未开始", participants: [] };
@@ -605,4 +613,34 @@ test("signup executes the real page handler for each role without contacting a s
     page.directSignup(activity);
     assert.deepEqual(events, ["modal"], "logged-out users must log in");
   }
+});
+
+
+test("remark line box cannot be shortened by iOS text bounds and rounds outward", () => {
+  const result = measureRemarkOverflow({ rowWidth: 250, naturalTextWidth: 300,
+    toggleWidth: 50, textHeight: 12.1, toggleHeight: 21.54,
+    expandedHeight: 64.62, status: "已结束" });
+  assert.equal(result.data.remarkCollapsedHeightPx, 22);
+  assert.equal(result.data.remarkExpandedHeightPx, 65);
+  assert.equal(result.data.remarkViewportHeightPx, 65);
+});
+
+test("remark toggle stays bottom-anchored during expansion and measurement uses layout boxes", () => {
+  assert.match(wxss, /\.hero-remark-row\s*\{[^}]*align-items: flex-end;/s);
+  assert.match(wxss, /\.hero-copy\s*\{[^}]*bottom: calc\(94\.23rpx \+ 46\.15rpx\);/s);
+  for (const name of ["hero-remark", "hero-remark-measure", "hero-remark-full-measure"]) {
+    assert.match(wxss, new RegExp("\\." + name + "\\s*\\{[^}]*line-height: 38\\.46rpx;", "s"));
+  }
+  assert.match(wxss, /\.hero-remark-viewport\s*\{[^}]*min-height: 38\.46rpx;/s);
+  assert.match(wxml, /<view[^>]*class="hero-remark-measure"/);
+  assert.match(wxml, /<view\s+wx:if="\{\{activity.remark\}\}"\s+class="hero-remark-full-measure"/);
+});
+
+
+test("detail login prompt reuses the yellow dialog and resumes signup on confirm", () => {
+  assert.equal(pageJson.usingComponents["create-access-dialog"], "../../components/create-access-dialog/index");
+  assert.match(wxml, /<create-access-dialog id="signup-login-dialog" bind:confirm="onSignupLoginConfirm"/);
+  assert.match(js, /selectComponent\("#signup-login-dialog"\)\.open\(\{[^}]*confirmBehavior: "emit"/s);
+  assert.match(js, /onSignupLoginConfirm\(\)\s*\{[\s\S]*?loginWithWechat\(app\)[\s\S]*?this\.directSignup\(this\.data\.activity\)/);
+  assert.doesNotMatch(js, /wx\.showModal\(\{\s*title: "提示",\s*content: "当前尚未登录/);
 });

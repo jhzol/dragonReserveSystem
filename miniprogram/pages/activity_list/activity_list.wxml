@@ -4,11 +4,14 @@
   </view>
 </template>
 <template name="home-card-skeleton">
-  <view class="card-skeleton card-skeleton--{{size}}" aria-label="卡片加载中">
-    <template is="home-skeleton-shape" data="{{shape: size === 'large' ? 'skeleton-large' : 'skeleton-small', running}}" />
+  <view class="card-skeleton card-skeleton--{{size}}" aria-label="{{failed ? '卡片加载失败' : '卡片加载中'}}">
+    <template is="home-skeleton-shape" data="{{shape: size === 'large' ? 'skeleton-large' : 'skeleton-small', running: running && !failed}}" />
+    <view wx:if="{{failed}}" class="home-card-retry home-card-retry--{{size}}" role="button" aria-label="重新加载这张卡片" catchtap="onRetryHomeCard" data-group="{{group}}" data-activity-id="{{activityId}}">
+      <text>加载失败，点击重试</text>
+    </view>
     <block wx:if="{{size === 'small'}}">
-      <template is="home-skeleton-shape" data="{{shape: 'skeleton-name', running}}" />
-      <template is="home-skeleton-shape" data="{{shape: 'skeleton-time', running}}" />
+      <template is="home-skeleton-shape" data="{{shape: 'skeleton-name', running: running && !failed}}" />
+      <template is="home-skeleton-shape" data="{{shape: 'skeleton-time', running: running && !failed}}" />
     </block>
   </view>
 </template>
@@ -83,8 +86,8 @@
             wx:key="_id"
             class="large-card-slide"
           >
-            <view class="home-card-slot home-card-slot--large">
-              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'large', running: skeletonShimmerRunning}}" />
+            <view class="home-card-slot home-card-slot--large" data-group="joined" data-activity-id="{{item._id}}">
+              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'large', running: skeletonShimmerRunning, failed: item._homeMediaError, group: 'joined', activityId: item._id}}" />
             <view
               class="large-card-wrap home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
@@ -104,9 +107,10 @@
                 <!-- 大卡片 -->
                 <view class="large-card large-card--{{item.activityType}}-{{item.activityStyleKey}}">
                 <image
-                  wx:if="{{item.largeCardBgImageUrl}}"
+                  wx:if="{{item._homeCoverSrc}}"
                   class="card-image-bg"
-                  src="{{item._homeCoverSrc || item.largeCardBgImageUrl}}"
+                  src="{{item._homeCoverSrc}}"
+                  data-media-src="{{item._homeCoverSrc}}"
                   mode="aspectFill"
                   lazy-load="{{false}}"
                   bindload="onCardBgLoaded"
@@ -169,11 +173,12 @@
                 <!-- 卡片内部底部毛玻璃：模糊层与信息层共用同一个边界，避免顶部出现接缝 -->
                 <view class="glass-bottom">
                   <view class="glass-static-blur-layer">
-                    <view wx:if="{{item.largeCardGlassImageUrl}}" class="glass-static-blur-stage">
+                    <view wx:if="{{item._homeGlassSrc}}" class="glass-static-blur-stage">
                       <!-- 服务端已完成镜像扩边和单次模糊；真机只展示静态位图，不运行实时滤镜。 -->
                       <image
                         class="glass-static-blur-image"
-                        src="{{item._homeGlassSrc || item.largeCardGlassImageUrl}}"
+                        src="{{item._homeGlassSrc}}"
+                        data-media-src="{{item._homeGlassSrc}}"
                         mode="aspectFill"
                         data-group="joined"
                         bindload="onCardGlassLoaded"
@@ -227,8 +232,8 @@
           bindchange="onGroupSwiperChange"
         >
           <swiper-item wx:for="{{groupedActivities.accepting}}" wx:key="_id" class="small-card-slide">
-            <view class="home-card-slot home-card-slot--small">
-              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning}}" />
+            <view class="home-card-slot home-card-slot--small" data-group="accepting" data-activity-id="{{item._id}}">
+              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning, failed: item._homeMediaError, group: 'accepting', activityId: item._id}}" />
             <view
               class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
@@ -248,9 +253,10 @@
               <view class="small-card-content">
                 <view class="small-card">
                 <image
-                  wx:if="{{item.smallCardBgImageUrl}}"
+                  wx:if="{{item._homeCoverSrc}}"
                   class="card-image-bg"
-                  src="{{item._homeCoverSrc || item.smallCardBgImageUrl}}"
+                  src="{{item._homeCoverSrc}}"
+                  data-media-src="{{item._homeCoverSrc}}"
                   mode="aspectFill"
                   lazy-load="{{false}}"
                   bindload="onCardBgLoaded"
@@ -325,8 +331,8 @@
           bindchange="onGroupSwiperChange"
         >
           <swiper-item wx:for="{{groupedActivities.notStarted}}" wx:key="_id" class="small-card-slide">
-            <view class="home-card-slot home-card-slot--small">
-              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning}}" />
+            <view class="home-card-slot home-card-slot--small" data-group="notStarted" data-activity-id="{{item._id}}">
+              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning, failed: item._homeMediaError, group: 'notStarted', activityId: item._id}}" />
             <view
               class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
@@ -346,9 +352,10 @@
               <view class="small-card-content">
                 <view class="small-card">
                 <image
-                  wx:if="{{item.smallCardBgImageUrl}}"
+                  wx:if="{{item._homeCoverSrc}}"
                   class="card-image-bg"
-                  src="{{item._homeCoverSrc || item.smallCardBgImageUrl}}"
+                  src="{{item._homeCoverSrc}}"
+                  data-media-src="{{item._homeCoverSrc}}"
                   mode="aspectFill"
                   lazy-load="{{false}}"
                   bindload="onCardBgLoaded"
@@ -423,8 +430,8 @@
           bindchange="onGroupSwiperChange"
         >
           <swiper-item wx:for="{{groupedActivities.ended}}" wx:key="_id" class="small-card-slide">
-            <view class="home-card-slot home-card-slot--small">
-              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning}}" />
+            <view class="home-card-slot home-card-slot--small" data-group="ended" data-activity-id="{{item._id}}">
+              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning, failed: item._homeMediaError, group: 'ended', activityId: item._id}}" />
             <view
               class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
@@ -444,9 +451,10 @@
               <view class="small-card-content">
                 <view class="small-card">
                 <image
-                  wx:if="{{item.smallCardBgImageUrl}}"
+                  wx:if="{{item._homeCoverSrc}}"
                   class="card-image-bg"
-                  src="{{item._homeCoverSrc || item.smallCardBgImageUrl}}"
+                  src="{{item._homeCoverSrc}}"
+                  data-media-src="{{item._homeCoverSrc}}"
                   mode="aspectFill"
                   lazy-load="{{false}}"
                   bindload="onCardBgLoaded"

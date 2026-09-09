@@ -74,3 +74,39 @@ test('serialized batches cap at eight; late duplicate callbacks cannot remove ne
   ack(h.requests[0]); assert.equal(h.storage.get(STORAGE_KEY).length,2);
   ack(h.requests[1]); assert.equal(h.storage.get(STORAGE_KEY).length,0);
 });
+test('anonymous home diagnostics use a bounded separate endpoint without account attribution', () => {
+  const h=setup(); h.storage.delete('accessToken'); h.storage.delete('userId');
+  h.outbox.enqueue(body); h.outbox.enqueue({event:'request_fail'}); h.advance(1200);
+  assert.equal(h.requests.length,1);
+  assert.match(h.requests[0].url,/anonymous-client-logs\/batch$/);
+  assert.equal(h.requests[0].header.Authorization,undefined);
+  assert.equal(h.requests[0].data.events.length,1);
+  ack(h.requests[0]); assert.equal(h.storage.get(STORAGE_KEY).length,0);
+});
+test('upload includes queue eviction and previous transport failure counters', () => {
+  const h=setup(); for(let i=0;i<80;i++) h.outbox.enqueue(body);
+  h.advance(1200); assert.ok(h.requests[0].data.events[0].payload.delivery.dropped >= 16);
+  h.requests[0].fail({errMsg:'offline'}); h.advance(5000);
+  assert.equal(h.requests[1].data.events[0].payload.delivery.uploadFailures,1);
+});
+test('logs created before login stay anonymous when delivered after login', () => {
+  const h=setup(); h.storage.delete('accessToken'); h.storage.delete('userId');
+  h.outbox.enqueue(body); h.storage.set('accessToken','new-token'); h.storage.set('userId','u2');
+  h.advance(1200); assert.match(h.requests[0].url,/anonymous-client-logs\/batch$/);
+  assert.equal(h.requests[0].header.Authorization,undefined);
+});
+test('normal successes coalesce disk writes and share a single upload batch', () => {
+  const h = setup(); let writes = 0;
+  const save = h.wxApi.setStorageSync;
+  h.wxApi.setStorageSync = (...args) => { writes++; save(...args); };
+  for (let i=0;i<6;i++) h.outbox.enqueue({...body, payload:{reason:'all_ready_state_committed'}});
+  assert.equal(writes,0); h.advance(200); assert.equal(writes,2);
+  h.advance(1000); assert.equal(h.requests.length,1); assert.equal(h.requests[0].data.events.length,6);
+});
+test('an error immediately persists pending normal summaries without waiting for debounce', () => {
+  const h = setup();
+  h.outbox.enqueue({...body,payload:{reason:'all_ready_state_committed'}});
+  h.outbox.enqueue(body);
+  assert.equal(h.storage.get(STORAGE_KEY).length,2);
+  h.advance(1200); assert.equal(h.requests.length,1);
+});

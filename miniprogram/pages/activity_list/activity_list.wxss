@@ -903,7 +903,7 @@ button.create-btn-fixed.create-btn-hover {
   overflow: visible;
   border-radius: 30.77rpx;
   background-color: transparent;
-  box-shadow: 0 11.54rpx 38.46rpx rgba(0, 0, 0, 0.10);
+  box-shadow: none;
 }
 
 .card-datetime-label {
@@ -980,7 +980,7 @@ button.create-btn-fixed.create-btn-hover {
   overflow: visible;
 }
 
-/* 小卡阴影与圆角裁切分层：Skyline 会裁掉和 overflow:hidden 同节点的外阴影。 */
+/* 保留原有布局层，首页卡片不再绘制外阴影。 */
 .small-card-shadow {
   position: absolute;
   top: 0;
@@ -989,7 +989,7 @@ button.create-btn-fixed.create-btn-hover {
   height: 346.15rpx;
   border-radius: 23.08rpx;
   overflow: visible;
-  box-shadow: 0 11.54rpx 38.46rpx rgba(0, 0, 0, 0.10);
+  box-shadow: none;
   pointer-events: none;
   z-index: 0;
 }
@@ -1376,3 +1376,8 @@ button.create-btn-fixed.create-btn-hover {
 .skeleton-initial-row--small { height: 488.46rpx; }
 .skeleton-initial-large { position: relative; width: 530.77rpx; height: 761.53rpx; margin-right: 23.08rpx; flex-shrink: 0; }
 .skeleton-initial-small { position: relative; width: 346.15rpx; height: 430rpx; margin-right: 23.08rpx; flex-shrink: 0; }
+
+/* A failed image keeps its skeleton, but offers an explicit recovery action. */
+.home-card-retry { position: absolute; top: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: center; color: #666666; font-size: 25rpx; z-index: 3; }
+.home-card-retry--large { height: 761.53rpx; }
+.home-card-retry--small { height: 346.15rpx; }

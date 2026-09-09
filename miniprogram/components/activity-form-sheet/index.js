@@ -161,7 +161,7 @@ Component({
 
     onContainerAfterLeave() {
       if (!this.properties.visible) {
-        this.setData({ containerRendered: false });
+        this.setData({ containerRendered: false }, () => this.triggerEvent("afterleave"));
       }
     },
 

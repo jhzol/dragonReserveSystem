@@ -33,7 +33,8 @@ def test_cover_catalog_exposes_all_prototype_artists_and_assets(client) -> None:
         "Benjamin Flouw",
         "venmen",
     ]
-    assert sum(len(artist["artworks"]) for artist in artists) == 65
+    # Reviewed catalog: seven artists with twelve assets, venmen with nine.
+    assert sum(len(artist["artworks"]) for artist in artists) == 93
     first = next(artist for artist in artists if artist["slug"] == "aleksey-rico")["artworks"][0]
     assert first["id"] == "aleksey-rico-001"
     assert first["thumbnail_url"].endswith("/activity-cover-assets/aleksey-rico/thumbs/aleksey-rico-001.jpg")

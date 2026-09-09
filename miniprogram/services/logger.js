@@ -62,15 +62,8 @@ function getRealtimeLogger() {
 function shouldReportRealtime(event) {
   return (
     event === "home_presentation_snapshot" ||
+    event === "home_media_attempt" ||
     event === "request_fail" ||
-    event === "activity_card_presentation_pending" ||
-    event === "activity_card_presentation_ready" ||
-    event === "activity_card_media_scan" ||
-    event === "activity_card_media_pending" ||
-    event === "activity_card_media_stalled" ||
-    event === "activity_card_media_error" ||
-    event === "activity_card_video_waiting" ||
-    event === "activity_card_media_all_resolved" ||
     event === "page_error" ||
     event === "diagnostic_upload_fail"
   );
@@ -79,11 +72,10 @@ function shouldReportRealtime(event) {
 function shouldUploadBackend(event) {
   return (
     event === "home_presentation_snapshot" ||
+    event === "home_media_attempt" ||
     event === "request_fail" ||
     event === "request_slow" ||
     event === "page_error" ||
-    event === "activity_card_media_stalled" ||
-    event === "activity_card_media_error" ||
     event === "activity_card_video_waiting"
   );
 }
@@ -95,7 +87,9 @@ function getRuntimeEnvironment() {
 
 function normalizeRealtimeValue(value, depth = 0) {
   if (value == null || typeof value === "boolean" || typeof value === "number") return value;
-  if (depth >= 3) {
+  // Preserve payload.cards[].coverPhases/glassPhases numeric fields.
+  // Keep bounded depth, array length and object keys for diagnostic size control.
+  if (depth >= 6) {
     return typeof value === "string" ? value.slice(0, 160) : String(value);
   }
   if (Array.isArray(value)) {
@@ -103,7 +97,7 @@ function normalizeRealtimeValue(value, depth = 0) {
   }
   if (typeof value === "object") {
     const next = {};
-    Object.keys(value).slice(0, 20).forEach((key) => {
+    Object.keys(value).slice(0, 50).forEach((key) => {
       next[key] = normalizeRealtimeValue(value[key], depth + 1);
     });
     return next;
@@ -156,6 +150,8 @@ function shouldThrottleBackendUpload(event, payload) {
     event,
     traceId: payload && payload.traceId,
     reason: payload && payload.reason,
+    sequence: payload && payload.sequence,
+    stage: payload && payload.stage,
     activityId: payload && payload.activityId,
     mediaType: payload && payload.mediaType,
     group: payload && payload.group,
@@ -182,6 +178,8 @@ function shouldThrottleWechatAnalyticsTransport(payload) {
   const signature = JSON.stringify({
     traceId: payload && payload.traceId,
     reason: payload && payload.reason,
+    sequence: payload && payload.sequence,
+    stage: payload && payload.stage,
     apiPath: payload && payload.apiPath,
     errMsg: payload && payload.errMsg,
     networkType: payload && payload.networkType
@@ -301,7 +299,7 @@ function uploadBackendLog(level, event, payload) {
   if (typeof wx === "undefined" || !wx || typeof wx.request !== "function") return;
   let token;
   try { token = wx.getStorageSync("accessToken"); } catch (_) { return; }
-  if (!token) return;
+  if (!token && !['home_presentation_snapshot', 'home_media_attempt'].includes(event)) return;
   if (shouldThrottleBackendUpload(event, payload || {})) return;
 
   const systemMeta = getSystemMeta();
@@ -330,7 +328,14 @@ function logPageError(operation, err, context = {}) {
   });
 }
 
+function isNormalHomeDiagnostic(event, payload = {}) {
+  return event === 'home_presentation_snapshot' && payload.reason === 'all_ready_state_committed' ||
+    event === 'home_media_attempt' && payload.stage === 'attempt_succeeded' && !payload.slowAttempt &&
+    !/failed|timeout|invalid|error/.test(Object.keys(payload.evidence || {}).join(' '));
+}
+
 function reportRealtime(level, event, payload) {
+  if (isNormalHomeDiagnostic(event, payload)) return;
   if (!shouldReportRealtime(event)) return;
   const logger = getRealtimeLogger();
   if (!logger || typeof logger[level] !== "function") return;
@@ -349,7 +354,7 @@ function reportRealtime(level, event, payload) {
 }
 
 function logInfo(event, payload) {
-  console.info(`[mini] ${event}`, payload || {});
+  if (!isNormalHomeDiagnostic(event, payload)) console.info(`[mini] ${event}`, payload || {});
   reportRealtime("info", event, payload);
   uploadBackendLog("info", event, payload);
 }

@@ -166,7 +166,7 @@ test("home large and small cards no longer render activity type badges", () => {
   assert.doesNotMatch(wxss, /\.card-type-label(?:-sm)?\s*\{/);
 });
 
-test("small card shadow is outside the rounded clipping layer", () => {
+test("small card layout preserves its clipping layers without a shadow", () => {
   const wxss = fs.readFileSync(path.join(pageDir, "activity_list.wxss"), "utf8");
   const shadowLayerCount = (wxml.match(/class="small-card-shadow"/g) || []).length;
 
@@ -214,9 +214,9 @@ test("large card matches the prototype geometry and typography", () => {
   assert.match(wxss, /\.large-card\s*\{[^}]*width:\s*530\.77rpx;[^}]*height:\s*707\.69rpx;[^}]*border-radius:\s*30\.77rpx;/s);
   assert.match(wxss, /\.large-card-wrap\s*\{[^}]*width:\s*530\.77rpx;/s);
   assert.match(wxss, /\.large-card-wrap\s*\{[^}]*gap:\s*15\.38rpx;[^}]*background-color:\s*transparent;/s);
-  assert.match(wxss, /\.large-card-transition\s*\{[^}]*width:\s*530\.77rpx;[^}]*height:\s*707\.69rpx;[^}]*overflow:\s*visible;[^}]*border-radius:\s*30\.77rpx;[^}]*background-color:\s*transparent;[^}]*box-shadow:\s*0 11\.54rpx 38\.46rpx rgba\(0, 0, 0, 0\.10\);/s);
+  assert.match(wxss, /\.large-card-transition\s*\{[^}]*width:\s*530\.77rpx;[^}]*height:\s*707\.69rpx;[^}]*overflow:\s*visible;[^}]*border-radius:\s*30\.77rpx;[^}]*background-color:\s*transparent;[^}]*box-shadow:\s*none;/s);
   assert.match(wxss, /\.large-card\s*\{[^}]*box-shadow:\s*none;/s);
-  assert.match(wxss, /\.small-card-shadow\s*\{[^}]*width:\s*346\.15rpx;[^}]*height:\s*346\.15rpx;[^}]*border-radius:\s*23\.08rpx;[^}]*overflow:\s*visible;[^}]*box-shadow:\s*0 11\.54rpx 38\.46rpx rgba\(0, 0, 0, 0\.10\);/s);
+  assert.match(wxss, /\.small-card-shadow\s*\{[^}]*width:\s*346\.15rpx;[^}]*height:\s*346\.15rpx;[^}]*border-radius:\s*23\.08rpx;[^}]*overflow:\s*visible;[^}]*box-shadow:\s*none;/s);
   assert.match(wxss, /\.small-card\s*\{[^}]*width:\s*346\.15rpx;[^}]*height:\s*346\.15rpx;[^}]*border-radius:\s*23\.08rpx;[^}]*overflow:\s*hidden;[^}]*box-shadow:\s*none;/s);
   const datetimeRule = wxss.match(/\.card-datetime-label\s*\{([^}]*)\}/);
   assert.ok(datetimeRule);
@@ -249,7 +249,7 @@ test("home large and small cards both use the original cover image", () => {
   assert.match(js, /activity\.smallCardBgImageUrl = selectedStyle \? \(selectedStyle\.largeCardBgImageUrl \|\| ""\) : ""/);
   assert.match(js, /activity\.largeCardBgImageUrl = activity\.activityCover\.imageUrl;[\s\S]*?activity\.smallCardBgImageUrl = activity\.activityCover\.imageUrl;/);
   assert.doesNotMatch(js, /activity\.smallCardBgImageUrl = activity\.activityCover\.thumbnailUrl/);
-  assert.match(wxml, /class="card-image-bg"[\s\S]*?src="\{\{item\._homeCoverSrc \|\| item\.smallCardBgImageUrl\}\}"[\s\S]*?mode="aspectFill"/);
+  assert.match(wxml, /class="card-image-bg"[\s\S]*?src="\{\{item\._homeCoverSrc\}\}"[\s\S]*?mode="aspectFill"/);
 });
 
 test("large-card glass uses a pre-rendered static image with the black gradient", () => {
@@ -263,8 +263,8 @@ test("large-card glass uses a pre-rendered static image with the black gradient"
   assert.match(js, /largeCardGlassImageUrl: String\(rawCover\.large_card_glass_image_url \|\| ""\)/);
   assert.match(js, /activity\.largeCardGlassImageUrl = activity\.activityCover\.largeCardGlassImageUrl \|\| ""/);
   assert.match(wxml, /class="glass-bottom"[\s\S]*class="glass-static-blur-layer"/);
-  assert.match(wxml, /wx:if="\{\{item\.largeCardGlassImageUrl\}\}"/);
-  assert.match(wxml, /class="glass-static-blur-image"[\s\S]*src="\{\{item\._homeGlassSrc \|\| item\.largeCardGlassImageUrl\}\}"/);
+  assert.match(wxml, /wx:if="\{\{item\._homeGlassSrc\}\}"/);
+  assert.match(wxml, /class="glass-static-blur-image"[\s\S]*src="\{\{item\._homeGlassSrc\}\}"/);
   assert.match(wxml, /class="glass-tint-layer"/);
   assert.match(wxml, /class="glass-content"/);
   assert.match(glassSection, /\.glass-static-blur-layer\s*\{[\s\S]*top: 0;[\s\S]*bottom: 0;[\s\S]*overflow: hidden;[\s\S]*border-bottom-left-radius: inherit;/);

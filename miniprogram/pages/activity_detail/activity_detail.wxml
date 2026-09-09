@@ -151,7 +151,7 @@
           <view wx:if="{{activity.remark}}" class="hero-remark-row" bindtap="toggleRemark">
             <view
               class="hero-remark-viewport"
-              style="height: {{remarkViewportHeightPx > 0 ? remarkViewportHeightPx + 'px' : '37.69rpx'}};"
+              style="height: {{remarkViewportHeightPx > 0 ? remarkViewportHeightPx + 'px' : '38.46rpx'}};"
             >
               <text
                 class="hero-remark"
@@ -172,12 +172,12 @@
         </view>
 
         <!-- 测量节点必须放在 hero-copy 外，避免 Skyline 将隐藏节点计入纵向 gap。 -->
-        <text wx:if="{{activity.remark}}" class="hero-remark-measure">{{activity.remark}}</text>
-        <text
+        <view wx:if="{{activity.remark}}" class="hero-remark-measure"><text class="hero-remark-measure-text">{{activity.remark}}</text></view>
+        <view
           wx:if="{{activity.remark}}"
           class="hero-remark-full-measure"
           style="width: {{remarkTextWidthPx}}px;"
-        >{{activity.remark}}</text>
+        ><text class="hero-remark">{{activity.remark}}</text></view>
         <view wx:if="{{activity.remark}}" class="remark-toggle-measure">
           <text class="remark-toggle-text">展开</text>
           <view class="remark-chevron-rotator">
@@ -393,3 +393,5 @@
     </view>
   </view>
 </view>
+
+<create-access-dialog id="signup-login-dialog" bind:confirm="onSignupLoginConfirm" />
