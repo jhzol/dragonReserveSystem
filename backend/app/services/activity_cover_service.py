@@ -3,9 +3,13 @@
 from __future__ import annotations
 
 import json
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
+
+from app.core.config import get_settings
 
 
 ASSET_ROOT = Path(__file__).resolve().parents[1] / "assets" / "activity-covers"
@@ -38,8 +42,41 @@ def _ordered_catalog_artists() -> list[dict[str, Any]]:
 
 
 def _public_url(path: str, base_url: str = "") -> str:
+    cdn = get_settings().activity_cover_cdn_base_url.strip().rstrip("/")
+    if cdn:
+        parsed = urlsplit(cdn)
+        if parsed.scheme != "https" or not parsed.netloc or parsed.query or parsed.fragment or parsed.username or parsed.password:
+            raise ValueError("ACTIVITY_COVER_CDN_BASE_URL must be a public HTTPS URL without credentials/query/fragment")
+        # Configure a versioned release prefix only after uploading and verifying
+        # all catalog assets. Empty configuration preserves the original origin.
+        return f"{cdn}/{path.lstrip('/')}"
     relative = f"{PUBLIC_PREFIX}/{path.lstrip('/')}"
     return f"{base_url.rstrip('/')}{relative}" if base_url else relative
+
+
+@lru_cache(maxsize=1)
+def _webp_manifest() -> dict[str, Any]:
+    # Opt-in only after the client preparation path supports WebP.
+    if os.environ.get("ACTIVITY_COVER_WEBP_ENABLED") != "1":
+        return {}
+    path = ASSET_ROOT / "webp-q90-manifest.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+
+
+@lru_cache(maxsize=1)
+def _jpeg_manifest() -> dict[str, Any]:
+    # Explicit rollout switch; preserve legacy URLs until client validation passes.
+    if os.environ.get("ACTIVITY_COVER_JPEG_ENABLED") != "1":
+        return {}
+    path = ASSET_ROOT / "jpeg-q88-manifest.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+
+
+def _delivery_url(path: str, base_url: str = "") -> str:
+    variant = _jpeg_manifest().get(path) or _webp_manifest().get(path)
+    if variant:
+        return _public_url(variant["path"], base_url) + "?v=" + variant["sha256"][:16]
+    return _public_url(path, base_url)
 
 
 def list_activity_cover_artists(base_url: str = "") -> list[dict[str, Any]]:
@@ -49,23 +86,28 @@ def list_activity_cover_artists(base_url: str = "") -> list[dict[str, Any]]:
             {
                 "slug": artist["slug"],
                 "display_name": artist["display_name"],
-                "avatar_url": _public_url(artist["avatar_path"], base_url),
+                "avatar_url": _delivery_url(artist["avatar_path"], base_url),
                 "artworks": [
                     {
                         "id": artwork["id"],
                         "artist_slug": artist["slug"],
                         "artist_name": artist["display_name"],
-                        "artist_avatar_url": _public_url(artist["avatar_path"], base_url),
+                        "artist_avatar_url": _delivery_url(artist["avatar_path"], base_url),
                         "width": artwork["width"],
                         "height": artwork["height"],
-                        "thumbnail_url": _public_url(artwork["thumbnail_path"], base_url),
-                        "image_url": _public_url(artwork["image_path"], base_url),
+                        "thumbnail_url": _delivery_url(artwork["thumbnail_path"], base_url),
+                        "image_url": _delivery_url(artwork["image_path"], base_url),
                         "large_card_glass_image_url": (
-                            f"{base_url.rstrip('/')}/api/v2/activity-covers/"
+                            _delivery_url(artwork["glass_path"], base_url)
+                            if artwork.get("glass_path") in _jpeg_manifest() or artwork.get("glass_path") in _webp_manifest()
+                            else (
+                            _public_url(artwork["glass_path"], base_url)
+                            if get_settings().activity_cover_cdn_base_url.strip() and artwork.get("glass_path")
+                            else (f"{base_url.rstrip('/')}/api/v2/activity-covers/"
                             f"{artwork['id']}/glass-image?v=2"
                             if base_url
-                            else f"/api/v2/activity-covers/{artwork['id']}/glass-image?v=2"
-                        ),
+                            else f"/api/v2/activity-covers/{artwork['id']}/glass-image?v=2")
+                        )),
                     }
                     for artwork in artist["artworks"]
                 ],

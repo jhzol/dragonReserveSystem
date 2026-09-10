@@ -34,9 +34,18 @@ if (mode === 'seed') {
     recorder.list(scenario === 'list_missing' ? 'request_pending' : 'list_processed');
     if(scenario === 'cover_missing') page._homeReadyImages.set('https://cdn.test/glass','local');
     if(scenario === 'glass_missing') page._homeReadyImages.set('https://cdn.test/cover?token=private','local');
+    elapsed = 100;
+    recorder.phase("https://cdn.test/cover?token=private", "download_started", { priority: 0, startPriority: 1 });
+    elapsed = 230;
+    recorder.phase("https://cdn.test/cover?token=private", "download_progress", {bytes: 12345, expectedBytes: 900000});
+    recorder.phase("https://cdn.test/glass", "image_info_complete", {width: 1200, height: 1400});
     elapsed = 15000;
     recorder.snapshot('checkpoint_15000'); recorder.stop();
   }
+  logger.logInfo('home_media_attempt', {traceId:'integration-attempt', sequence:1, stage:'attempt_failed',
+    evidence:{attempt:2, bytes:540672, logicalActive:3, outstandingPreparations:5,
+      profile:{profileAvailable:true, queueStart:1,queueEnd:32,connectStart:33,connectEnd:48,protocol:'h2'},
+      requestId:'hm-integration-2', downloadTasksAwaitingCallback:4}});
   timers.splice(0).forEach(fn=>fn());
   requests[0].fail({errMsg:'injected offline'});
   console.log(JSON.stringify({retained:stored.length,ids:stored.map(e=>e.id)}));

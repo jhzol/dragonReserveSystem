@@ -1,7 +1,9 @@
+const { rankHomeCardImages, cardVisibilityKey } = require("../../utils/homeCardImagePriority");
+const { prepareHomeImage, invalidateHomeImageCache } = require("../../utils/homeImagePreparation");
 const app = getApp();
 const activityService = require("../../services/activity");
 const { resolveLocalMediaUrl, isLocalTestMediaUrl } = require("../../services/config");
-const { createTraceId, logInfo, logError, summarizeError } = require("../../services/logger");
+const { createTraceId, logInfo, summarizeError } = require("../../services/logger");
 const { enrichSingleActivity } = require("../../utils/activityEnrich");
 const { parseCreatedAtMs, orderParticipantsForRecentAvatarSlice } = require("../../utils/participantSort");
 const cacheManager = require("../../services/cacheManager");
@@ -26,8 +28,6 @@ function getWeekdayLabel(dateTimeString) {
 const DEFAULT_AVATAR = "/images/default-avatar.svg";
 const LOCAL_TEST_AVATAR_PREFIX = "/images/avatars";
 const DEFAULT_ACTIVITY_TYPE_KEY = "other";
-const CARD_MEDIA_DIAG_WARN_MS = 8000;
-const CARD_MEDIA_DIAG_ERROR_MS = 15000;
 const ENDED_ACTIVITY_PAGE_SIZE = 5;
 /** 须与 wxml 中 refresher-threshold 一致 */
 const MAIN_REFRESH_THRESHOLD_PX = 80;
@@ -353,19 +353,7 @@ function adaptActivity(item) {
   };
 }
 
-function buildCardMediaKey(meta) {
-  const aid =
-    meta.activityId != null && meta.activityId !== ""
-      ? String(meta.activityId)
-      : "unknown";
-  return [
-    meta.mediaType || "unknown",
-    meta.group || "unknown",
-    meta.cardSize || "unknown",
-    aid,
-    meta.url || ""
-  ].join("|");
-}
+
 
 function pickCardMediaMetaFromDataset(dataset, mediaType) {
   const safeDataset = dataset || {};
@@ -426,6 +414,7 @@ Page({
     this._createdCardRevealStarted = false;
     this._loadedCardGlassUrls = new Set();
     this._homeReadyImages = new Map();
+    this._homeInvalidImageUrls = new Set();
     this._homeEnteredMediaKeys = new Set();
     const aid = options && options.activityId;
     if (aid) {
@@ -517,9 +506,8 @@ Page({
     this._pageVisible = false;
     this._loadGeneration = (this._loadGeneration || 0) + 1;
     this._finishColdStartCardEntrance();
-    this._stopHomeCardMedia();
+    this._stopHomeCardMedia({ preserveDownloads: true });
     this._finishCreatedCardEntrance();
-    this._clearCardMediaDiagnostics();
     calendarWarmup.cancelScheduledPrefetch();
     /**
      * 页面隐藏时只保留抽屉对 Tab 的隐藏要求；卡片准备状态不影响其他页面的 Tab。
@@ -538,6 +526,8 @@ Page({
     this._pageVisible = false;
     this._loadGeneration = (this._loadGeneration || 0) + 1;
     this._stopHomeCardMedia();
+    if (this._createFormCloseTimer) clearTimeout(this._createFormCloseTimer);
+    this._createFormCloseTimer = null;
     if (this._cardEntranceTimer) clearTimeout(this._cardEntranceTimer);
     if (this._cardEntranceFrameTimer) clearTimeout(this._cardEntranceFrameTimer);
     if (this._createdCardEntranceFrameTimer) clearTimeout(this._createdCardEntranceFrameTimer);
@@ -549,7 +539,6 @@ Page({
     this._coldStartTabEntrancePending = false;
     if (app && app.globalData) app.globalData.homeTabEntrancePending = false;
     calendarWarmup.cancelScheduledPrefetch();
-    this._clearCardMediaDiagnostics();
     const self = this;
     const flush = () => self._setTabBarHidden(false);
     if (typeof wx !== "undefined" && typeof wx.nextTick === "function") wx.nextTick(flush);
@@ -636,6 +625,7 @@ Page({
         const key = this._cardMediaKey(item, group);
         const cover = group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl;
         return { ...item, _homeMediaKey: key, _homeMediaReady: this._homeEnteredMediaKeys.has(key),
+          _homeMediaError: !this._homeEnteredMediaKeys.has(key) && this._cardImageUrls(item, group).some(url => this._homeExhaustedImages?.has(url)),
           _homeCoverSrc: this._homeReadyImages.get(cover) || "",
           _homeGlassSrc: this._homeReadyImages.get(item.largeCardGlassImageUrl) || "" };
       });
@@ -679,55 +669,194 @@ Page({
     if (this._pageVisible === false) return;
     if (!this._homeImageLoader) {
       this._homeImageLoader = createHomeCardMediaLoader({
-        load: (url, ready, failed) => {
-          // Decode independently of swiper item creation. The local file is reused
-          // by the rendered image; native bindload remains a second success path.
-          wx.getImageInfo({ src: url, success: (res) => ready(res.path), fail: failed });
-        },
+        onStage: (url, name, details) => this._homePresentationDiagnostics?.phase(url, name,
+          { ...details, ...(name === "worker_started" ? { startPriority: this._homeImagePriorities?.get(url) } : {}) }),
+        load: (url, ready, failed, context) => prepareHomeImage({ wxApi: wx, url, ready, failed,
+          stage: (name, details) => context.report(name, details)
+        }),
         onReady: (url, path) => {
           this._homePresentationDiagnostics?.media(url, "preload", "loaded");
           this._markHomeImageReady(url, path);
         },
+        onExhausted: (url) => this._setHomeImageExhausted(url, true),
         onError: (url, error) => {
           this._homePresentationDiagnostics?.media(url, "preload", summarizeError(error));
           this._homePresentationDiagnostics?.snapshot("preload_error", { url: String(url).split(/[?#]/)[0], summary: summarizeError(error) });
-          logError("activity_card_presentation_pending", {
-            url, summary: summarizeError(error),
-            waitingCards: this._homeCardsWaitingFor(url)
-          });
         }
       });
     }
-    const groups = this.data.groupedActivities || {};
-    // Round-robin by group: prioritize each visible/focused card before the tails.
-    const ordered = Object.keys(groups).map((group) => {
-      const cards = groups[group] || [];
-      const focus = this.data.focusedCardIndex[group] || 0;
-      return cards.slice(focus).concat(cards.slice(0, focus)).map((item) => ({ item, group }));
-    });
-    const urls = [];
-    for (let i = 0; ordered.some((cards) => i < cards.length); i += 1) {
-      ordered.forEach((cards) => {
-        if (cards[i]) urls.push(...this._cardImageUrls(cards[i].item, cards[i].group));
-      });
+    this._resetInvalidHomeImages();
+    // Completions while hidden are cached without mutating a hidden page.
+    for (const [url, path] of this._homeReadyImages) this._markHomeImageReady(url, path);
+    this._observeHomeCardVisibility();
+    if (this._homeVisibilityCollecting) {
+      this._homeImageLoader.pause();
+      if (retryFailed) this._homePendingRetry = true;
+      return;
     }
-    this._homeImageLoader.enqueue(urls.filter((url) => !this._homeReadyImages.has(url)), { retryFailed });
+    retryFailed = retryFailed || !!this._homePendingRetry;
+    this._homePendingRetry = false;
+    const ranked = rankHomeCardImages({ groups: this.data.groupedActivities || {},
+      focused: this.data.focusedCardIndex, visible: this._homeVisibleCardKeys,
+      visibilityKnown: !!this._homeVisibilityKnown });
+    this._homeImagePriorities = new Map(ranked.map(({ url, priority }) => [url, priority]));
+    ranked.forEach(({ url, priority }) => {
+      this._homePresentationDiagnostics?.phase(url, "priority_updated", { priority });
+    });
+    const pendingUrls = ranked.map(item => item.url).filter(url => !this._homeReadyImages.has(url));
+    if (retryFailed) pendingUrls.forEach(url => this._setHomeImageExhausted(url, false));
+    this._homeImageLoader.enqueue(pendingUrls, { retryFailed, prioritize: true,
+      foregroundUrls: ranked.filter(item => item.priority === 0).map(item => item.url) });
+    this._homeImageLoader.resume();
+    for (const url of this._homeExhaustedImages || []) this._setHomeImageExhausted(url, true);
   },
 
-  _homeCardsWaitingFor(url) {
-    const result = [];
-    Object.keys(this.data.groupedActivities || {}).forEach((group) => {
-      this.data.groupedActivities[group].forEach((item) => {
-        if (!item._homeMediaReady && this._cardImageUrls(item, group).includes(url)) {
-          result.push({ group, activityId: String(item._id) });
-        }
+  _observeHomeCardVisibility() {
+    if (typeof this.createIntersectionObserver !== "function") return;
+    const groups = this.data.groupedActivities || {};
+    const signature = JSON.stringify(Object.keys(groups).map(group => [group, groups[group].map(item => String(item._id))]));
+    if (this._homeVisibilitySignature === signature) return;
+    this._homeVisibilitySignature = signature;
+    if (this._homeVisibilityObserver) this._homeVisibilityObserver.disconnect();
+    const generation = (this._homeVisibilityGeneration || 0) + 1;
+    this._homeVisibilityGeneration = generation;
+    this._homeVisibleCardKeys = new Set();
+    this._homeVisibilityKnown = false;
+    this._homeVisibilityCollecting = true;
+    clearTimeout(this._homeVisibilityInitialTimer);
+    // Collect the initial observer batch, including partially exposed cards.
+    // A missing callback must not prevent loading: bounded fallback at 120ms.
+    this._homeVisibilityInitialTimer = setTimeout(() => {
+      this._homeVisibilityInitialTimer = null;
+      if (this._pageVisible === false || this._homeVisibilityGeneration !== generation) return;
+      this._homeVisibilityCollecting = false;
+      if (!this._homeVisibleCardKeys.size) this._homeVisibilityKnown = false;
+      this._prepareHomeCardImages();
+    }, 120);
+    wx.nextTick(() => {
+      if (this._pageVisible === false || this._homeVisibilityGeneration !== generation) return;
+      try {
+        const observer = this.createIntersectionObserver({ observeAll: true, thresholds: [0, 0.01] });
+        this._homeVisibilityObserver = observer;
+        observer.relativeTo(".main-scroll").relativeToViewport().observe(".home-card-slot", result => {
+          if (this._pageVisible === false || this._homeVisibilityGeneration !== generation) return;
+          const data = result.dataset || {};
+          if (!data.group || data.activityId == null) return;
+          const key = cardVisibilityKey(data.group, data.activityId);
+          const visible = result.intersectionRatio > 0;
+          const changed = !this._homeVisibilityKnown || this._homeVisibleCardKeys.has(key) !== visible;
+          this._homeVisibilityKnown = true;
+          if (visible) this._homeVisibleCardKeys.add(key);
+          else this._homeVisibleCardKeys.delete(key);
+          if (changed) this._scheduleHomeImagePriorityUpdate();
+        });
+      } catch (_) {
+        // Visibility diagnostics must never gate media loading on older runtimes.
+        if (this._homeVisibilityObserver) this._homeVisibilityObserver.disconnect();
+        this._homeVisibilityObserver = null;
+        this._homeVisibilityKnown = false;
+        this._homeVisibilityCollecting = false;
+        clearTimeout(this._homeVisibilityInitialTimer);
+        this._homeVisibilityInitialTimer = null;
+        this._scheduleHomeImagePriorityUpdate();
+      }
+    });
+  },
+
+  _scheduleHomeImagePriorityUpdate() {
+    if (this._pageVisible === false || this._homePriorityTimer) return;
+    this._homePriorityTimer = setTimeout(() => {
+      this._homePriorityTimer = null;
+      this._prepareHomeCardImages();
+    }, 32);
+  },
+
+  _setHomeImageExhausted(url, exhausted) {
+    if (!url) return;
+    if (!this._homeExhaustedImages) this._homeExhaustedImages = new Set();
+    if (exhausted && !this._homeReadyImages.has(url)) this._homeExhaustedImages.add(url);
+    else this._homeExhaustedImages.delete(url);
+    if (this._pageVisible === false) return;
+    const patch = {};
+    Object.entries(this.data.groupedActivities || {}).forEach(([group, cards]) => {
+      cards.forEach((item, index) => {
+        const failed = !item._homeMediaReady && this._cardImageUrls(item, group)
+          .some(src => this._homeExhaustedImages.has(src));
+        if (!!item._homeMediaError !== failed) patch[`groupedActivities.${group}[${index}]._homeMediaError`] = failed;
       });
     });
-    return result.slice(0, 6);
+    if (Object.keys(patch).length) this.setData(patch);
+  },
+
+  onRetryHomeCard(e) {
+    if (this._pageVisible === false) return;
+    const { group, activityId } = (e && e.currentTarget && e.currentTarget.dataset) || {};
+    const item = (this.data.groupedActivities[group] || []).find(card => String(card._id) === String(activityId));
+    if (!item || item._homeMediaReady || !item._homeMediaError) return;
+    const urls = this._cardImageUrls(item, group).filter(url => !this._homeReadyImages.has(url));
+    urls.forEach(url => this._setHomeImageExhausted(url, false));
+    this._prepareHomeCardImages();
+    this._homeImageLoader?.enqueue(urls, { retryFailed: true });
+    this._startSkeletonShimmer();
+  },
+
+  _isCurrentHomeImageEvent(e, role) {
+    const data = (e && e.currentTarget && e.currentTarget.dataset) || {};
+    // Older event callers have no source token. Current image elements always do.
+    if (data.mediaSrc == null) return true;
+    if (!data.mediaSrc || this._homeReadyImages.get(data.url) !== data.mediaSrc) return false;
+    const group = data.group || "joined";
+    const item = (this.data.groupedActivities[group] || []).find(card => String(card._id) === String(data.activityId));
+    if (!item) return false;
+    const url = role === "glass" ? item.largeCardGlassImageUrl
+      : group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl;
+    const src = role === "glass" ? item._homeGlassSrc : item._homeCoverSrc;
+    return url === data.url && src === data.mediaSrc;
+  },
+
+  _resetInvalidHomeImages() {
+    if (this._pageVisible === false || !this._homeInvalidImageUrls?.size) return;
+    const patch = {};
+    Object.entries(this.data.groupedActivities || {}).forEach(([group, cards]) => {
+      cards.forEach((item, index) => {
+        const cover = group === "joined" ? item.largeCardBgImageUrl : item.smallCardBgImageUrl;
+        const badCover = this._homeInvalidImageUrls.has(cover);
+        const badGlass = group === "joined" && this._homeInvalidImageUrls.has(item.largeCardGlassImageUrl);
+        if (!badCover && !badGlass) return;
+        const prefix = `groupedActivities.${group}[${index}]`;
+        if (badCover) patch[`${prefix}._homeCoverSrc`] = "";
+        if (badGlass) patch[`${prefix}._homeGlassSrc`] = "";
+        patch[`${prefix}._homeMediaReady`] = false;
+        patch[`${prefix}._homeMediaError`] = false;
+        this._homeEnteredMediaKeys.delete(this._cardMediaKey(item, group));
+      });
+    });
+    this._homeInvalidImageUrls.clear();
+    if (Object.keys(patch).length) this.setData(patch);
+  },
+
+  _recoverHomeImage(e) {
+    const { url } = (e && e.currentTarget && e.currentTarget.dataset) || {};
+    // Only invalidate prepared files. A duplicate error must not restart an
+    // in-flight transfer, reset its retry budget, or revive an unloaded page.
+    if (!url || !this._homeImageLoader || !this._homeReadyImages.has(url)) return;
+    this._homeReadyImages.delete(url);
+    this._loadedCardGlassUrls.delete(url);
+    if (!this._homeInvalidImageUrls) this._homeInvalidImageUrls = new Set();
+    this._homeInvalidImageUrls.add(url);
+    this._resetInvalidHomeImages();
+    invalidateHomeImageCache(wx, url);
+    this._homeImageLoader.invalidateReady(url);
+    this._startSkeletonShimmer();
   },
 
   _markHomeImageReady(url, path) {
-    if (!url || this._pageVisible === false) return;
+    if (!url) return;
+    if (this._pageVisible === false) {
+      if (path) this._homeReadyImages.set(url, path);
+      return;
+    }
+    this._setHomeImageExhausted(url, false);
     if (!this._homeReadyImages.has(url)) this._homeReadyImages.set(url, path || url);
     this._loadedCardGlassUrls.add(url);
     const created = Object.values(this.data.groupedActivities || {}).flat().find(
@@ -761,7 +890,6 @@ Page({
           const key = this._cardMediaKey(item, group);
           this._homeEnteredMediaKeys.add(key);
           patch[`groupedActivities.${group}[${index}]._homeMediaReady`] = true;
-          logInfo("activity_card_presentation_ready", { group, activityId: String(item._id) });
         });
       });
       if (Object.keys(patch).length) this.setData(patch, () => this._homePresentationDiagnostics?.check());
@@ -774,7 +902,7 @@ Page({
     const tick = () => {
       if (this._pageVisible === false) return;
       const pending = this.data.homeListLoading || Object.values(this.data.groupedActivities || {})
-        .some((cards) => cards.some((item) => !item._homeMediaReady));
+        .some((cards) => cards.some((item) => !item._homeMediaReady && !item._homeMediaError));
       if (!pending) {
         this._skeletonShimmerTimer = null;
         if (this.data.skeletonShimmerRunning) this.setData({ skeletonShimmerRunning: false });
@@ -786,11 +914,33 @@ Page({
     tick();
   },
 
-  _stopHomeCardMedia() {
+  _stopHomeCardMedia({ preserveDownloads = false } = {}) {
+    this._homeVisibilityGeneration = (this._homeVisibilityGeneration || 0) + 1;
+    if (this._homeVisibilityObserver) this._homeVisibilityObserver.disconnect();
+    this._homeVisibilityObserver = null;
+    this._homeVisibilitySignature = null;
+    clearTimeout(this._homeVisibilityInitialTimer);
+    this._homeVisibilityInitialTimer = null;
+    this._homeVisibilityCollecting = false;
+    this._homePendingRetry = false;
+    this._homeVisibilityKnown = false;
+    this._homeVisibleCardKeys = new Set();
+    this._homeImagePriorities = null;
+    clearTimeout(this._homePriorityTimer);
+    this._homePriorityTimer = null;
+    if (this._homeImageLoader) {
+      if (preserveDownloads) this._homeImageLoader.pause();
+      else this._homeImageLoader.dispose();
+    }
     this._homePresentationDiagnostics?.stop();
     this._homePresentationDiagnostics = null;
-    if (this._homeImageLoader) this._homeImageLoader.dispose();
-    this._homeImageLoader = null;
+    if (!preserveDownloads) this._homeImageLoader = null;
+    if (!preserveDownloads) this._homeExhaustedImages = new Set();
+    const reset = {};
+    Object.entries(this.data.groupedActivities || {}).forEach(([group, cards]) => cards.forEach((item, index) => {
+      if (item._homeMediaError) reset[`groupedActivities.${group}[${index}]._homeMediaError`] = false;
+    }));
+    if (Object.keys(reset).length) this.setData(reset);
     clearTimeout(this._skeletonShimmerTimer);
     this._skeletonShimmerTimer = null;
   },
@@ -866,254 +1016,6 @@ Page({
     this._tryRevealCreatedCard();
   },
 
-  _clearCardMediaDiagnostics() {
-    if (this._cardMediaDiagWarnTimer) {
-      clearTimeout(this._cardMediaDiagWarnTimer);
-      this._cardMediaDiagWarnTimer = null;
-    }
-    if (this._cardMediaDiagErrorTimer) {
-      clearTimeout(this._cardMediaDiagErrorTimer);
-      this._cardMediaDiagErrorTimer = null;
-    }
-    this._cardMediaDiagnostics = null;
-  },
-
-  _ensureTrackedCardMedia(meta) {
-    const session = this._cardMediaDiagnostics;
-    if (!session) return null;
-
-    const key = buildCardMediaKey(meta);
-    if (!session.items[key]) {
-      session.items[key] = {
-        ...meta,
-        key,
-        status: "pending",
-        registeredAt: Date.now()
-      };
-    }
-    return session.items[key];
-  },
-
-  _startCardMediaDiagnostics(list, groupedActivities, focusMap) {
-    this._clearCardMediaDiagnostics();
-
-    const fm = focusMap || this.data.focusedCardIndex || {};
-    const focusedIndexFor = (group) => {
-      const v = fm[group];
-      return typeof v === "number" ? v : 0;
-    };
-
-    const groups = groupedActivities || { joined: [], accepting: [], notStarted: [], ended: [] };
-    const traceId = createTraceId("card-media");
-    const startedAt = Date.now();
-    let deviceInfo = {};
-    try {
-      const device = typeof wx.getDeviceInfo === "function" ? wx.getDeviceInfo() : {};
-      const windowInfo = typeof wx.getWindowInfo === "function" ? wx.getWindowInfo() : {};
-      deviceInfo = {
-        brand: device.brand || "",
-        model: device.model || "",
-        system: device.system || "",
-        platform: device.platform || "",
-        benchmarkLevel: device.benchmarkLevel,
-        windowWidth: windowInfo.windowWidth,
-        windowHeight: windowInfo.windowHeight,
-        pixelRatio: windowInfo.pixelRatio
-      };
-    } catch (err) {}
-    const items = {};
-    const groupSummary = {};
-    let imageCount = 0;
-    let videoCount = 0;
-    let avatarCount = 0;
-
-    const registerItem = (meta) => {
-      const key = buildCardMediaKey(meta);
-      if (items[key]) return;
-      items[key] = {
-        ...meta,
-        key,
-        status: "pending",
-        registeredAt: Date.now()
-      };
-      if (meta.mediaType === "image") {
-        imageCount += 1;
-      } else if (meta.mediaType === "video") {
-        videoCount += 1;
-      }
-    };
-
-    ["joined", "accepting", "notStarted", "ended"].forEach((group) => {
-      const cards = Array.isArray(groups[group]) ? groups[group] : [];
-      const cardSize = group === "joined" ? "large" : "small";
-      groupSummary[group] = {
-        cards: cards.length,
-        images: 0,
-        videos: 0,
-        avatars: 0
-      };
-
-      cards.forEach((activity, index) => {
-        const imageUrl = cardSize === "large"
-          ? activity.largeCardBgImageUrl
-          : activity.smallCardBgImageUrl;
-        if (imageUrl && index === focusedIndexFor(group)) {
-          registerItem({
-            mediaType: "image",
-            group,
-            cardSize,
-            activityId: String(activity._id != null ? activity._id : ""),
-            activityName: activity.name || "",
-            url: imageUrl
-          });
-          groupSummary[group].images += 1;
-        }
-        if (activity.bgVideoUrl && index === focusedIndexFor(group)) {
-          registerItem({
-            mediaType: "video",
-            group,
-            cardSize,
-            activityId: String(activity._id != null ? activity._id : ""),
-            activityName: activity.name || "",
-            url: activity.bgVideoUrl
-          });
-          groupSummary[group].videos += 1;
-        }
-        const cardAvatarCount = Array.isArray(activity.cardAvatars) ? activity.cardAvatars.length : 0;
-        avatarCount += cardAvatarCount;
-        groupSummary[group].avatars += cardAvatarCount;
-      });
-    });
-
-    this._cardMediaDiagnostics = {
-      traceId,
-      startedAt,
-      items,
-      groupSummary,
-      totalCards: Array.isArray(list) ? list.length : 0,
-      deviceInfo,
-      resolvedLogged: false
-    };
-
-    logInfo("activity_card_media_scan", {
-      traceId,
-      totalActivities: Array.isArray(list) ? list.length : 0,
-      trackedImages: imageCount,
-      trackedVideos: videoCount,
-      trackedAvatars: avatarCount,
-      device: deviceInfo,
-      groups: groupSummary
-    });
-
-    this._cardMediaDiagWarnTimer = setTimeout(() => {
-      this._reportPendingCardMedia("warn");
-    }, CARD_MEDIA_DIAG_WARN_MS);
-
-    this._cardMediaDiagErrorTimer = setTimeout(() => {
-      this._reportPendingCardMedia("error");
-    }, CARD_MEDIA_DIAG_ERROR_MS);
-  },
-
-  _reportPendingCardMedia(level) {
-    const session = this._cardMediaDiagnostics;
-    if (!session) return;
-
-    const items = Object.values(session.items || {});
-    const pending = items.filter((item) => item.status === "pending");
-    if (!pending.length) {
-      logInfo("activity_card_media_settled", {
-        traceId: session.traceId,
-        duration: Date.now() - session.startedAt,
-        tracked: items.length,
-        loaded: items.filter((item) => item.status === "loaded").length,
-        failed: items.filter((item) => item.status === "error").length
-      });
-      return;
-    }
-
-    const pendingImages = pending.filter((item) => item.mediaType === "image");
-    const pendingVideos = pending.filter((item) => item.mediaType === "video");
-    const payload = {
-      traceId: session.traceId,
-      duration: Date.now() - session.startedAt,
-      pendingImages: pendingImages.length,
-      pendingVideos: pendingVideos.length,
-      sample: pending.slice(0, 6).map((item) => ({
-        mediaType: item.mediaType,
-        group: item.group,
-        cardSize: item.cardSize,
-        activityId: item.activityId,
-        activityName: item.activityName,
-        url: item.url
-      }))
-    };
-
-    if (level === "error") {
-      logError("activity_card_media_stalled", payload);
-      return;
-    }
-
-    logInfo("activity_card_media_pending", payload);
-  },
-
-  _markCardMediaEvent(meta, status, detail) {
-    const session = this._cardMediaDiagnostics;
-    if (!session) return;
-
-    const item = this._ensureTrackedCardMedia(meta);
-    if (!item) return;
-
-    const wasPending = item.status === "pending";
-    item.status = status;
-    item.updatedAt = Date.now();
-    if (detail) {
-      item.detail = detail;
-    }
-
-    if (status === "error") {
-      logError("activity_card_media_error", {
-        traceId: session.traceId,
-        mediaType: item.mediaType,
-        group: item.group,
-        cardSize: item.cardSize,
-        activityId: item.activityId,
-        activityName: item.activityName,
-        url: item.url,
-        summary: summarizeError(detail || {})
-      });
-    } else if (wasPending) {
-      logInfo("activity_card_media_loaded", {
-        traceId: session.traceId,
-        mediaType: item.mediaType,
-        group: item.group,
-        cardSize: item.cardSize,
-        activityId: item.activityId,
-        activityName: item.activityName
-      });
-    }
-
-    const hasPending = Object.values(session.items).some((entry) => entry.status === "pending");
-    if (!hasPending) {
-      if (this._cardMediaDiagWarnTimer) {
-        clearTimeout(this._cardMediaDiagWarnTimer);
-        this._cardMediaDiagWarnTimer = null;
-      }
-      if (this._cardMediaDiagErrorTimer) {
-        clearTimeout(this._cardMediaDiagErrorTimer);
-        this._cardMediaDiagErrorTimer = null;
-      }
-      if (!session.resolvedLogged) {
-        session.resolvedLogged = true;
-        logInfo("activity_card_media_all_resolved", {
-          traceId: session.traceId,
-          duration: Date.now() - session.startedAt,
-          loaded: Object.values(session.items).filter((entry) => entry.status === "loaded").length,
-          failed: Object.values(session.items).filter((entry) => entry.status === "error").length
-        });
-      }
-    }
-  },
-
   _syncVideoFocus(group, oldIndex, newIndex) {
     const previousIndex = typeof oldIndex === "number" ? oldIndex : 0;
     const nextIndex = typeof newIndex === "number" ? newIndex : previousIndex;
@@ -1141,6 +1043,17 @@ Page({
     this._rememberFocusedCard(group, current);
     this.setData({ [`focusedCardIndex.${group}`]: current }, () => {
       this._syncVideoFocus(group, previous, current);
+      // Native intersection updates cover scrolling and partial cards. Promote a
+      // touched swiper immediately too, without waiting for its animation to end.
+      if (e.detail && e.detail.source === "touch") {
+        this._homeVisibleCardKeys = this._homeVisibleCardKeys || new Set();
+        (this.data.groupedActivities[group] || []).forEach((item, index) => {
+          const key = cardVisibilityKey(group, item._id);
+          if (index === current) this._homeVisibleCardKeys.add(key);
+          else this._homeVisibleCardKeys.delete(key);
+        });
+      }
+      this._prepareHomeCardImages();
       const endedCount = (this.data.groupedActivities.ended || []).length;
       if (group === "ended" && this.data.endedHasMore && current === endedCount) {
         this.loadMoreEndedActivities();
@@ -1338,7 +1251,6 @@ Page({
     const focusedCardIndex = this._resolveFocusedCardIndex(groupedActivities);
     const cardPresentation = this._prepareColdStartCardPresentation(groupedActivities);
     // 须在 setData 回调之前创建 session，否则缓存命中的首帧 bindload 可能早于回调，导致事件丢弃并误报 stalled（H1）
-    this._startCardMediaDiagnostics(listWithFlags, groupedActivities, focusedCardIndex);
     this.setData({
       activityList: listWithFlags,
       filteredList: filtered,
@@ -1356,7 +1268,6 @@ Page({
   loadActivityList(options = {}) {
     const generation = options.generation == null ? (this._loadGeneration || 0) : options.generation;
     if (this._pageVisible === false || generation !== (this._loadGeneration || 0)) return Promise.resolve();
-    this._clearCardMediaDiagnostics();
     this._homePresentationDiagnostics?.list("request_pending");
     return (options.responsePromise || activityService.listActivities())
       .then((res) => {
@@ -1376,7 +1287,6 @@ Page({
           const focusedCardIndex = this._resolveFocusedCardIndex(groupedActivities);
           const cardPresentation = this._prepareColdStartCardPresentation(groupedActivities);
           if (!options.skipCardMediaDiagnostics) {
-            this._startCardMediaDiagnostics(list, groupedActivities, focusedCardIndex);
           }
           this.setData({
             activityList: list,
@@ -1653,6 +1563,8 @@ Page({
   showCreateModal() {
     if (!this.hasCreateActivityPermission()) return;
     if (this.data.showCreateForm || this.data.createFormSubmitting) return;
+    if (this._createFormCloseTimer) clearTimeout(this._createFormCloseTimer);
+    this._createFormCloseTimer = null;
     this._setTabBarHidden(true);
     this.setData({
       createFormContainerRendered: true,
@@ -1665,12 +1577,27 @@ Page({
 
   closeCreateForm() {
     if (this.data.createFormSubmitting) return;
-    this.setData({ showCreateForm: false });
+    this.setData({ showCreateForm: false }, () => this._scheduleCreateFormCloseCompletion());
+  },
+
+  _scheduleCreateFormCloseCompletion() {
+    if (this._createFormCloseTimer) clearTimeout(this._createFormCloseTimer);
+    // The homepage uses its own native page-container, not the component's.
+    // Do not rely solely on the native afterleave callback to release the Tab.
+    this._createFormCloseTimer = setTimeout(() => {
+      this._createFormCloseTimer = null;
+      if (this.data.showCreateForm || !this.data.createFormContainerRendered) return;
+      this._homePresentationDiagnostics?.snapshot("create_form_afterleave_missing");
+      this.onCreateFormAfterLeave();
+    }, 400); // Native close duration is 240ms; allow its normal animation first.
   },
 
   onCreateFormAfterLeave() {
-    if (!this.data.showCreateForm) {
+    if (!this.data.showCreateForm && this.data.createFormContainerRendered) {
+      if (this._createFormCloseTimer) clearTimeout(this._createFormCloseTimer);
+      this._createFormCloseTimer = null;
       this.setData({ createFormContainerRendered: false }, () => {
+        if (this._pageVisible === false) return;
         this._setTabBarHidden(false, { animate: true });
         this._revealCreatedCard();
       });
@@ -1752,7 +1679,7 @@ Page({
         this.setData({
           showCreateForm: false,
           createFormSubmitting: false
-        });
+        }, () => this._scheduleCreateFormCloseCompletion());
         return this.insertCreatedActivity(createdActivity)
           .then((inserted) => inserted || this.loadActivityList());
       })
@@ -1823,22 +1750,24 @@ Page({
   },
 
   onCardBgLoaded(e) {
+    if (!this._isCurrentHomeImageEvent(e, "cover")) return;
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "image");
     this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "loaded", meta);
-    this._markCardMediaEvent(meta, "loaded");
     this._markHomeImageReady(meta.url);
   },
 
   onCardBgError(e) {
+    if (!this._isCurrentHomeImageEvent(e, "cover")) return;
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "image");
     this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "error", meta);
     this._homePresentationDiagnostics?.snapshot("native_media_error", {
       url: String(meta.url || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
     });
-    this._markCardMediaEvent(meta, "error", e && e.detail);
+    this._recoverHomeImage(e);
   },
 
   onCardGlassLoaded(e) {
+    if (!this._isCurrentHomeImageEvent(e, "glass")) return;
     const dataset = e && e.currentTarget && e.currentTarget.dataset;
     const activityId = String((dataset && dataset.activityId) || "");
     const url = String((dataset && dataset.url) || "");
@@ -1848,23 +1777,19 @@ Page({
   },
 
   onCardGlassError(e) {
+    if (!this._isCurrentHomeImageEvent(e, "glass")) return;
     const dataset = e && e.currentTarget && e.currentTarget.dataset;
     this._homePresentationDiagnostics?.media(dataset && dataset.url, "glass", "error", { activityId: dataset && dataset.activityId, group: (dataset && dataset.group) || "joined" });
     this._homePresentationDiagnostics?.snapshot("glass_error", {
       url: String((dataset && dataset.url) || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
     });
-    logError("activity_card_glass_load_failed", {
-      activityId: String((dataset && dataset.activityId) || ""),
-      url: String((dataset && dataset.url) || ""),
-      summary: summarizeError((e && e.detail) || {})
-    });
+    this._recoverHomeImage(e);
     // Failure never releases a card: keep its own skeleton visible.
   },
 
   onCardVideoLoaded(e) {
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "video");
     this._homePresentationDiagnostics?.media(meta.url, meta.mediaType === "video" ? "video" : "cover", "loaded", meta);
-    this._markCardMediaEvent(meta, "loaded");
     this._markHomeImageReady(meta.url);
   },
 
@@ -1874,14 +1799,11 @@ Page({
     this._homePresentationDiagnostics?.snapshot("native_media_error", {
       url: String(meta.url || "").split(/[?#]/)[0], summary: summarizeError(e && e.detail)
     });
-    this._markCardMediaEvent(meta, "error", e && e.detail);
   },
 
   onCardVideoWaiting(e) {
-    const session = this._cardMediaDiagnostics;
     const meta = pickCardMediaMetaFromDataset(e && e.currentTarget && e.currentTarget.dataset, "video");
-    logInfo("activity_card_video_waiting", {
-      traceId: session ? session.traceId : "",
+    this._homePresentationDiagnostics?.snapshot("video_waiting", {
       group: meta.group,
       cardSize: meta.cardSize,
       activityId: meta.activityId,

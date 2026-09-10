@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
@@ -17,13 +18,29 @@ def _diagnostic_log_path() -> Path:
     return Path(getattr(settings, "application_log_file", "logs/application.log")).resolve()
 
 
+def sanitize_diagnostic(value, depth=0):
+    """Defense in depth for both authenticated and anonymous ingestion."""
+    if depth > 8:
+        return "[truncated]"
+    if isinstance(value, dict):
+        return {str(key)[:100]: sanitize_diagnostic(item, depth + 1)
+                for key, item in list(value.items())[:50]
+                if not re.search(r"token|authorization|password|cookie|secret", str(key), re.I)}
+    if isinstance(value, list):
+        return [sanitize_diagnostic(item, depth + 1) for item in value[:64]]
+    if isinstance(value, str):
+        value = re.sub(r"Bearer\s+[^\s\"']+", "Bearer [redacted]", value, flags=re.I)
+        return re.sub(r"(https?://[^\s?#\"']+)[?#][^\s\"']*", r"\1", value)[:2048]
+    return value
+
+
 def append_client_diagnostic_log(record: dict[str, Any]) -> Path:
     """Write one client diagnostic event to the unified backend application log."""
 
     path = _diagnostic_log_path()
     enriched = {
         "received_at": datetime.now(timezone.utc).isoformat(),
-        **record,
+        **sanitize_diagnostic(record),
     }
     logger.info("client_diagnostic %s", json.dumps(enriched, ensure_ascii=False, separators=(",", ":")))
     return path

@@ -708,11 +708,13 @@ page {
 .hero-remark-row {
   width: 100%;
   display: flex;
+  /* hero-copy is bottom-anchored: keep the toggle stationary as text grows upward. */
   align-items: flex-end;
   gap: 7.69rpx;
 }
 
 .hero-remark-viewport {
+  min-height: 38.46rpx;
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -726,7 +728,7 @@ page {
   color: rgba(255, 255, 255, 0.9);
   font-size: 26.92rpx;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 38.46rpx;
   white-space: normal;
   word-break: break-all;
 }
@@ -821,12 +823,13 @@ page {
 }
 
 .hero-remark-measure {
+  min-height: 38.46rpx;
   display: inline-block;
   width: auto;
   color: transparent;
   font-size: 26.92rpx;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 38.46rpx;
   white-space: nowrap;
 }
 
@@ -835,12 +838,13 @@ page {
   color: transparent;
   font-size: 26.92rpx;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 38.46rpx;
   white-space: normal;
   word-break: break-all;
 }
 
 .remark-toggle-measure {
+  height: 38.46rpx;
   display: flex;
   align-items: center;
   gap: 7.69rpx;

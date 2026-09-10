@@ -1,0 +1,30 @@
+# Caddy 2.6.2 compatibility bridge, ONLY for this site's public cover routes.
+# Precondition: no Caddy authentication / http.auth.user.id consumer on this site.
+# The map registers a lazy logging value; it does NOT authenticate a request,
+# change request headers, rewrite URLs, or change the upstream/response.
+# Upgrade to a native custom log-field directive before introducing Caddy auth.
+@coverRequestCorrelation path /activity-cover-assets/* /api/v2/activity-covers/*/glass-image
+map @coverRequestCorrelation {http.request.header.X-Request-Id} {http.auth.user.id} {
+    ~^(hm-[0-9a-z]{8,12}-[0-9a-z]{1,6}-[0-9a-z]{6,16})$ $1
+    default ""
+}
+@notCoverRequest not path /activity-cover-assets/* /api/v2/activity-covers/*/glass-image
+skip_log @notCoverRequest
+log {
+    output file /var/log/caddy/cover-diagnostics.jsonl {
+        roll_size 10MiB
+        roll_keep 3
+        roll_keep_for 72h
+    }
+    format filter {
+        wrap json
+        fields {
+            request delete
+            resp_headers delete
+            user_id rename request_id
+            err_id delete
+            err_trace delete
+            msg delete
+        }
+    }
+}

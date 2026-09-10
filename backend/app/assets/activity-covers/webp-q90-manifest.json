@@ -1,0 +1,2011 @@
+{
+  "aleksey-rico/avatar.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/avatar.webp",
+    "source_sha256": "799e3f367fede178007c7b0c15ce7d2baae800fb45c2703a4ab3a0a5ce9ff7f6",
+    "sha256": "9c5018640ef604465bec973856207ddcbb34e34e9a0830443e022c88559b782d",
+    "source_bytes": 5007,
+    "bytes": 4258
+  },
+  "aleksey-rico/images/aleksey-rico-001.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-001.webp",
+    "source_sha256": "de7afc450bdc5d5f5cb93e4d0a827fa351552e6f9cb1ab1991c9c8574b769177",
+    "sha256": "004c3275c4554e211c159a6f60f9c15b50235eeec9b13a38f18a10bbe882c789",
+    "source_bytes": 612791,
+    "bytes": 337720
+  },
+  "aleksey-rico/thumbs/aleksey-rico-001.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-001.webp",
+    "source_sha256": "36c51f3812b4adb39cc013a2b21d791c5c54008a0db531902527f4d57927c821",
+    "sha256": "d0a4f13f1fadaa451042103200f8a027f0af7af228f686051a88a0cffd74c6a2",
+    "source_bytes": 26976,
+    "bytes": 31998
+  },
+  "aleksey-rico/glass/aleksey-rico-001.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-001.webp",
+    "source_sha256": "c6863a18f4d8849b5bc23606df5031fa0ffb89026da64f707497788a48d4a931",
+    "sha256": "1f055d5af351579ce2bae687c112dc38e77e867ab58291ceebac16945148a1c3",
+    "source_bytes": 23060,
+    "bytes": 18088
+  },
+  "aleksey-rico/images/aleksey-rico-002.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-002.webp",
+    "source_sha256": "40f07bf57dd799999a9479f184c5cf927a0a63ce196cd0f3b435b3a67c67edb4",
+    "sha256": "19f0ab1e51d987d22d872aefc7cb396482aa0a24f4ad48b3fd84ba3d998ba144",
+    "source_bytes": 747971,
+    "bytes": 446268
+  },
+  "aleksey-rico/thumbs/aleksey-rico-002.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-002.webp",
+    "source_sha256": "10ef54654a62ca66bc60e44da83e5ae626aed45681283bc7a4671a84bf88d8a5",
+    "sha256": "5643a592db73ee1ad576382bcaa924159cfaa169a873342d0f23c67db3b2e01d",
+    "source_bytes": 27309,
+    "bytes": 34350
+  },
+  "aleksey-rico/glass/aleksey-rico-002.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-002.webp",
+    "source_sha256": "877263582a0d5817cc07aec4a6ec2f9213132e2a1d5747a3a1f4b8e4075a1ae9",
+    "sha256": "45240ce51dae1e8746ff511eb58c860034f5a3bd9d6a5a1930d542c31278956c",
+    "source_bytes": 25053,
+    "bytes": 19676
+  },
+  "aleksey-rico/images/aleksey-rico-003.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-003.webp",
+    "source_sha256": "1ec5546dd7c1bccf8dc21233b417a908d3831e9dbdd141953c359e7ec164f5c1",
+    "sha256": "9ea7a8a3bde540bdb53382d00166174fdee3466160851fb57bb6904393bc0df2",
+    "source_bytes": 812862,
+    "bytes": 500170
+  },
+  "aleksey-rico/thumbs/aleksey-rico-003.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-003.webp",
+    "source_sha256": "fc364be63709fd9a398e0665aaae07b95dafe8d21a3506a17ee8f8a9b487fb33",
+    "sha256": "5bcb2140a54aebcd6307e0e6a22d5b841a657324f125b87b523fee6d5b596b17",
+    "source_bytes": 26730,
+    "bytes": 31712
+  },
+  "aleksey-rico/glass/aleksey-rico-003.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-003.webp",
+    "source_sha256": "ac49f0cb2a01c894e759586d863408564a57db149085f475b2a4a9796a341678",
+    "sha256": "66e3b4e39ac3441cbfdb8d41c2fb82dc7911b4dfa36b140f029f50bc7d169b83",
+    "source_bytes": 22945,
+    "bytes": 18242
+  },
+  "aleksey-rico/images/aleksey-rico-004.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-004.webp",
+    "source_sha256": "79c43fef5895cde893ca3a21f9bca9c87d4391746cad7ab51e39bb1360ade2a2",
+    "sha256": "1d27df3a10669a9ac3422e1ba48ea992a700878e389b34b563af57317656633c",
+    "source_bytes": 518423,
+    "bytes": 290238
+  },
+  "aleksey-rico/thumbs/aleksey-rico-004.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-004.webp",
+    "source_sha256": "0742fe5090f5f345c33d05274aa362914346268406aa3b588960d949d7b10a33",
+    "sha256": "300dd61854ca66de63011ccd2602d1098e755b20994d82ce735d508592221f2f",
+    "source_bytes": 20901,
+    "bytes": 23052
+  },
+  "aleksey-rico/glass/aleksey-rico-004.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-004.webp",
+    "source_sha256": "937fb3113e706a5471c41c4582d53bd0bc5f4f2e2754f1845c2a7d791134b430",
+    "sha256": "ff4c0ee483c6fe3643d3019a0fd1430ebdf9aac29ac5d44b9bfdee1ce15cd5a7",
+    "source_bytes": 20060,
+    "bytes": 15818
+  },
+  "aleksey-rico/images/aleksey-rico-005.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-005.webp",
+    "source_sha256": "a3892a1ede17569f9ba9160908396fb14df54d5a4db1722476c53a859b70b7de",
+    "sha256": "234fb0a50995db312c39fc621996369eca1c2a3c07bcac2aecd61edcf6e5b74e",
+    "source_bytes": 462675,
+    "bytes": 225634
+  },
+  "aleksey-rico/thumbs/aleksey-rico-005.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-005.webp",
+    "source_sha256": "e89c57250824279041d3872f4def2feb07bf9cf5b62ea6bf9a23bb3a0c18a23e",
+    "sha256": "6ab3811e34ec0c625082b83f7cd39b96d61ff619d15ae95a0addd7b846e73456",
+    "source_bytes": 35377,
+    "bytes": 41858
+  },
+  "aleksey-rico/glass/aleksey-rico-005.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-005.webp",
+    "source_sha256": "641e7cd386a5362f9e4cc26235c38d1a8e829ebdaed983cd12b1e140614b452d",
+    "sha256": "87b7eb6d66b13b045b04112a087e19a770d67044e29c11f279dccb0630480640",
+    "source_bytes": 27113,
+    "bytes": 21644
+  },
+  "aleksey-rico/images/aleksey-rico-006.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-006.webp",
+    "source_sha256": "b98d6b6b50164edc5746d01cc9e47d745bf099a3e8a39a857921399badccb944",
+    "sha256": "4b2b20b349ab1f0afbba9d00e84c2653db73f1b84e6d11c0ee7fbf1bca05a496",
+    "source_bytes": 645871,
+    "bytes": 379626
+  },
+  "aleksey-rico/thumbs/aleksey-rico-006.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-006.webp",
+    "source_sha256": "0b71c33dd3153b4eb8b2fb88b2252a52d5a006dbd02f4750257ce76521bbb883",
+    "sha256": "cb694ced35e1b87cc0cf3d0e8587ed4f26256d3d494752d277dcb2cf6dc5d30b",
+    "source_bytes": 31073,
+    "bytes": 41422
+  },
+  "aleksey-rico/glass/aleksey-rico-006.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-006.webp",
+    "source_sha256": "4bb3a9e7d8c8f7480fc0542436771e28781f897fc897d75f44fe887dee61a3ef",
+    "sha256": "7dc39fe0b0afe380bbb09c4315f515884fbbcd5f67c99bebb7ac74b384e35ddf",
+    "source_bytes": 19374,
+    "bytes": 16576
+  },
+  "aleksey-rico/images/aleksey-rico-009.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-009.webp",
+    "source_sha256": "10a0d246fc6054b283cf2b279b730ccb8b843c3230b9535edded65c4af202fed",
+    "sha256": "5a7d1c3781e6a230970bb1abb2a79685e467577c95752e973dc19bd4b166b204",
+    "source_bytes": 228517,
+    "bytes": 122122
+  },
+  "aleksey-rico/thumbs/aleksey-rico-009.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-009.webp",
+    "source_sha256": "4951275fafebd78f1cdc251d831dd1ebfc866132c0a675ed5fa4590efa9eba43",
+    "sha256": "964c49c5ab2bc4088619bad1a4f70bec4cd5e1854e15e69276e68a7d2f78aebb",
+    "source_bytes": 20005,
+    "bytes": 22378
+  },
+  "aleksey-rico/glass/aleksey-rico-009.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-009.webp",
+    "source_sha256": "caa88243d680490d0c0cc45f59abf0f9a16ead3f5330368ad1fa7236dfb40b54",
+    "sha256": "1fcf1abdc037514e180f0d14737e2c6db8d023a3cfbfbd07eeab8ab8dd827f38",
+    "source_bytes": 18016,
+    "bytes": 12152
+  },
+  "aleksey-rico/images/aleksey-rico-010.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-010.webp",
+    "source_sha256": "6eae73e6fa3db52744d2ef82b663bd2c29968006df11949c9a57a2bc90157089",
+    "sha256": "b1fd2440b5e496cd8d3859c5c865d17c872d7762b91f8967d3cb4e9df2221721",
+    "source_bytes": 520409,
+    "bytes": 275166
+  },
+  "aleksey-rico/thumbs/aleksey-rico-010.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-010.webp",
+    "source_sha256": "f889d2cccf3d853fe55d0ce2cf4003933ad30099d6d4c7494288a210154aee70",
+    "sha256": "c14da219d1a27959f6d70db8fe7b7b8361caa50ea716f0c3bbd6a19a16ca9087",
+    "source_bytes": 31213,
+    "bytes": 36238
+  },
+  "aleksey-rico/glass/aleksey-rico-010.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-010.webp",
+    "source_sha256": "d12dfedb17fbb2e4000b6ec0d6ddcfc70dfd84907b52f5323f57938862f03532",
+    "sha256": "1de13b38a9a76c9522d34a28b4d522b7839ce81dd6ad6824086946bc28ae10a9",
+    "source_bytes": 31171,
+    "bytes": 23748
+  },
+  "aleksey-rico/images/aleksey-rico-011.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-011.webp",
+    "source_sha256": "373cb3c52be61a7aab672ce01526c503ccc1552fbd94cf26569ab7da6898f723",
+    "sha256": "b92902a2e4c5a25843a4d551a203d343720f3e2d2a30372f4260c77453e0e32d",
+    "source_bytes": 546792,
+    "bytes": 303122
+  },
+  "aleksey-rico/thumbs/aleksey-rico-011.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-011.webp",
+    "source_sha256": "32dcd43deef97469d97285a027a7622e2474e16375205a3734a05999adf34955",
+    "sha256": "9ebefb961bb044191b16b517b828e75656df57d62b9f0ab12c2ffb7bd5f1c721",
+    "source_bytes": 28458,
+    "bytes": 30124
+  },
+  "aleksey-rico/glass/aleksey-rico-011.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-011.webp",
+    "source_sha256": "e9c43b19e771e0111f75d5ca252f94d11d40744c4cc15c899dbf21052c314a41",
+    "sha256": "a70eb073d1fabc26ee60802069f9159000741d6c90b4bcdd971ba9d1f3d34851",
+    "source_bytes": 30944,
+    "bytes": 20162
+  },
+  "aleksey-rico/images/aleksey-rico-012.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-012.webp",
+    "source_sha256": "9320cc8a2296b9bca682f456e3458b6e92c682291c34d835093a12ed968b5f23",
+    "sha256": "0fb0ac7cb7b14f400b7ed0a2102e51aeb83f86d3057d26f66530242783fb2ff2",
+    "source_bytes": 667442,
+    "bytes": 389730
+  },
+  "aleksey-rico/thumbs/aleksey-rico-012.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-012.webp",
+    "source_sha256": "6b39333e6254d3b631b482bd6f4eca27309c129181e8c77172d2551ce78db2bb",
+    "sha256": "8512740e257453183b7bacc20c99d8901488d08acb2c5080af63248dcc1f14c4",
+    "source_bytes": 30616,
+    "bytes": 37970
+  },
+  "aleksey-rico/glass/aleksey-rico-012.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-012.webp",
+    "source_sha256": "e4cbb821877646d620f4503a0c532be3575e020b5e590c4d50bd95333c53de52",
+    "sha256": "087752d2ffce027ac15872b2d8603c8f8cfba0d4b0ad41089d6957b85c24ec39",
+    "source_bytes": 28087,
+    "bytes": 22866
+  },
+  "aleksey-rico/images/aleksey-rico-013.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-013.webp",
+    "source_sha256": "cb4b411c2f9e0bef9427704c561bcb81437843c515c2a5912592baf533772290",
+    "sha256": "89b74a9242f35654a28b6e8be6aa91505503abfe3ba5418413824d632c262820",
+    "source_bytes": 717791,
+    "bytes": 383560
+  },
+  "aleksey-rico/thumbs/aleksey-rico-013.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-013.webp",
+    "source_sha256": "11a79f58a38e68190b129f13d5101fee2608aa4fb10172775c374abd0d02f8db",
+    "sha256": "8be06ffb4e291f1928c842d411edbd0608677c533de0e4994663b79dd8776ce0",
+    "source_bytes": 24459,
+    "bytes": 29136
+  },
+  "aleksey-rico/glass/aleksey-rico-013.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-013.webp",
+    "source_sha256": "50bd242e9e551e36a973305b8891144744ab44ed9569eceb61dd56337089d1a5",
+    "sha256": "fdc503dbdef371c1c86822bfa3687d4a6e64d1d32031c4014f9003e31bf6e805",
+    "source_bytes": 21974,
+    "bytes": 17660
+  },
+  "aleksey-rico/images/aleksey-rico-014.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/images/aleksey-rico-014.webp",
+    "source_sha256": "3683348670833fe2277b42f48fbd49ce1f60e694bbd83594d0412b50836e2a08",
+    "sha256": "ef282ad8224db1bfc7af0277986e5dbde55b379819616227c8efc99cba9011bf",
+    "source_bytes": 621664,
+    "bytes": 383466
+  },
+  "aleksey-rico/thumbs/aleksey-rico-014.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/thumbs/aleksey-rico-014.webp",
+    "source_sha256": "4a9faf1eef3bf69fb4da95ca1c5af88e4999e1b6eb781467f743503b9d424aa4",
+    "sha256": "d38182a1f728ca99eaba2ec99bd6c86fb217333002e26b32bf37d1234408f636",
+    "source_bytes": 27848,
+    "bytes": 31736
+  },
+  "aleksey-rico/glass/aleksey-rico-014.jpg": {
+    "path": "webp-q90-v1/aleksey-rico/glass/aleksey-rico-014.webp",
+    "source_sha256": "e9a1cbf9c89dba293f3133b9542244850b08f6a03fcf3cac244c18987d998ccb",
+    "sha256": "564e66b447fc12db1168ee05f1306da5600b35255e079c33aff7cb8c869c2257",
+    "source_bytes": 26954,
+    "bytes": 20276
+  },
+  "lam/avatar.jpg": {
+    "path": "webp-q90-v1/lam/avatar.webp",
+    "source_sha256": "48498597d0810baf95fb6c2d2526c07089d94991791075d06bf0328d2e6ee118",
+    "sha256": "49af46ffed1b129f8762843e0fb3a371d89f8374c4ded14e8252fd561157066d",
+    "source_bytes": 5184,
+    "bytes": 5148
+  },
+  "lam/images/lam-001.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-001.webp",
+    "source_sha256": "3ee6c9138b8eb93200de3c84e3af29f0fb3b9cafef7a7233660044d4ad1c439c",
+    "sha256": "47cbc67661f554bc1d3ce134050bb880f3d583eee31cc27196b7df65a3d2fb15",
+    "source_bytes": 549640,
+    "bytes": 362818
+  },
+  "lam/thumbs/lam-001.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-001.webp",
+    "source_sha256": "f607c55ac6d83dce118ab8a4d8c7c00fba0564932a2dcc2ed7715e601325352d",
+    "sha256": "9bfe5c75cc70e41b5ee4411d2afb171bc4da0851bee4f29ef56b715a69d48269",
+    "source_bytes": 39856,
+    "bytes": 45476
+  },
+  "lam/glass/lam-001.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-001.webp",
+    "source_sha256": "6d2f2e22ce402f4f2c126582e40d00d5c969a979ba54a89deece2a8622f7a546",
+    "sha256": "7f3d280c821afefcb63daa5cdadc6e25a1fe6d59932bee18d3e37bde0112d910",
+    "source_bytes": 22537,
+    "bytes": 18726
+  },
+  "lam/images/lam-002.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-002.webp",
+    "source_sha256": "2f9c31bc9d4cc45f78ad054a7ff19ebd635ef1449f8ce6019a107d076ffaa14e",
+    "sha256": "6d9652635f6aefc0ebeb80d141fee6d2a78bf3d021f09b7bbb7fd8cfeeb0a70a",
+    "source_bytes": 330485,
+    "bytes": 172720
+  },
+  "lam/thumbs/lam-002.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-002.webp",
+    "source_sha256": "a1f07de496e4285448619a59655a8b44529f69feaf321a4570341de739120033",
+    "sha256": "3e5f37861d09d2b5c3085d02176294d77c7097cb23b90f1fbb55f9643bc1e155",
+    "source_bytes": 25180,
+    "bytes": 28066
+  },
+  "lam/glass/lam-002.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-002.webp",
+    "source_sha256": "71a5fe288896515e003147445b78b84e8ebaf72298a62a6dac31b48348a4fde9",
+    "sha256": "67b914254c01ae29711ec1460d813264fe868693d0eef2463d8b3bc3cc519835",
+    "source_bytes": 24388,
+    "bytes": 17732
+  },
+  "lam/images/lam-003.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-003.webp",
+    "source_sha256": "04080e4d86a80d61678feffa04f1f5067401501028b54ce870c431ffd4faeb60",
+    "sha256": "9814d5b9ca4595c37c1fd572b2e8676856e4af97d779e9a39ced69125ba900d8",
+    "source_bytes": 223526,
+    "bytes": 101030
+  },
+  "lam/thumbs/lam-003.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-003.webp",
+    "source_sha256": "e40a1abcc9d5b56a09da41582735a0cb07ccc18a92285829986fd4e925bbaf24",
+    "sha256": "8246d1c794108b8e4c4150824fc6e233c0bb0067871382ee0722057bc64f3368",
+    "source_bytes": 16924,
+    "bytes": 15966
+  },
+  "lam/glass/lam-003.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-003.webp",
+    "source_sha256": "adf3e108d00da5788a1a9f1b489f8faf7c84dd9577c0a223afa6ae2de6df02b8",
+    "sha256": "6fcba746ff340ed65a48761da86e3ef9d579aa02445ece6bfc5efa36374eaa98",
+    "source_bytes": 20489,
+    "bytes": 12496
+  },
+  "lam/images/lam-004.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-004.webp",
+    "source_sha256": "d6001efc12746393e21860c28c183d0d4e1a55eb33f1082d3a11c9fb904e155b",
+    "sha256": "12409bbb1c0f50e583bd8399fd55068a815a81b885a867eb3272564b0156cd03",
+    "source_bytes": 352222,
+    "bytes": 173012
+  },
+  "lam/thumbs/lam-004.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-004.webp",
+    "source_sha256": "8677b6f8248a1f174b413f71d45da42f5a5d946b3ed4524a5125fc304f572abf",
+    "sha256": "ff7547e56e31039985a2613fe7768381de9c7f3044fd9f9fa27d4d489b22041c",
+    "source_bytes": 24667,
+    "bytes": 26734
+  },
+  "lam/glass/lam-004.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-004.webp",
+    "source_sha256": "359b0d52f2e8e265dadf781ce0c5d09756a9f69e08adec337c6f2bd71be403a2",
+    "sha256": "e0ef5a8cbee0ed3236e7230ed393259d385a3388d0ab6f408dd3197fca68ea36",
+    "source_bytes": 25194,
+    "bytes": 18478
+  },
+  "lam/images/lam-005.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-005.webp",
+    "source_sha256": "1a626c6b9a281a7cbe95c6a29b53068f3b744a0fe9ef18c9ff4e7218943b1aca",
+    "sha256": "dd0c5c46bc52d50734668519ab5b4c615bb11532b0ffb2432364cb42212620d0",
+    "source_bytes": 294577,
+    "bytes": 141842
+  },
+  "lam/thumbs/lam-005.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-005.webp",
+    "source_sha256": "57425b05b9271f6bcdcfa528a872adce4515712b23b99f27599babbac865e7b1",
+    "sha256": "a1e92c0decbb834dba3225025abc6506751fd51eb561e845c1520b2f7b448fb2",
+    "source_bytes": 23015,
+    "bytes": 25696
+  },
+  "lam/glass/lam-005.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-005.webp",
+    "source_sha256": "731abff1161b078841449a37547faa421952d119d3119dcd232bf62b3cfc040e",
+    "sha256": "afe401a72fa8acdfe5b0522be3772554926223fc548e77043c829ce7e4daa673",
+    "source_bytes": 22827,
+    "bytes": 16552
+  },
+  "lam/images/lam-006.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-006.webp",
+    "source_sha256": "4a9a4e1f2def4491887a457dbacc24d3f4aa7058d94affa13f5313d3a5efb9ac",
+    "sha256": "3cbde162fe89d308aa1e1298a39c5d40d697bbf574ffc0d0a4852d0374098e9e",
+    "source_bytes": 357471,
+    "bytes": 168550
+  },
+  "lam/thumbs/lam-006.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-006.webp",
+    "source_sha256": "4307e3722bae1aa499d127780e708ee4d44d592c181e690203bd6e9cdfc7e44e",
+    "sha256": "cd7259e33cf27d55c50f65869d06b13f22ce5f3bb5bd188e62d62bed8258a0ad",
+    "source_bytes": 21990,
+    "bytes": 23596
+  },
+  "lam/glass/lam-006.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-006.webp",
+    "source_sha256": "ced682f9148f09d0bcd3c4b544d57829617f8b9f9d4eaee018590441f6b70c69",
+    "sha256": "3448972f0256cfc0cf92a1d65e5ae6e58094647104a1307de5342dad587e53ae",
+    "source_bytes": 21976,
+    "bytes": 16644
+  },
+  "lam/images/lam-007.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-007.webp",
+    "source_sha256": "86e1c697fb8a624d7548fbe8e46a58fa9db8dfb8cb940519a1fc43e5493c8b1d",
+    "sha256": "49d0a445e3aab86b191d5318078db0103f2dcf1839d32cc35cc249c365451ab4",
+    "source_bytes": 546270,
+    "bytes": 256550
+  },
+  "lam/thumbs/lam-007.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-007.webp",
+    "source_sha256": "45bef343dab4c43719407fd9298240855f9224a494bf129ff1c243c70bb08809",
+    "sha256": "668a6d6c580764fbfb827306cea47534704a0119d6b214ce25acd5a347674f8e",
+    "source_bytes": 26285,
+    "bytes": 29648
+  },
+  "lam/glass/lam-007.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-007.webp",
+    "source_sha256": "dea0a28f7c65b655bb8f250dd3061c54724b61922ae6e3989e19328e3c2f3da2",
+    "sha256": "bb0fc293c68faad6c43f6143e1c3322e9d8baa3a80fd19bf5c8e10dc1bff133c",
+    "source_bytes": 27124,
+    "bytes": 19170
+  },
+  "lam/images/lam-008.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-008.webp",
+    "source_sha256": "5095e4da88bae252001614fdd56ccc1f131fab01892a6af83cc5d00fddc0857b",
+    "sha256": "6516ff73937cd43dd436eceb25f51bdfc236a4980a84d62abde1fe02b146e491",
+    "source_bytes": 569377,
+    "bytes": 250944
+  },
+  "lam/thumbs/lam-008.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-008.webp",
+    "source_sha256": "844fdf17d2d3aa20bd16eb228320825f370b052b1ed4f712e82f0eb5b0905939",
+    "sha256": "64c942c0943ffbf8020747c9d707113abfcbe7bc5cde1215e204b3d5c687a923",
+    "source_bytes": 29040,
+    "bytes": 32076
+  },
+  "lam/glass/lam-008.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-008.webp",
+    "source_sha256": "4f5d92347af61dcaa035fafccbb8998b002cd63851cfa27e79e7f252604f4e6d",
+    "sha256": "d37acad674b07697df54638d5883535d54db21a969233706bb8f300bc8014e03",
+    "source_bytes": 28148,
+    "bytes": 20298
+  },
+  "lam/images/lam-009.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-009.webp",
+    "source_sha256": "fa6a9f3a44f53fa1d679ca0df95a423bbd58d52380f706ce8021c15f7ea4e50c",
+    "sha256": "c441f05e8c2142c0d4aa7a922e25cb972bd44aa3e3f129285a05fff3063d41be",
+    "source_bytes": 831957,
+    "bytes": 525984
+  },
+  "lam/thumbs/lam-009.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-009.webp",
+    "source_sha256": "bde6b3a13423bdc481143871fed02a933c84fb1b7aa5ee6f870caae84f6bb9d8",
+    "sha256": "1457706a849b80d89b13800e3b6d5d75e1170fcef7c5a5dac178588c03f77005",
+    "source_bytes": 40537,
+    "bytes": 48992
+  },
+  "lam/glass/lam-009.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-009.webp",
+    "source_sha256": "07ab01b58f891d178f30b048584da027aa627cac857fabedea947f6e96ef58a2",
+    "sha256": "bbec396290144800c14ada23c0af786075fe7f8f605ba6bcb46aa7ebbaee56eb",
+    "source_bytes": 30951,
+    "bytes": 25356
+  },
+  "lam/images/lam-010.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-010.webp",
+    "source_sha256": "f3f00572c6c59bbcd7067d7227638bc317e5fccd71aaefd0858b757d5b309dc8",
+    "sha256": "8a02476dfc841e28ef74a36ad6a58156c255475532c80cb257e66f85ad8bf394",
+    "source_bytes": 244996,
+    "bytes": 95312
+  },
+  "lam/thumbs/lam-010.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-010.webp",
+    "source_sha256": "c1e71ea9edad17eee38ba9ae15912324eb724b37d375c0731899a276f7aa0dcb",
+    "sha256": "7903ad33d6d5a739dfed3e4bfc9c1b35d098ec4f6015f23bfb4447bf09bcaff6",
+    "source_bytes": 16482,
+    "bytes": 16076
+  },
+  "lam/glass/lam-010.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-010.webp",
+    "source_sha256": "de908fa7e40cd0ad4392acf1f0835b421d5928e54d27316c84defa71db94e46f",
+    "sha256": "bc555530e898f4aba1d603f33d8d2c44d7f0a3e4141546247c52df5718da0978",
+    "source_bytes": 16082,
+    "bytes": 9808
+  },
+  "lam/images/lam-011.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-011.webp",
+    "source_sha256": "1e50fbcaa6097b86c607f803eeb83c514cbeaa61f04d971fd7ee178ba9942358",
+    "sha256": "b0765cd9648c2db86314fece83520b0988bc6593379859b781c640946f92344a",
+    "source_bytes": 333641,
+    "bytes": 150188
+  },
+  "lam/thumbs/lam-011.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-011.webp",
+    "source_sha256": "ad2471e28ac0ad8897e677fa9ac096664962629f7964fbbd7d42b2c113a66b43",
+    "sha256": "46699b5b14eae8f721b726658b61a2bd3137c452367ea24aeb043f9271d2c5d7",
+    "source_bytes": 24607,
+    "bytes": 26910
+  },
+  "lam/glass/lam-011.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-011.webp",
+    "source_sha256": "9ce2e72cfdcea346f98e509ed06aecd5d839100ab30d000d5f20a148f49683a2",
+    "sha256": "4b0afaa83c0319cf4ccc4c999049c93c2f3b92ceba35e2b7587561a5445ec584",
+    "source_bytes": 26480,
+    "bytes": 19318
+  },
+  "lam/images/lam-012.jpg": {
+    "path": "webp-q90-v1/lam/images/lam-012.webp",
+    "source_sha256": "02e510d980a1455fd1e065fcd89cdef3c6b67e76950938335ef899520fd51343",
+    "sha256": "663c2cc19f8a6e5509b83cf4a5ba79fd45b94fedf4a0b64791d956db23b0b134",
+    "source_bytes": 331014,
+    "bytes": 152210
+  },
+  "lam/thumbs/lam-012.jpg": {
+    "path": "webp-q90-v1/lam/thumbs/lam-012.webp",
+    "source_sha256": "39799e211501e939bff6462de2a4e7121502662c9e325644e9c2a09c2fcf540b",
+    "sha256": "c61714621ffc02d269342bde259f69b1d8f4c9d13355365baf93f33554a21de8",
+    "source_bytes": 24555,
+    "bytes": 26408
+  },
+  "lam/glass/lam-012.jpg": {
+    "path": "webp-q90-v1/lam/glass/lam-012.webp",
+    "source_sha256": "80109932d66804df92cc38c146c94693e2a0887af63f6fac87540b342f44ba45",
+    "sha256": "76512e303ed55888c5dd063f03ff46532fc10fee203afb906b200cbac2871582",
+    "source_bytes": 25675,
+    "bytes": 19544
+  },
+  "ardhira-putra/avatar.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/avatar.webp",
+    "source_sha256": "0975d17893c1d60424632efc67c6e7435d52549bec5930932d1871ff683c4909",
+    "sha256": "ceb3db480d5360ad36a98a15d3b2ce8dbbdde729acf71d1c86bfb18f6babfe5d",
+    "source_bytes": 5854,
+    "bytes": 6028
+  },
+  "ardhira-putra/images/ardhira-putra-001.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-001.webp",
+    "source_sha256": "90f179f4b5a486d6c851d1da758bf7c7dfe4efd63b0bd3e4067538ae1ada4c11",
+    "sha256": "6731e659c5c8efaf7f173d76c60184c9e820c0e545497ba09e7bfcf20fd7daf9",
+    "source_bytes": 744918,
+    "bytes": 401558
+  },
+  "ardhira-putra/thumbs/ardhira-putra-001.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-001.webp",
+    "source_sha256": "46beb1f20c2dd30e90728ebba99257b4d552d2dc210272158a713630c6d1689a",
+    "sha256": "ccf834a66b705f769f9efe826b9bea0593864075fdaed7845dfe5b58c3fcfd54",
+    "source_bytes": 46758,
+    "bytes": 56890
+  },
+  "ardhira-putra/glass/ardhira-putra-001.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-001.webp",
+    "source_sha256": "ebc026999e5b582828d92a4c2147a0514824f8791373fd92180e8194b4517457",
+    "sha256": "ac1251111f0c7f45612d4fad9a35631ee0f237c22037c343079f1811fc972890",
+    "source_bytes": 23897,
+    "bytes": 20696
+  },
+  "ardhira-putra/images/ardhira-putra-002.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-002.webp",
+    "source_sha256": "7a058036cdd025680c4a4c38138a83ac65a34e3199bc6e2490bab50af768ee91",
+    "sha256": "c7157f66b150f3cc3fef330eab869891442239c3d37aa425bf58f609a65aa514",
+    "source_bytes": 624479,
+    "bytes": 321366
+  },
+  "ardhira-putra/thumbs/ardhira-putra-002.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-002.webp",
+    "source_sha256": "06577c8aac168a56450f2f63870e45904d5ef0ed18bc9f2790a4c452fced6b4e",
+    "sha256": "d38aaf0a61cd51965a7f3ff2a0184a74260940580ab17839d12d5200ff839760",
+    "source_bytes": 42849,
+    "bytes": 50316
+  },
+  "ardhira-putra/glass/ardhira-putra-002.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-002.webp",
+    "source_sha256": "3eb87b2740296d892e2e1739a224c01e3b85626b38d7e491f985b94f7c40c3f6",
+    "sha256": "7ca9247e3d512cac8cd708ccca95f728b62f243c1cf706c1d01a0fa903f813fc",
+    "source_bytes": 23222,
+    "bytes": 19700
+  },
+  "ardhira-putra/images/ardhira-putra-003.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-003.webp",
+    "source_sha256": "614bfb9c6518ed4f6a1ca7adbfe5be5e5b70ab160c8952c793f5a461be2adc45",
+    "sha256": "f6a57c1409bbfae73f4c52198476d1460e4b97e81bd2ee3ff1e695511fdc81b6",
+    "source_bytes": 665097,
+    "bytes": 348788
+  },
+  "ardhira-putra/thumbs/ardhira-putra-003.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-003.webp",
+    "source_sha256": "1434cd23d8e83687ede61f65aa0f28e87f54f1fbb7d01324964b0f2446ffb933",
+    "sha256": "537a10b72e7467e6ff37ac7e816a7d1b86f48ace0828d6206f1994c256c222f0",
+    "source_bytes": 38212,
+    "bytes": 45638
+  },
+  "ardhira-putra/glass/ardhira-putra-003.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-003.webp",
+    "source_sha256": "9217f15322a0cfbbdfeb8763ba6da62500cb2574ae22a837d0809b6ba6c410e2",
+    "sha256": "a3ec7b23dc0108d0cb8f0ccf6ea18ba2edf9c687c732ddcecd0a272ebfe08df0",
+    "source_bytes": 19604,
+    "bytes": 16340
+  },
+  "ardhira-putra/images/ardhira-putra-004.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-004.webp",
+    "source_sha256": "73ac3346d36ec12bafcf12bb83c74b3129029f09fff76588e13a3ccffe5e7d16",
+    "sha256": "bdf9a4d18fc7db93e112ad3611841ef74da220a60635096581c51f622ac8275d",
+    "source_bytes": 181705,
+    "bytes": 82976
+  },
+  "ardhira-putra/thumbs/ardhira-putra-004.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-004.webp",
+    "source_sha256": "e7d00fe9db6b0ff652555c3b34a6378fdbbd4703f999bf093a0f18465a1a411b",
+    "sha256": "96b561b0a4eb08f6bf8721152710b04756f0216f9a4d6c78d431a9622ca1272b",
+    "source_bytes": 23104,
+    "bytes": 24156
+  },
+  "ardhira-putra/glass/ardhira-putra-004.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-004.webp",
+    "source_sha256": "9c74a6fcb6a897beb17462ef70886eaa0fce52dff6c0df42248262de9f1d1819",
+    "sha256": "9b53b284a47f6a98358b732bd0ff866b568161d434ce37b3b5443c7508745eaf",
+    "source_bytes": 16388,
+    "bytes": 12172
+  },
+  "ardhira-putra/images/ardhira-putra-005.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-005.webp",
+    "source_sha256": "3f51056bc85d16ac568805e4769fc5e6f18ba74c0f67cd7ce5b1b902445cdf09",
+    "sha256": "f16548b968a359b3d3045d0becffa0617fd8ad6788b8d6a60b76e7dd702ecab7",
+    "source_bytes": 733781,
+    "bytes": 394208
+  },
+  "ardhira-putra/thumbs/ardhira-putra-005.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-005.webp",
+    "source_sha256": "3a6092748ae4d622edc8adf4b3d70bf1227a3915668d01f91602e493f44f9fce",
+    "sha256": "a65d7d9cb6a483aaa380b5cc49c5f01a865f02bcced2aa0255f6ddd54a51476e",
+    "source_bytes": 46051,
+    "bytes": 56378
+  },
+  "ardhira-putra/glass/ardhira-putra-005.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-005.webp",
+    "source_sha256": "21cf4052cd34185334bbb52704c03c2d1f77ffe28f176547169506e59ffc82f4",
+    "sha256": "9bee912e646bf0dd5ee7b865f40890aa32fb269f80b06516917244be5c848900",
+    "source_bytes": 23425,
+    "bytes": 19644
+  },
+  "ardhira-putra/images/ardhira-putra-006.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-006.webp",
+    "source_sha256": "97956b56ca38c3f54b1e33dd03d645b604ecc9e096fd17bc54c69163e73902aa",
+    "sha256": "62afe4eb7e5f7a5cebe4a349e95311907059c91b06f6bfae53b7151328eb5603",
+    "source_bytes": 221149,
+    "bytes": 118426
+  },
+  "ardhira-putra/thumbs/ardhira-putra-006.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-006.webp",
+    "source_sha256": "36eeaabffe834b5f284afb05362cfae8a437c1f6fa44b0f35264dcb7c0a25c1a",
+    "sha256": "115df076590e83467ab7b69f32580c37c69b93492a9a5a9a760d9f425f6b8c6d",
+    "source_bytes": 16426,
+    "bytes": 18378
+  },
+  "ardhira-putra/glass/ardhira-putra-006.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-006.webp",
+    "source_sha256": "d4fb1e4db7c64450a31b179f6f8f68e0d8e66762b3887f265f28bea8d2d8dcf1",
+    "sha256": "d34699520b7a880698d50502dd7d230c8823e0e412117d6afc973d39687ece79",
+    "source_bytes": 9971,
+    "bytes": 7510
+  },
+  "ardhira-putra/images/ardhira-putra-007.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-007.webp",
+    "source_sha256": "5281039248cd89dac709b1f1e712aeb2287604db86efe79d418f33cacaa2052f",
+    "sha256": "ef7fc5bd0eaeaa49c60612c2e5ba7428015c70d57ee06cb15d1e16922e55c919",
+    "source_bytes": 409628,
+    "bytes": 220276
+  },
+  "ardhira-putra/thumbs/ardhira-putra-007.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-007.webp",
+    "source_sha256": "cb86c9f0c95c95596901a4537fa5fb893ee44bb67bebbe3610861203feb9c7fb",
+    "sha256": "b3363aa8f1b65eb0d54e4ddc097e7ca92a6f4128cb739f359574b601bbac82f6",
+    "source_bytes": 28550,
+    "bytes": 35012
+  },
+  "ardhira-putra/glass/ardhira-putra-007.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-007.webp",
+    "source_sha256": "b65c059d15557c4b22532337f1451ecb3a267704d3bebf8037ce56432dfe49c5",
+    "sha256": "e768c620d1d4292d11b9d69f3c979ec39fb4ee66dedfd74fd0a521fb7833ead4",
+    "source_bytes": 14797,
+    "bytes": 12728
+  },
+  "ardhira-putra/images/ardhira-putra-008.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-008.webp",
+    "source_sha256": "44be32f6ebfc8ddc9073738b1397a7c3652269bca2d80c192b1cd3b8e5d468fc",
+    "sha256": "c1dc6fac9ae1a66842cd899c15eb8a05a70d976b73179e6fc5f9d8a446102fd5",
+    "source_bytes": 744819,
+    "bytes": 406200
+  },
+  "ardhira-putra/thumbs/ardhira-putra-008.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-008.webp",
+    "source_sha256": "fbaaff79d891354d0492c4e47e3ddae9862898ae0b38be72e2f44017d04880f4",
+    "sha256": "d690b5e2e417fdc235f9667b10eed988d30b32379f3c30b74521d762fff19d0e",
+    "source_bytes": 48446,
+    "bytes": 60056
+  },
+  "ardhira-putra/glass/ardhira-putra-008.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-008.webp",
+    "source_sha256": "f1e74edbd12438a090caaa5c707be17e188515fe3ef3deadc6611536c34b1ed0",
+    "sha256": "4810d618c22e9dcab59944cf798e91abf35ce1bfb44f3ae8644171c79cc9185b",
+    "source_bytes": 25053,
+    "bytes": 21254
+  },
+  "ardhira-putra/images/ardhira-putra-009.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-009.webp",
+    "source_sha256": "c93360e3587da39b9fba2ccc685567909d694081c63417ea80f7804938356431",
+    "sha256": "7835f790eb1b35c30bc6b3b418c543a04bb852338f92938dabe9823df9161375",
+    "source_bytes": 709499,
+    "bytes": 386036
+  },
+  "ardhira-putra/thumbs/ardhira-putra-009.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-009.webp",
+    "source_sha256": "8abfe99bae245523926fef5781f6b997904263d5efc1c5d4909b78d345653dfa",
+    "sha256": "abdf78bc6b411ceae2af57e76c7fbb9255d1a048413c8245773911e563203096",
+    "source_bytes": 44582,
+    "bytes": 54238
+  },
+  "ardhira-putra/glass/ardhira-putra-009.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-009.webp",
+    "source_sha256": "5a68e7dbffac26be8e624ef3bf357831cd8249e694a60ae0f728ba1525f27fd2",
+    "sha256": "601fa5800e803797aab6859fa9773c6a071307c8807ba6fc8904e8745d203c9c",
+    "source_bytes": 22844,
+    "bytes": 19530
+  },
+  "ardhira-putra/images/ardhira-putra-010.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-010.webp",
+    "source_sha256": "ae8c4e416eaff3217ea211805bacf9d514b5543149ad0ba5c9bba7157c9d1dd9",
+    "sha256": "f9ca182ebecdbc69dd88855fb5461f5c4b23bccc119547e2c88093d631b4963d",
+    "source_bytes": 1245329,
+    "bytes": 677574
+  },
+  "ardhira-putra/thumbs/ardhira-putra-010.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-010.webp",
+    "source_sha256": "e09575335d18547a6d4480e05f663f96c57141b6b159adb52d785523954f3053",
+    "sha256": "a20d6053fb08f41b4ad61e79b80469515805a376d7daddf488100887ab562c9b",
+    "source_bytes": 40820,
+    "bytes": 51682
+  },
+  "ardhira-putra/glass/ardhira-putra-010.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-010.webp",
+    "source_sha256": "c07570b159ce230ee868e7586e35427fa5b37b5fcc2043968c8676543b9c74e9",
+    "sha256": "fb6b8aa392dd7816cae2f94e4718ac63e7024a3eedcd426228e73e4fb9bcc36d",
+    "source_bytes": 30033,
+    "bytes": 24844
+  },
+  "ardhira-putra/images/ardhira-putra-011.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-011.webp",
+    "source_sha256": "7055d4ee238b2afe0edb1e2882d6c13c3cf1c2f488151874c3fc5b3078ba3b3b",
+    "sha256": "74121ab36be778eeed54c860d2c1fafaa75e42914de00626b5b8fd9f27df80a5",
+    "source_bytes": 1070917,
+    "bytes": 602440
+  },
+  "ardhira-putra/thumbs/ardhira-putra-011.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-011.webp",
+    "source_sha256": "6459bcfbcecfe4d0aaee5864b0cc29b2ed8da7c302c33b910136f6fb85d94632",
+    "sha256": "5ff1d0c6ba9af8804915af00b4dab1e99af52fbc819559ebe0bef716db55c4bf",
+    "source_bytes": 38644,
+    "bytes": 47494
+  },
+  "ardhira-putra/glass/ardhira-putra-011.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-011.webp",
+    "source_sha256": "8557c9c65303bf5c1e08558e5535ac7d9eaa20186b8240c7f38e1143904d3b13",
+    "sha256": "e965daedef36986defd5e7b93b838f34782ee675c8203dd1775f5cd3f1a68024",
+    "source_bytes": 30362,
+    "bytes": 24012
+  },
+  "ardhira-putra/images/ardhira-putra-012.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/images/ardhira-putra-012.webp",
+    "source_sha256": "3206add7087bd00b38611a9a0a68371a76e7cc5df7729d703b903de2b28e1a63",
+    "sha256": "70d9826242c4ddae03678121de9a7e4889165ed79430868224fd55ef478a27cb",
+    "source_bytes": 1164876,
+    "bytes": 655556
+  },
+  "ardhira-putra/thumbs/ardhira-putra-012.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/thumbs/ardhira-putra-012.webp",
+    "source_sha256": "475190f20a0bff29997764a8ee67831c5947122e3925873bdc0cb15fd7136fd3",
+    "sha256": "9d96851a9cef1107f342bc06016a8968047b838532f2dde87d5a5c2122e18316",
+    "source_bytes": 48345,
+    "bytes": 59592
+  },
+  "ardhira-putra/glass/ardhira-putra-012.jpg": {
+    "path": "webp-q90-v1/ardhira-putra/glass/ardhira-putra-012.webp",
+    "source_sha256": "65c591d8d4b340b61165f5d97360a93264c7a0f4209356511511f9eb82386afc",
+    "sha256": "3a5a68523295e06a75809a6802802286f220d9e7f32df5a30712b9f94eb13b7c",
+    "source_bytes": 30961,
+    "bytes": 26274
+  },
+  "magoyama/avatar.jpg": {
+    "path": "webp-q90-v1/magoyama/avatar.webp",
+    "source_sha256": "b04a542978cacba44edda0ea758c7d1bbd005673380053452d40aad3d37e58b7",
+    "sha256": "d68f76e460cf94145c4e9268f2a981f505c522fd4323ddf6d6cdbbb446c15895",
+    "source_bytes": 4625,
+    "bytes": 4378
+  },
+  "magoyama/images/magoyama-001.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-001.webp",
+    "source_sha256": "bec29015ffcf1d3b97534625c307ceac3123d297e495a91b2028b3d505537ccb",
+    "sha256": "935012b0ec79a62551f2d57d2a324e17658e6849857f6aa37ad00557c717185e",
+    "source_bytes": 122266,
+    "bytes": 67834
+  },
+  "magoyama/thumbs/magoyama-001.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-001.webp",
+    "source_sha256": "5296d05538ee18840749faca4e0928b5b227fa6478ec4659acb12ed63d89c09a",
+    "sha256": "04a84f1302eba463787c3b057c5bfa1c0dd6f3673fca9ce1557d05492d300dbe",
+    "source_bytes": 27518,
+    "bytes": 28870
+  },
+  "magoyama/glass/magoyama-001.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-001.webp",
+    "source_sha256": "3b5657e8b663f5833497a34a1e7250c089e3304e49e14947eb71b1b9404d231e",
+    "sha256": "eb80fefdb09ce417572d2eddf4420a8b077774df2f15817d668d2547fc953042",
+    "source_bytes": 18666,
+    "bytes": 13096
+  },
+  "magoyama/images/magoyama-002.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-002.webp",
+    "source_sha256": "acab5da198375b8bc7bd971c8bb53cf7f1f82238e191ae4efa6f3b8824e473a1",
+    "sha256": "2b19e2200e3303ba20afddb27a07a5f427c7f3c801b1d8171c79f75a613acaa6",
+    "source_bytes": 248816,
+    "bytes": 132664
+  },
+  "magoyama/thumbs/magoyama-002.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-002.webp",
+    "source_sha256": "a3e14d9f4e90897cb25c0574eb710a00bd666e88e9cfc00658da19e911512097",
+    "sha256": "5ebf92cb6790b7fb7715a9ee477fb92ce4bf545ab27647d5d2ec2c4a1fc1923a",
+    "source_bytes": 22343,
+    "bytes": 24354
+  },
+  "magoyama/glass/magoyama-002.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-002.webp",
+    "source_sha256": "fca58889928ebd22e78ea3db46060fc983e739f44af27c149921c16ff71255d3",
+    "sha256": "5cceab43d230218fa100526c0a68d4043aa7b3aa0895f07746f5e99343c8022d",
+    "source_bytes": 23474,
+    "bytes": 17060
+  },
+  "magoyama/images/magoyama-003.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-003.webp",
+    "source_sha256": "636f36cc03e7d20cd555645d197edd758d36a89fc5f777a137957f70ed84b91b",
+    "sha256": "bb7a9d760c95f3761ec8bb1471408562dafd28872d4ba1797a502d1713b27c62",
+    "source_bytes": 355089,
+    "bytes": 195230
+  },
+  "magoyama/thumbs/magoyama-003.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-003.webp",
+    "source_sha256": "92653dd186fc191fe6d1c5532c7a1b89ef882be5d2300817bdec9b25d9d5c230",
+    "sha256": "a5646e377a6e03ae0ae7f76ed53012707e56526f89f0fcdc3dd861d71fef81c4",
+    "source_bytes": 28962,
+    "bytes": 33326
+  },
+  "magoyama/glass/magoyama-003.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-003.webp",
+    "source_sha256": "966a173ccd24dce2f5151acfc5552513179473bbd92e3ca743f3012dc7db0cf6",
+    "sha256": "fc602f144879d111b33da6006803ae89a76fc528fd63ae30b4c4662772f86032",
+    "source_bytes": 25810,
+    "bytes": 21304
+  },
+  "magoyama/images/magoyama-004.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-004.webp",
+    "source_sha256": "96d34330d04681e25f7714b46e32280a120eda1ce4d022b5e66e983cae17b566",
+    "sha256": "3a4111c2e479abfe5ec738934bc5788e962264a46fc05ca0369b0d9b8be3be74",
+    "source_bytes": 480458,
+    "bytes": 269954
+  },
+  "magoyama/thumbs/magoyama-004.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-004.webp",
+    "source_sha256": "a40b9f139c91a473e49fbda0e91d0233af55f22c4bdb8e5301c075b453d6db78",
+    "sha256": "9037ba6670270a06f0273dd5053cea7cea75e7b05d7bb81a81b77661953386c1",
+    "source_bytes": 38064,
+    "bytes": 47000
+  },
+  "magoyama/glass/magoyama-004.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-004.webp",
+    "source_sha256": "8dd8051da2ac11f227d9912567cca22b634a7c8ad304e2349fc0513c9847beab",
+    "sha256": "26cb60c617b1636d4ea8f8e5d26165c80d8ac8e2e4f01679e8fb1b810fcc8fca",
+    "source_bytes": 33634,
+    "bytes": 27222
+  },
+  "magoyama/images/magoyama-005.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-005.webp",
+    "source_sha256": "57eda785436e1611c5d953d28dd92c8ecaea8c22f3dc1faee140eb24231343a1",
+    "sha256": "d44554fec6048707093f320cf7f1d551884d9c8b3a8773ae6371980490ff3386",
+    "source_bytes": 408197,
+    "bytes": 235346
+  },
+  "magoyama/thumbs/magoyama-005.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-005.webp",
+    "source_sha256": "3fdfeb538010cbed07d98228f4a7f735712de5592dfbf91fdd52acf72c8b2de2",
+    "sha256": "576c5928abf870a61a2c46d0e96f561493952c4f8860433869a2062057ca1c90",
+    "source_bytes": 28788,
+    "bytes": 36110
+  },
+  "magoyama/glass/magoyama-005.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-005.webp",
+    "source_sha256": "bdda6879d8279ff273b2cd3a35963435d2770c0063a97865098a57746a99b027",
+    "sha256": "62b44cc5021d614b0b1b06517b3386e21f2cafc1a6f81d1eb292aff823ff88eb",
+    "source_bytes": 22958,
+    "bytes": 19692
+  },
+  "magoyama/images/magoyama-006.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-006.webp",
+    "source_sha256": "993e59c8fe4e9f1b945d1ce09772df6ac58b8852302bc717c931ba06fdad9a21",
+    "sha256": "87006f231afab5e2d1afb6de2d6b830c6e518841283c94d68c3705989fe2ea2c",
+    "source_bytes": 387789,
+    "bytes": 212372
+  },
+  "magoyama/thumbs/magoyama-006.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-006.webp",
+    "source_sha256": "1093266fb72a54013a3c41001bd70ba21ace395126bf355dfe806660836df607",
+    "sha256": "b24f97eff746473a94938e2e382e34bbbbb9906ca6851c95e5d2f71cc20115f1",
+    "source_bytes": 33367,
+    "bytes": 38452
+  },
+  "magoyama/glass/magoyama-006.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-006.webp",
+    "source_sha256": "daefb8e01befb67b1a3e996f454966f737f4c1792190d58a86134202aa7a71ca",
+    "sha256": "e36356c18014a6b9dfd43bcc2229038b9e15881a60a45e6ec02ab4ddf4336dcf",
+    "source_bytes": 20563,
+    "bytes": 15428
+  },
+  "magoyama/images/magoyama-007.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-007.webp",
+    "source_sha256": "cb28a25df28ae6008c65c4568190356d6e51f6e8402af63053b889422c872766",
+    "sha256": "902c57e8b6be08ab16547ab11e3dfd4267f9e4d655a5d9d3d9252205703a0ee8",
+    "source_bytes": 356596,
+    "bytes": 191902
+  },
+  "magoyama/thumbs/magoyama-007.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-007.webp",
+    "source_sha256": "7a113662aa43a73d073bac36ec4c20f2c2885a3f8bd2f1852dd89897f555557e",
+    "sha256": "75c6a3342df476cbca527a90bd3897d931e64618a9bfbc30909d89d1176c762d",
+    "source_bytes": 29041,
+    "bytes": 34598
+  },
+  "magoyama/glass/magoyama-007.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-007.webp",
+    "source_sha256": "bcd9303eeaeeb2569a4bd3c105da9da84d0e9dcd34a41f75c4aef994bffe8f09",
+    "sha256": "0ac0f48b2d395e61a48480a439de1f6f5fab8b2128e46512df7430ec838ad2b5",
+    "source_bytes": 18703,
+    "bytes": 16354
+  },
+  "magoyama/images/magoyama-008.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-008.webp",
+    "source_sha256": "ee8127b474b3b76f10e23ca733f32557a89dbec5b8d0914cbb640efedde2d68c",
+    "sha256": "22fc8dcff8a9de7f8492a6d231aabf8b7f0ec357d4c8fb0852f97788ede15873",
+    "source_bytes": 289317,
+    "bytes": 144054
+  },
+  "magoyama/thumbs/magoyama-008.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-008.webp",
+    "source_sha256": "5da4278af34b861d447f53fde5fb9d6925731d606e520a05d1b4cafb788f3468",
+    "sha256": "73080de1dab2dadfd2043757cc95214ef69a1cd498caa7d86ddee6fc641a923b",
+    "source_bytes": 31221,
+    "bytes": 33836
+  },
+  "magoyama/glass/magoyama-008.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-008.webp",
+    "source_sha256": "73baba790f486323ffffa9c4e1588659dadbec604c08e821a022c118310b17d7",
+    "sha256": "4d0751e625935519506bf3f4123ec3e78663b6e05bc567ee4ec1afdd25311547",
+    "source_bytes": 20001,
+    "bytes": 15166
+  },
+  "magoyama/images/magoyama-009.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-009.webp",
+    "source_sha256": "8fbea7946dbe1ee8e77e896599ec8d0ddf46b3d2853e83d87f5725a1408ee56a",
+    "sha256": "e049d2c6ea98e2d1bd7a6e05424e97e4f08ba7d00af27b7e653a23b7f4dc5350",
+    "source_bytes": 239652,
+    "bytes": 116344
+  },
+  "magoyama/thumbs/magoyama-009.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-009.webp",
+    "source_sha256": "fdee9ee966beb02797143eb7143a06af9d96945d1b85c99b4aac3a4021f4f148",
+    "sha256": "9409dfd1406d6d3fd5d62403cb4e45fc001c6a8bce11dac65f7e31636a1fc82a",
+    "source_bytes": 25699,
+    "bytes": 26544
+  },
+  "magoyama/glass/magoyama-009.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-009.webp",
+    "source_sha256": "bbb776cd67da55f0f691ed2c297c817857aca7aadbd55c93743bea44c577c4ef",
+    "sha256": "82459deab2e21668ef2cb8695ca2bf2d97e7bc9630bd38a74405afedada7a357",
+    "source_bytes": 18813,
+    "bytes": 14534
+  },
+  "magoyama/images/magoyama-010.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-010.webp",
+    "source_sha256": "ba686f476b7b20d5c6a1a93f16f0c8c7466151de9abc8a4e3a4a0359507636c1",
+    "sha256": "39119086f10187eafdf4d9d17563a10eb338f479119df2c9a1ce4e5c890fadee",
+    "source_bytes": 367025,
+    "bytes": 200348
+  },
+  "magoyama/thumbs/magoyama-010.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-010.webp",
+    "source_sha256": "59f7d6dac71a2e6c9a13b0da573c5194e75384a7a781e2412fa4484eb209bf71",
+    "sha256": "3a4b9da576ddbc14e7b92f3f34830874c49fe12172959e2dcd25a9c8421deeb6",
+    "source_bytes": 32634,
+    "bytes": 35866
+  },
+  "magoyama/glass/magoyama-010.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-010.webp",
+    "source_sha256": "1b5e3aafad5477262899fce6022427bfe1510bb5d7dd97bbc6a4d671e7052efe",
+    "sha256": "1a7de6398d9f8ec9221fb2ad9f88b3c5a3745ff77553950a615df9ccca90e033",
+    "source_bytes": 21936,
+    "bytes": 15906
+  },
+  "magoyama/images/magoyama-011.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-011.webp",
+    "source_sha256": "9f211afd0941a10c8baf1841db88591d6ef80e378e4a18ffabd0ce96af96f382",
+    "sha256": "d67bb298c19dfa4c4ca2ccecff449c0f104ea2eb32ed985a055d0b21be5317e9",
+    "source_bytes": 241892,
+    "bytes": 117926
+  },
+  "magoyama/thumbs/magoyama-011.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-011.webp",
+    "source_sha256": "3e46bddd9b0c51013f6c391811007873a44657ac2c8b73d4e0136a619c6c22f0",
+    "sha256": "01ba071f065d75258dbb171cef4907be94314ff5910670a08961cfbfdd4af15e",
+    "source_bytes": 23893,
+    "bytes": 26450
+  },
+  "magoyama/glass/magoyama-011.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-011.webp",
+    "source_sha256": "0c27690d4564d5c759f12df0a3f6defac38b7497c37318b8b00423a1ebb48f76",
+    "sha256": "099227ce6d100fa2df7c60eac80468283cfab7eec5557d09e5aac9fb4ef7133c",
+    "source_bytes": 12615,
+    "bytes": 9262
+  },
+  "magoyama/images/magoyama-012.jpg": {
+    "path": "webp-q90-v1/magoyama/images/magoyama-012.webp",
+    "source_sha256": "f91cf26959c3533aa768c5d5192d6fafcd0b1058a13b8c56dd2d12806d743050",
+    "sha256": "92a1f7b51fb437ce6b09ead71c15b194698016b9db2aab2392f4670107877590",
+    "source_bytes": 473333,
+    "bytes": 303136
+  },
+  "magoyama/thumbs/magoyama-012.jpg": {
+    "path": "webp-q90-v1/magoyama/thumbs/magoyama-012.webp",
+    "source_sha256": "8d2cfb00d780f8d8c653e6d808f37bc7caa41f28651ff03076bb0ec340aa128a",
+    "sha256": "0da32279aff1ca2290230c413be519c62cf2477ac399cce4fac7bfd42ec54e0e",
+    "source_bytes": 33232,
+    "bytes": 37844
+  },
+  "magoyama/glass/magoyama-012.jpg": {
+    "path": "webp-q90-v1/magoyama/glass/magoyama-012.webp",
+    "source_sha256": "9516d14e35b10a3cde6270c1cbb4f9ce1bf42aea529457d71fa808faea62ec9b",
+    "sha256": "34d70399810da77475a2d4cd14733e6c80e2cb8a885db1059ec8b3e692dccfc4",
+    "source_bytes": 18669,
+    "bytes": 13854
+  },
+  "yoneyama-mai/avatar.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/avatar.webp",
+    "source_sha256": "842028d6fdabe5926c29b4d10d31e7daf87de6d180d8fb55a348421c2742421a",
+    "sha256": "b04251cbb26e23e4b36fe636153972842d14fe9c0e0200db521a9bc113074ed5",
+    "source_bytes": 3794,
+    "bytes": 2684
+  },
+  "yoneyama-mai/images/yoneyama-mai-003.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-003.webp",
+    "source_sha256": "3391c09e2cf9ab5d72d7cba2805e22eb40e25d024aea915a281dcedb1f207e74",
+    "sha256": "4be55e9d733a68cc7a9d60ccf3b197248d46728deb4d1aff15da027ddd1dd709",
+    "source_bytes": 434046,
+    "bytes": 180612
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-003.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-003.webp",
+    "source_sha256": "cf6d85e361189c62113667d5d425aa3a7c248dc4442c8bfd6922970d3cdad103",
+    "sha256": "f745f992552370daca99390d1e67f7d72fd97eded75015c6948c26175fa38f17",
+    "source_bytes": 25000,
+    "bytes": 25530
+  },
+  "yoneyama-mai/glass/yoneyama-mai-003.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-003.webp",
+    "source_sha256": "5ba2411c1b412cba66a4274c1e4d7df779a6d23975b1d406f7a96c524c6d1eff",
+    "sha256": "376fd60231eff3f79a202c1ddda39fb2d46b31634a271e31594fdca019ef6b5e",
+    "source_bytes": 16241,
+    "bytes": 10912
+  },
+  "yoneyama-mai/images/yoneyama-mai-004.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-004.webp",
+    "source_sha256": "bebf4bfd3108fba7dfdf0ca4edc2fb332fa8a0aea8fa672d6dc09c646a565149",
+    "sha256": "f68a9339f6fdf24451e85535ea94b495cd29940cc141ccac2147a50526be8fde",
+    "source_bytes": 729372,
+    "bytes": 403270
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-004.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-004.webp",
+    "source_sha256": "825c50f3214671aa3db87308ad9f10e762162697dcca4a1dcd4879e77dc28888",
+    "sha256": "46a6fc501529203521a803acbfeeb2826fa15d3897702b0d3eb62ee85ff7f54d",
+    "source_bytes": 32996,
+    "bytes": 37378
+  },
+  "yoneyama-mai/glass/yoneyama-mai-004.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-004.webp",
+    "source_sha256": "43feac1e50ca060cce118c4506931472606febde9ccbceda86263910df13dac3",
+    "sha256": "1d489aa1e9e91578dcc4a21e8b4249845d3e15e4d721a8787b709af7e40462f8",
+    "source_bytes": 21316,
+    "bytes": 17316
+  },
+  "yoneyama-mai/images/yoneyama-mai-006.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-006.webp",
+    "source_sha256": "ba5982ac57118d43c41d5fa3638309195e6e86956d2e6fddd755e93715463cfe",
+    "sha256": "18adc85ab86b396510259b296bba1a5e2169075be942d906c8db76971d1d650b",
+    "source_bytes": 823590,
+    "bytes": 417170
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-006.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-006.webp",
+    "source_sha256": "03ce4df4c0a8c78e27d2054dd0504684c0d304f4ad32eb831e1a0dc5662fc6a9",
+    "sha256": "5301dc1a5782b5dd58793dca9b31900c708e897e351c55f9bfdf7dc4cc192c92",
+    "source_bytes": 16884,
+    "bytes": 17668
+  },
+  "yoneyama-mai/glass/yoneyama-mai-006.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-006.webp",
+    "source_sha256": "324eee44c8dd3226febaaaa030348cacd98af7c96357d67fbb01e5c2645e70aa",
+    "sha256": "0977b206e39f48581ae8959c7dd0505c85c8bf22d245832b94c4a8a926efde90",
+    "source_bytes": 20494,
+    "bytes": 15884
+  },
+  "yoneyama-mai/images/yoneyama-mai-007.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-007.webp",
+    "source_sha256": "23fe7cd10e6896632b6a4baefc08ceebf5d834a9a9ed3a4e6f1ed0c4a6faf372",
+    "sha256": "d232853aa2246bea936fb38f1f4f304a5e74971bfbce129fd555868fc1fd1855",
+    "source_bytes": 674924,
+    "bytes": 391494
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-007.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-007.webp",
+    "source_sha256": "67aad0303e6fb0872277d85a467f47640eae325da6ab9a30467448b25965b25c",
+    "sha256": "78f0e9e764a6c7d6286956e3409c8ade349648cacf6d53f21f6b609e29b00cdf",
+    "source_bytes": 30301,
+    "bytes": 33872
+  },
+  "yoneyama-mai/glass/yoneyama-mai-007.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-007.webp",
+    "source_sha256": "90b8621d2a992994719954a74a666c88f603335bee2f71f60f9e552c8c7a87f0",
+    "sha256": "b8ecd9085e9241b3fb3aed13d2912bb82f6ed74585081f2f88dc0757cb9b716b",
+    "source_bytes": 21697,
+    "bytes": 17850
+  },
+  "yoneyama-mai/images/yoneyama-mai-008.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-008.webp",
+    "source_sha256": "95904c80ca62b455933055f15da05e985319f958bd3c26e5ec83bf3a8aa3cac5",
+    "sha256": "6941e89b7747d64200a517c30a1a4f3aab9225a549711f478a15d9ea547eeabf",
+    "source_bytes": 733417,
+    "bytes": 369638
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-008.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-008.webp",
+    "source_sha256": "027727ce71646b95b02e4567565ff1d0fb9832ff94fabe0e7dadd2920921cefa",
+    "sha256": "3421a097db2469962dc8e80fe8ab207617b6ae6aa85feb9b37ac2bd4cdbb65b6",
+    "source_bytes": 20774,
+    "bytes": 23366
+  },
+  "yoneyama-mai/glass/yoneyama-mai-008.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-008.webp",
+    "source_sha256": "27b1285f7ca855f7672677a1cae427300ac93bfdeb4e2bd0ef30045dfbf04fc4",
+    "sha256": "a4e714a56f1040c1f4c645dc41b6bf517786446e1eba76eaacb139d326ef87d6",
+    "source_bytes": 23918,
+    "bytes": 18752
+  },
+  "yoneyama-mai/images/yoneyama-mai-010.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-010.webp",
+    "source_sha256": "3087ae632c91c4e8b7b053a2257b0499e1d11348787b16c82415e501c5b4fad7",
+    "sha256": "b23a961cb31d82d6d3a110c11280708e4553617e51be011402afe04295ffe972",
+    "source_bytes": 1106666,
+    "bytes": 718656
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-010.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-010.webp",
+    "source_sha256": "4dff845b5eb146753006f05963be09dc62ebc5e056899672d4b037d129b1a50f",
+    "sha256": "32111c17f4ce38b1890b9c8237ea6aaf1805e033e82bce908dda0c7631f8856c",
+    "source_bytes": 21177,
+    "bytes": 23312
+  },
+  "yoneyama-mai/glass/yoneyama-mai-010.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-010.webp",
+    "source_sha256": "08f56844e2e086c1d887721e8528ec080a9fd76bc56d18f594df986d54a55009",
+    "sha256": "ca8d53d63a1b3867304b5494ee9baab100e47bd604a67fe84cda2decc4e75c08",
+    "source_bytes": 23420,
+    "bytes": 18948
+  },
+  "yoneyama-mai/images/yoneyama-mai-011.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-011.webp",
+    "source_sha256": "1cc8f2a1d5e4c054f9eaf79f4c2f8bea51b6ab247c0e27e5c4fcaad89975cfa0",
+    "sha256": "d91b16f5fb7080e6b51fa37824cea383f1179f82e8232b82a55eb37f7f1cb8ea",
+    "source_bytes": 1092159,
+    "bytes": 624418
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-011.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-011.webp",
+    "source_sha256": "f8c07c3dc260336dd42d655dcf3d7dfedfd21b4c6e92d3fc56074df1fe6fa176",
+    "sha256": "8351e81f7c419053a5972395451246262a19b4c59105e20a512cb0bfa16a764d",
+    "source_bytes": 34698,
+    "bytes": 41976
+  },
+  "yoneyama-mai/glass/yoneyama-mai-011.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-011.webp",
+    "source_sha256": "b649d6effa2845b7fc60acb0801b00d94a4397984fe86f4c4098c5e81a531390",
+    "sha256": "49bc73ceea24ee4324d485b5af5401044fee49926e70d778f542da23ad8383d2",
+    "source_bytes": 30803,
+    "bytes": 25056
+  },
+  "yoneyama-mai/images/yoneyama-mai-012.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-012.webp",
+    "source_sha256": "4bd6cc86f3efbfa107d9484db30b8af871685ddd75d3487e5fbbca75d7618a3a",
+    "sha256": "80c06ed99e66f098d21238343a2701fd20bfed076ce05e372b0fbfa0536532c3",
+    "source_bytes": 746096,
+    "bytes": 413068
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-012.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-012.webp",
+    "source_sha256": "68bd91ec334bf0ed0abed4c9703f7df19a68938652173249ee994a62c4ae47db",
+    "sha256": "e7fc85786897b49d6e68dd5d27337c585e8686f543c457523561f6d6cc943cdf",
+    "source_bytes": 28296,
+    "bytes": 29114
+  },
+  "yoneyama-mai/glass/yoneyama-mai-012.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-012.webp",
+    "source_sha256": "ab0c5c400bacc96d528ca9623d3a01da154fe035dbd3310d46c4d2e428629cbb",
+    "sha256": "fdf4118ee6798d2e52079320b529162349a09e6597c09c0513cad62fcc232cd0",
+    "source_bytes": 26184,
+    "bytes": 16344
+  },
+  "yoneyama-mai/images/yoneyama-mai-013.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-013.webp",
+    "source_sha256": "248f005566440f9cb48d0bfb12bd69a2b18ffd2157ebc3db5fc2eb9de4d9be57",
+    "sha256": "772f9da9700e31f7ec8bdf6ded914f1e40853a88ff5a52eeb0f7c215a9feba91",
+    "source_bytes": 617310,
+    "bytes": 271366
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-013.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-013.webp",
+    "source_sha256": "314e6d809334b9415f8c32800e4edbbd22f747fb7386e799a22ef2b80b405ae0",
+    "sha256": "ff7dd79eeb8664bde3c70812ec9da72f9ababa051ad6963aa1486b023c6e440d",
+    "source_bytes": 24555,
+    "bytes": 27364
+  },
+  "yoneyama-mai/glass/yoneyama-mai-013.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-013.webp",
+    "source_sha256": "688dd90e22f320eb77c9ff94e0c28cc87788177d8bc6d3eabd587b560f7e353f",
+    "sha256": "8f40eb616e52c4e1bc008ec48a02e53cf95eb1910397d49c25329922652791c1",
+    "source_bytes": 27467,
+    "bytes": 20940
+  },
+  "yoneyama-mai/images/yoneyama-mai-014.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-014.webp",
+    "source_sha256": "b7ce15fe19d0f777a89897f7c3317c3c15de2f71daf297ba048a2a320eb6bca8",
+    "sha256": "6e71b2b86951329d47eb8e003e9d34ee21fbff5f21212cf05449a4e97373d33e",
+    "source_bytes": 869020,
+    "bytes": 461188
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-014.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-014.webp",
+    "source_sha256": "4ee2a71bbfaaaaa835aca3a2225617cf68dcc96935de55a54fc10266d34ba2c9",
+    "sha256": "302d7bb9946987233a749b5c1bd437c818ab3a7ee61fb1734d356da3d0c08081",
+    "source_bytes": 32803,
+    "bytes": 39588
+  },
+  "yoneyama-mai/glass/yoneyama-mai-014.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-014.webp",
+    "source_sha256": "6e302581635fd8dd57e72fd5c22d6542ddd90d5aba62df0630852af16ab86fae",
+    "sha256": "64aca8e6f290f0b5bdf275241b058671e6c1b31a251adaed049786fcba73e217",
+    "source_bytes": 28725,
+    "bytes": 22858
+  },
+  "yoneyama-mai/images/yoneyama-mai-015.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-015.webp",
+    "source_sha256": "b218574d89062a41423ca25d4a9360567df2f3cbecc9d11b96f3c4ad6c19a3de",
+    "sha256": "2b685bac2a0633a4436822934071987fb614d6483f7e76c550b8bbdd58a769b0",
+    "source_bytes": 522289,
+    "bytes": 199462
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-015.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-015.webp",
+    "source_sha256": "d687460040339929d6817cae3029d6df075121f421d83f036cff364480fc4285",
+    "sha256": "5b5181e8ec7d6388e57061feb21d57b63eedd0417c4eefabb0482e5c15c919eb",
+    "source_bytes": 21194,
+    "bytes": 22588
+  },
+  "yoneyama-mai/glass/yoneyama-mai-015.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-015.webp",
+    "source_sha256": "3af5c57904be4068a2a4ae4a3fb6bfd82f7347316ed8aa68a0c5943aa3a0f00f",
+    "sha256": "b22643c3ed523af53a04b45ae109685225ac4958c5aba2b24d657b90c7686836",
+    "source_bytes": 23526,
+    "bytes": 16222
+  },
+  "yoneyama-mai/images/yoneyama-mai-016.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/images/yoneyama-mai-016.webp",
+    "source_sha256": "11d185c1cc2aaaad93f4b640c86081269d5215d92ca8509da9f218a21169766f",
+    "sha256": "81d1292c89a36bb00d2d55f1d77f8e1c73d192fc8f00e0f095ee46d173037b0a",
+    "source_bytes": 1289416,
+    "bytes": 816246
+  },
+  "yoneyama-mai/thumbs/yoneyama-mai-016.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/thumbs/yoneyama-mai-016.webp",
+    "source_sha256": "a95c265995e1e0682c2bc162ff9e8d5c7de3f12c34ba1726cab418f7ee4420f4",
+    "sha256": "c3b55237d14ed33e46706ea4871af07862312fbe324c52a4ff24a6ca02049f2c",
+    "source_bytes": 29053,
+    "bytes": 35198
+  },
+  "yoneyama-mai/glass/yoneyama-mai-016.jpg": {
+    "path": "webp-q90-v1/yoneyama-mai/glass/yoneyama-mai-016.webp",
+    "source_sha256": "1d9f611ec6434a29dd3e5a0ddaf37ee2427fd59203e96def0b637079d756121a",
+    "sha256": "c877d116b424e356b20d558047e70450dca7e57a087b8ea5c387d6fa9b4b5901",
+    "source_bytes": 29613,
+    "bytes": 24948
+  },
+  "benjamin-flouw/avatar.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/avatar.webp",
+    "source_sha256": "5f56429e34323c4b58918edb7c23b5ffd33fffe1adede93b05a5623786f91d48",
+    "sha256": "493b115205a768510369b455c8a324a75b9d26c81d2ca2743b9cd542581e6e79",
+    "source_bytes": 6332,
+    "bytes": 6996
+  },
+  "benjamin-flouw/images/benjamin-flouw-001.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-001.webp",
+    "source_sha256": "670ee422da25cafee02f1b69fccdfb459880e0430b3616931edc932f02b3a358",
+    "sha256": "3e9414ecce095ace4da4f2fe5bc9ad58744a32f0612be482256ed29830f96378",
+    "source_bytes": 140872,
+    "bytes": 67282
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-001.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-001.webp",
+    "source_sha256": "80811262c88f59f1b26d4c175b14b17aba9af15da9c924009d7416e7c0cbed17",
+    "sha256": "312add4828dce3504a542980c2c98705e35bb5e1eac02d4e227080bc290d2438",
+    "source_bytes": 10477,
+    "bytes": 9780
+  },
+  "benjamin-flouw/glass/benjamin-flouw-001.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-001.webp",
+    "source_sha256": "e69aaed154cbac75f27580e9c21d3a740276055bd91a4df1d7c2f976fc89e437",
+    "sha256": "5f1c3c248ebc8ea97eb006ff09e5428ff4cc18058cbdb60cd7aebfeb1cc9d09a",
+    "source_bytes": 11723,
+    "bytes": 6832
+  },
+  "benjamin-flouw/images/benjamin-flouw-003.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-003.webp",
+    "source_sha256": "0cb701888d54b78dbb1d2ea07e15dbe3e73e7096874e4d0e78ee85886a52dc74",
+    "sha256": "a55779af7c673f3b4c092517bc3c7364a885bfa6c268023411bea7495f0d14de",
+    "source_bytes": 512955,
+    "bytes": 270940
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-003.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-003.webp",
+    "source_sha256": "49bac345220a459fae51f30d856bcbdb3c149e6b498596bd2a93d89082066a31",
+    "sha256": "b64b57fd6a9b65de786fd29208ec74649a74c07effc1851fb39e4bc8c2a83058",
+    "source_bytes": 16137,
+    "bytes": 15988
+  },
+  "benjamin-flouw/glass/benjamin-flouw-003.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-003.webp",
+    "source_sha256": "522f0cc55a3e7cf0c3a4a737dbd12d84ff81250f24683079c14f17a488b647a8",
+    "sha256": "9d2ea12a83e3981e8b1d8d23f3ff655dcc4808edcf8eb66a557ca0c3e18ba729",
+    "source_bytes": 15481,
+    "bytes": 10412
+  },
+  "benjamin-flouw/images/benjamin-flouw-004.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-004.webp",
+    "source_sha256": "a3f8833740a45a97f46498e5e48dee08473dc966262d044aa888566cf7b7fa29",
+    "sha256": "13b5275ba74d0781e410ada91c384c0bbb7a0eacb753fa4808a94ecb5ff31963",
+    "source_bytes": 121748,
+    "bytes": 41636
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-004.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-004.webp",
+    "source_sha256": "31f12d5f4b4674fb7b025bd8bb1568fd78a9b5f26d982ede378432bc506de930",
+    "sha256": "a9463d1f4fce5f43de2191e600107ec8ad012611ed745609ddfe4b640e0ce242",
+    "source_bytes": 5902,
+    "bytes": 4374
+  },
+  "benjamin-flouw/glass/benjamin-flouw-004.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-004.webp",
+    "source_sha256": "ed1cbbe552c09c3a7de7583e212fe040da8da888fd961782db121e39ca481a7f",
+    "sha256": "d3abb238446cdf014549ee5f86d6058bd3b322322cdf85926575f9438dc21ba9",
+    "source_bytes": 8332,
+    "bytes": 5566
+  },
+  "benjamin-flouw/images/benjamin-flouw-005.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-005.webp",
+    "source_sha256": "e92c3dfaf6ee13a3f824f6bb71a759b0ecb899dd78713cfc6b0e80ae608f7181",
+    "sha256": "22fa941616eca35835f38a68995368d5816f90539ed8d2ba25fa0b1a07f607eb",
+    "source_bytes": 221279,
+    "bytes": 104138
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-005.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-005.webp",
+    "source_sha256": "8a0064cfa4c16ea7e9dbb5777646760690a118216adfa7e988d45705290a9cb7",
+    "sha256": "344debbe10bd8682947822eacbe01670cd345d9dc482280a6be862552b425469",
+    "source_bytes": 16354,
+    "bytes": 16234
+  },
+  "benjamin-flouw/glass/benjamin-flouw-005.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-005.webp",
+    "source_sha256": "c6ba01b37929c0f51af45296f6aff281d6e1bf0017a544ec33a57859c7e196ef",
+    "sha256": "c1b0d5a9b572144d88818edff6701f4fe61f49886ba4598546939194a0403488",
+    "source_bytes": 18064,
+    "bytes": 12154
+  },
+  "benjamin-flouw/images/benjamin-flouw-006.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-006.webp",
+    "source_sha256": "52065aee80af357b5299ce0cbd270ade9f59e221df5d23c42123103d9c7202be",
+    "sha256": "066103d2f69bdea13cd6f0fa6252d03b765b3ebf07afceb16bbea7d3455c95d4",
+    "source_bytes": 296029,
+    "bytes": 156156
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-006.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-006.webp",
+    "source_sha256": "4c3b9157652b032c44b9b5d34a950bbf64ca3ecf7c21905fe0c7daff4ae7f794",
+    "sha256": "3a2627bef52674b5cc877a3bdbaf8d33734b89473e7c84b49e2f673d3333a6c8",
+    "source_bytes": 14925,
+    "bytes": 13552
+  },
+  "benjamin-flouw/glass/benjamin-flouw-006.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-006.webp",
+    "source_sha256": "27935a0e817f70b70fca908cb5be9de66fce61fb3244f7e9cb255cd2202dc3bb",
+    "sha256": "6a76c4436d6f0f5b48607f7f0a2c3de4f9a200c3c60563dd947baf98dd3ed3a1",
+    "source_bytes": 19856,
+    "bytes": 11932
+  },
+  "benjamin-flouw/images/benjamin-flouw-007.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-007.webp",
+    "source_sha256": "d765001db52a40006a23745d36e4953e7987fc10b4431607d60ef0d1cd322565",
+    "sha256": "6eea5cf5b975373dde8313f8d3b021963225ece2b711f7db4c86f053b4cdeeab",
+    "source_bytes": 476452,
+    "bytes": 240774
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-007.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-007.webp",
+    "source_sha256": "f65de60912f17d440c60715cc84599895ea047fddedacebc50b9ffae938988f5",
+    "sha256": "b7adc79fe596ed3cbfdef936f47e5b720dc8532ce458dec0209b110b06631ff3",
+    "source_bytes": 17229,
+    "bytes": 18302
+  },
+  "benjamin-flouw/glass/benjamin-flouw-007.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-007.webp",
+    "source_sha256": "630c0985d5986502537ec29b018ad3960d15144b727830974354ed2c1ed29f2c",
+    "sha256": "5b5cb6f2b38e338487661d103b38f64a7dcd4809fa6fbb1d8f5ab6f882d77414",
+    "source_bytes": 19707,
+    "bytes": 14038
+  },
+  "benjamin-flouw/images/benjamin-flouw-009.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-009.webp",
+    "source_sha256": "85c47e70b4cc642fb94e45c331886b38d01d0403335d373ae6e6d45b8bcfc4c9",
+    "sha256": "e8c75e8b3bff2dfa40e1fd23752a80f5867d2bef4e4e2fb137e9099f7b049f6a",
+    "source_bytes": 195437,
+    "bytes": 102268
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-009.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-009.webp",
+    "source_sha256": "92c2e472c7e87439de4f01b1c386decf6ca465c6b719bce56490febf64c12ef1",
+    "sha256": "c09767d6218c7b2f4367096c2470fc945b07388081e510f81fa1e2b24959c7ed",
+    "source_bytes": 10360,
+    "bytes": 8778
+  },
+  "benjamin-flouw/glass/benjamin-flouw-009.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-009.webp",
+    "source_sha256": "0fab8e9a8bc763e021e9d83122ad5ffcae12bc81858875db6318342505e5200a",
+    "sha256": "505b97df2ec75e2b43e96cbb9b982491276dce9a9536e6fc478f83918a9407ce",
+    "source_bytes": 14503,
+    "bytes": 7722
+  },
+  "benjamin-flouw/images/benjamin-flouw-010.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-010.webp",
+    "source_sha256": "c336d249b0dc8a6d437e3e901d8d346c1f77e4c7b3d021787eb52cb23ac0758c",
+    "sha256": "2012aefd3f4dd1b270e84b8430fc8a4983a681b77e0092a80db487cad67501fa",
+    "source_bytes": 301093,
+    "bytes": 165024
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-010.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-010.webp",
+    "source_sha256": "52b9694cda344ea01324050dc318ddd5b49a304dd16ced6ac12ea20e32a94645",
+    "sha256": "dfd48021b4873f09c21c678e90325f4853696fdcd652ae84c75c7cdea08b22fd",
+    "source_bytes": 16760,
+    "bytes": 16824
+  },
+  "benjamin-flouw/glass/benjamin-flouw-010.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-010.webp",
+    "source_sha256": "a10d27c8a9d9c811744e785b4bed22ddf0d103498d3879419536d7ad602c3cc2",
+    "sha256": "71ae780367c744b74c1fb9ec5be8d1e00f65130b26bde28832e152406b30fb8d",
+    "source_bytes": 18502,
+    "bytes": 10772
+  },
+  "benjamin-flouw/images/benjamin-flouw-011.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-011.webp",
+    "source_sha256": "9f392df0491bbca2a6b53d7679cfb232079e6280304529630a3c2411fc89b4ec",
+    "sha256": "ec5713265ef1a6e03f22d8d16787694d6a5adef8de63b78fb2d9f82c722817b9",
+    "source_bytes": 622677,
+    "bytes": 297426
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-011.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-011.webp",
+    "source_sha256": "1c52050c24887bd08b13ec6ef4093b3b031c5744877856402bd9464f84e8c4aa",
+    "sha256": "887929a3e3e5ac0df7b522a4a795bbda95da05e3b2aa22244bd85cc736ef95a8",
+    "source_bytes": 18071,
+    "bytes": 18130
+  },
+  "benjamin-flouw/glass/benjamin-flouw-011.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-011.webp",
+    "source_sha256": "4b1ed685754985439e9ada27bcde4c4c614e4fd40ed360bfa33e51e2e0f5bd7f",
+    "sha256": "be8500cbba7526cafde0c23e442d9702dfa2fd00c6baa6e2387a0c92d6eda013",
+    "source_bytes": 18868,
+    "bytes": 13416
+  },
+  "benjamin-flouw/images/benjamin-flouw-012.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-012.webp",
+    "source_sha256": "4921b252c0fd93f3a0c65afcf88bc53df1413894e7f15c1dd4ec626d2ccdd871",
+    "sha256": "936eca15615ac6d5dcc2c7c7e24953851408b21a2d373fa40694e0b5b6ab3b69",
+    "source_bytes": 818140,
+    "bytes": 407864
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-012.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-012.webp",
+    "source_sha256": "b4a138e69d9ab874ab4e52b322fcfe1bc8a9be51fd97af93e96d3d50ad69b771",
+    "sha256": "8018723f11e5ce22d115299ca1745678aa57875db4728275595e66562adb6e35",
+    "source_bytes": 22132,
+    "bytes": 24488
+  },
+  "benjamin-flouw/glass/benjamin-flouw-012.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-012.webp",
+    "source_sha256": "fb9ae927b43b0956802497276631c38c9af9a2fbe6460160d6de961df3b556d7",
+    "sha256": "10d964c269fe5d077ffe2139629ac1da2c0441d4be8308bf9feef87cf957544b",
+    "source_bytes": 21884,
+    "bytes": 15682
+  },
+  "benjamin-flouw/images/benjamin-flouw-013.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-013.webp",
+    "source_sha256": "506e55a25e49ff3ac0203020aaba3d0f9cc374a6ff275eb30a6cb804502d362b",
+    "sha256": "c5e6bad0054cfbe7600736e11b38ec98275b69236ca320fb98e1b0ed1da82956",
+    "source_bytes": 228278,
+    "bytes": 110860
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-013.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-013.webp",
+    "source_sha256": "b5d89d420fcf66be7ccb733440e84c39713d1233996b65f54592ce5d2b51b129",
+    "sha256": "9dc37cebff4597bc4a24f5fac690486a2b1f207a9559f0738ce451c5f96f3ebb",
+    "source_bytes": 8742,
+    "bytes": 7602
+  },
+  "benjamin-flouw/glass/benjamin-flouw-013.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-013.webp",
+    "source_sha256": "cfdf5f3174cd02793c703b96dbad1e014b3730c91bc307f5e32e689bf32157b0",
+    "sha256": "2734148876c55daf19884fb39089d7d1dd7d669e0bb38dab195b2e2fc7befe4a",
+    "source_bytes": 12897,
+    "bytes": 6842
+  },
+  "benjamin-flouw/images/benjamin-flouw-014.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/images/benjamin-flouw-014.webp",
+    "source_sha256": "0b09fb827163a8899e3a5f5c212ff2e691b29b7757c6d588022ce48ff5ebe6d7",
+    "sha256": "0f55c52688d8a814714128955d197c7fff692d89835f60bf71ddbeb0ff31f0ae",
+    "source_bytes": 471327,
+    "bytes": 242272
+  },
+  "benjamin-flouw/thumbs/benjamin-flouw-014.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/thumbs/benjamin-flouw-014.webp",
+    "source_sha256": "5c6514479292797433629d5d43d0745f67dbe46890571a83e6a777dd821048f7",
+    "sha256": "9905db7b717eee97db23a06f3a33a427208747725e17abf6ec059dbc3c712446",
+    "source_bytes": 17853,
+    "bytes": 19768
+  },
+  "benjamin-flouw/glass/benjamin-flouw-014.jpg": {
+    "path": "webp-q90-v1/benjamin-flouw/glass/benjamin-flouw-014.webp",
+    "source_sha256": "e92208273fee088a2ac25048308ec594c262e5b6e4b79115feafd99b64293703",
+    "sha256": "3bf914fab30550fe4de4542198536a0dbe68b11598d3639f914032f962e9c88a",
+    "source_bytes": 18091,
+    "bytes": 12656
+  },
+  "venmen/avatar.jpg": {
+    "path": "webp-q90-v1/venmen/avatar.webp",
+    "source_sha256": "72987eb479bd8dc2a8d40cc27d12fc5b2714eceaea25815bec7291a2f54c4b54",
+    "sha256": "98629c603f0d587ed6dd1a3d6ec65bfebd3ad178304538203574c0242927fa8f",
+    "source_bytes": 3645,
+    "bytes": 3098
+  },
+  "venmen/images/venmen-001.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-001.webp",
+    "source_sha256": "56d6f408b0ddb31f3d9a426bf5327eba63e615b80d87f7ee0e9509aa49e1d6e5",
+    "sha256": "194256d4eab061d64f3665f1110f8941c346d8aca18ba54c37a6caeb7c8b1722",
+    "source_bytes": 379950,
+    "bytes": 169542
+  },
+  "venmen/thumbs/venmen-001.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-001.webp",
+    "source_sha256": "b889bcdcd8c473f52d09f5a61cda12f3c4aa76950eb13c603735a3800083c37e",
+    "sha256": "7be9a4a4bd41e977e970014b69fce70081c944558f982fd4e212981171159736",
+    "source_bytes": 20164,
+    "bytes": 21008
+  },
+  "venmen/glass/venmen-001.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-001.webp",
+    "source_sha256": "96d0dada38299c11429b11d4bc6693f4b0b6a9b11a7ed5b5a507c97088ba3471",
+    "sha256": "1c403660c1789065baaa51010f05cfedd09728cd60d14a503008e182e3189f52",
+    "source_bytes": 25138,
+    "bytes": 16872
+  },
+  "venmen/images/venmen-003.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-003.webp",
+    "source_sha256": "2a8c5a5b472909924176c15d35bb868c73c9e80ff0c0a1aafbbc226723be6a31",
+    "sha256": "6ae4c723a997aa7e4afdbe15b98dd831530fbd43cb085d41b945a6ddc20ca082",
+    "source_bytes": 466425,
+    "bytes": 250500
+  },
+  "venmen/thumbs/venmen-003.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-003.webp",
+    "source_sha256": "bcd24474abc1ebf4b4fb6b27e90fa80ee77bea8b4c6073dd97eb4d5a581e088d",
+    "sha256": "8ea54823937fe6f92c59fd9fd29657e1acd75b3aa59cb9801eaeac865afef3f5",
+    "source_bytes": 18590,
+    "bytes": 19506
+  },
+  "venmen/glass/venmen-003.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-003.webp",
+    "source_sha256": "66fd4397032d470e071b9b7e743ba6b8aff348fff2a73d5da990314a9c4a9869",
+    "sha256": "d0aaf32ab3a6774e1cd13d378ce87989935dbeb7dd2bde2877f514aae1d010a4",
+    "source_bytes": 21717,
+    "bytes": 15878
+  },
+  "venmen/images/venmen-004.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-004.webp",
+    "source_sha256": "222cb72b2255b3150150221d0a7540ee805e0ee8be616fe241d5b04e9804b8bc",
+    "sha256": "39e12b828dc82e1212d95cca64f9c816f9c82848cf7f38d60598abb4f8d57ae7",
+    "source_bytes": 551816,
+    "bytes": 307962
+  },
+  "venmen/thumbs/venmen-004.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-004.webp",
+    "source_sha256": "4c54d26bc2874ea499ba32000766983224ab17906f0ddfc0919d8bad39ddcded",
+    "sha256": "b713c79da8bbf567985dea9a618b5c01d8d1c721644e1a082829644580493741",
+    "source_bytes": 22190,
+    "bytes": 24162
+  },
+  "venmen/glass/venmen-004.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-004.webp",
+    "source_sha256": "e7f87f7f9e3c67d1f9ab6d3eb956a019a3a9071db05a404ea087bbdb66a8af46",
+    "sha256": "9ac2113e4e4141534d4ebe8c2ea5310691d6f27a8cd26963d5624ee5d9b1b7b1",
+    "source_bytes": 23293,
+    "bytes": 17290
+  },
+  "venmen/images/venmen-005.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-005.webp",
+    "source_sha256": "ade873e2c737b83330ffad8f813b4485dfd2c06ffb6563ef8bbacdd517cc9c9d",
+    "sha256": "cde717889e88b4cf610e775fb30cbb6369633873247a6e872406fbdd4ba6531b",
+    "source_bytes": 475949,
+    "bytes": 226480
+  },
+  "venmen/thumbs/venmen-005.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-005.webp",
+    "source_sha256": "ad6175763243308ae5ab2cc6b742c49a615839fe4293d75f425eaae2995c9992",
+    "sha256": "2ec2fe5205752214f3924fbb2aeb76e4ba29f565fcc965b8f50c95c8fbf6920b",
+    "source_bytes": 16264,
+    "bytes": 17802
+  },
+  "venmen/glass/venmen-005.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-005.webp",
+    "source_sha256": "1ebf71c6fa54db291e5ad258901c13ff9f8ce473510062653be6e878b4586404",
+    "sha256": "73ff1d10f1f09dbe399d76a8a3523f8b25744d7b3ae72218aa83fc8133072d24",
+    "source_bytes": 17689,
+    "bytes": 13786
+  },
+  "venmen/images/venmen-006.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-006.webp",
+    "source_sha256": "fa7f57c1fe5e6d21b485d318d3468439a2d03a51d3f703c317aa9e48d89e7a12",
+    "sha256": "30c909d09bfef1d35d6351a65aaea95c3b1a8388367575eef47dddf4b812dae4",
+    "source_bytes": 1035867,
+    "bytes": 561312
+  },
+  "venmen/thumbs/venmen-006.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-006.webp",
+    "source_sha256": "aa71e0f3ad12061b29fe2780ea4b3084ecc10c7af81a547370404b76801955e6",
+    "sha256": "0fa9fdb3a585e03a7d9f6297b53c2fb0bd7e959a498075b38c8ca609cd653e12",
+    "source_bytes": 29819,
+    "bytes": 33862
+  },
+  "venmen/glass/venmen-006.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-006.webp",
+    "source_sha256": "92285349f63964fc51efd2c834178c06d7611668b529cf8fe512fe5aff8f04cd",
+    "sha256": "21157c85525ad892d70ee0780389edf52d10fc71c57d7f1c4347a10310fdca42",
+    "source_bytes": 24354,
+    "bytes": 19234
+  },
+  "venmen/images/venmen-007.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-007.webp",
+    "source_sha256": "97f1fcad73cd87719527f8f77f7aa09ef36705dbe08b3cf5facc9d7ca0f25f9c",
+    "sha256": "bb9ec6431897b8874cc4b01b018fcea9df53c249afa66e4136e8a5ceccb5b2e0",
+    "source_bytes": 1342701,
+    "bytes": 751120
+  },
+  "venmen/thumbs/venmen-007.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-007.webp",
+    "source_sha256": "d207844b4662395fd41460c515a19c9169b6ae8abe350d5ed37aaa6c4d5443b3",
+    "sha256": "d4be11909ffd0ad61e2b5715cd9f81f13c8d30661ac5246b7ae6e550003685c4",
+    "source_bytes": 46054,
+    "bytes": 57224
+  },
+  "venmen/glass/venmen-007.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-007.webp",
+    "source_sha256": "d3eebcebb19643837bc579552e8198dc733a9debddfa0534316bf58608b68589",
+    "sha256": "2d9d304d4c72e23b2f48e52b5461aab8a3ce7b463772d2e2c0aedd158c1c8746",
+    "source_bytes": 33984,
+    "bytes": 26746
+  },
+  "venmen/images/venmen-008.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-008.webp",
+    "source_sha256": "b9b48106b3713549956e88272db3ad44dbec77d95afa8e7792c7720970aa02af",
+    "sha256": "411a59e18517fc8db289f061529d8409ed57f1f0dee05c06e5880fc05a8fe891",
+    "source_bytes": 393536,
+    "bytes": 177440
+  },
+  "venmen/thumbs/venmen-008.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-008.webp",
+    "source_sha256": "1b242ed0da545d9ef32256629db6d6a77f344d051931ca5ccc89256e46587707",
+    "sha256": "e5b53eeb48f78a2063793aea49464a8f19903a59ecb9881d12cbad5cba91e9fb",
+    "source_bytes": 22077,
+    "bytes": 22368
+  },
+  "venmen/glass/venmen-008.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-008.webp",
+    "source_sha256": "f953326fb061db3092ff1a87d8cf02eaf60bde045633faacc084e76fc7927713",
+    "sha256": "b9750782f9a7d374f591b93423c9aafae2720798108339708b6536e3455f239c",
+    "source_bytes": 22654,
+    "bytes": 15658
+  },
+  "venmen/images/venmen-010.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-010.webp",
+    "source_sha256": "566b686d74b7c3a0ae91bd142c72ed39be2f3e23bbe2c9ed03c9f424184d63d4",
+    "sha256": "9b76e41dd8d93d061e82c2ee4883f95d320f6d25b20248d0f9a515238e90741d",
+    "source_bytes": 476003,
+    "bytes": 226124
+  },
+  "venmen/thumbs/venmen-010.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-010.webp",
+    "source_sha256": "409fdd36573470daa8c6a52ce73829b36c1bc48a68e58838c42c541f84c443bb",
+    "sha256": "6455b21d89be7da3d660f6dd70956a47d38f9fc18535a629a3f907a05b1a47a3",
+    "source_bytes": 26542,
+    "bytes": 28668
+  },
+  "venmen/glass/venmen-010.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-010.webp",
+    "source_sha256": "c4f4b80b26656c9e594d328e8c2cab775620a7e1fcaea885341137f9a424900f",
+    "sha256": "d95430c9cc12d1c5e6269eb8c0f4f6d9d8fddd0f4cd95ce9062a6dd305e97728",
+    "source_bytes": 26381,
+    "bytes": 19526
+  },
+  "venmen/images/venmen-011.jpg": {
+    "path": "webp-q90-v1/venmen/images/venmen-011.webp",
+    "source_sha256": "2235358f7fd12ea9141668da09c66295f0a5c46d49e888513948c54516dca6f6",
+    "sha256": "02e43560500ee93335cac83ef9d87b4c184136a1ed4561a8b3474b406770c456",
+    "source_bytes": 1001033,
+    "bytes": 572362
+  },
+  "venmen/thumbs/venmen-011.jpg": {
+    "path": "webp-q90-v1/venmen/thumbs/venmen-011.webp",
+    "source_sha256": "11f1cbec635c772496e029d44ad3e99c3323d8efcaa359d39f8bbf252d4a8e48",
+    "sha256": "827461001d9a3e8c9c178216bcfa1f17d4dabf149e9feba5df1a3ec4caebcaf1",
+    "source_bytes": 34856,
+    "bytes": 44468
+  },
+  "venmen/glass/venmen-011.jpg": {
+    "path": "webp-q90-v1/venmen/glass/venmen-011.webp",
+    "source_sha256": "a90893a11cddf8b3e32264e04c16e9e9b85e3196c163196fe688beea0c1dcfe1",
+    "sha256": "22e8418d9def6c9d971a020e80c59a240571f13837b962e90868f7aa2bfee5ce",
+    "source_bytes": 25846,
+    "bytes": 22078
+  },
+  "patryk-wojciechowicz/avatar.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/avatar.webp",
+    "source_sha256": "3ffeb0b397465b06435b80fe9390aee1fa4ba0b01bb64b6d99ba29f7b63542c0",
+    "sha256": "8531d0849e025906bf151fc48fb9b6a90661325c7a89ff965fdb026805f96e32",
+    "source_bytes": 3012,
+    "bytes": 2230
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-002.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-002.webp",
+    "source_sha256": "044fbe22b27adc1190ebeaac83327a6d2ef4421226514867119fe9b7662acc01",
+    "sha256": "c7bb1d74ff517cc851ed0057972c0f4e7a6d4f156bb57f49c1eb0d3cf9fd2b88",
+    "source_bytes": 175774,
+    "bytes": 65018
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-002.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-002.webp",
+    "source_sha256": "f92d2f401d4cef9fd1b53789c16466f68907d70ec1848098962a8faf2a94b6a7",
+    "sha256": "102a66ccddc55f55c0e44b385368140352856327713c4d825ab9faa68da28cb7",
+    "source_bytes": 8755,
+    "bytes": 6834
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-002.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-002.webp",
+    "source_sha256": "8db3f87015ad011bf28bc158998d1e696e6b0b6e9db39cfb6e40ce0138aa8346",
+    "sha256": "0482d5b11062258b05485a862a458cdf90e6f15d91e2d18438484ba5a3bfcb28",
+    "source_bytes": 8619,
+    "bytes": 5746
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-004.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-004.webp",
+    "source_sha256": "9bb1a5c7dda9bdefe84fd6c7a9e24d86d2f800676037fc8139f1dbbbf6dd2375",
+    "sha256": "e7ee73676fa76b0bef8538c7a40c01798efbfcf571c5089383c127562b18b185",
+    "source_bytes": 182596,
+    "bytes": 73446
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-004.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-004.webp",
+    "source_sha256": "c5a14021fc3f41b6d7e56c5bfb08e75deadba2fcbab55d0983f87f24e5730abe",
+    "sha256": "bfb90938e9c809c41d8470f24584fb10e08e8619ea070ef0dc0a00ee14c4bfb3",
+    "source_bytes": 11476,
+    "bytes": 10356
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-004.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-004.webp",
+    "source_sha256": "31677e6111568f9337e75a50f6540497f21969a29bb6aa2de393c9b04ea14335",
+    "sha256": "30e11778c905f9bd47c7663ae5e7dca56fbc0efbcb6e424fa5e70b0dbf52ce12",
+    "source_bytes": 8944,
+    "bytes": 6214
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-005.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-005.webp",
+    "source_sha256": "cee53dd54d6f740c04c6b7a607b81257b6fb6e5376ce45366609dfcf46ab091a",
+    "sha256": "4f663f1492984d986973a9f97bc4035293f33245b0cf70af1ae0305b538d4db3",
+    "source_bytes": 246754,
+    "bytes": 83514
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-005.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-005.webp",
+    "source_sha256": "a312a926fb5e24846453cf5e2e8ca38d876a763623c5b3edf872cc737811905c",
+    "sha256": "2f5d3c1d7b7921b138e232eb33bca5e495ab1330dd48baf3a30cefa2b2dab674",
+    "source_bytes": 13244,
+    "bytes": 12096
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-005.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-005.webp",
+    "source_sha256": "6854c328cafe5df8652e5b2b2162b4c0d1d2f7081e3c92b5468c228d7501d4ea",
+    "sha256": "2bc8bc7253e4343a22dd928f583a598aa9e202fc78c109f368a5a2c0d5cc54f1",
+    "source_bytes": 7556,
+    "bytes": 5120
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-006.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-006.webp",
+    "source_sha256": "3f267e26f094f7c966ced040b3bb3006e2f5625b955cd4ac9cb6f783c8411290",
+    "sha256": "4755f95249af880fb3cee2f8aa90065d58956766a0d1b9ca7ceed705b21f6b26",
+    "source_bytes": 269187,
+    "bytes": 100240
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-006.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-006.webp",
+    "source_sha256": "185388294d3e5656d36b710f6812772e33a45f49b7ed7369f6885d2987e83fd3",
+    "sha256": "feb200a0b8faaa9449ff30ef3ea4c2e3382a9f458f8a5e95467514174086b124",
+    "source_bytes": 13124,
+    "bytes": 9616
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-006.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-006.webp",
+    "source_sha256": "3d771a748ab80c1cee3ac710922451478914860652f1a81229fcdd73f46bb4fb",
+    "sha256": "ca18bcf67cb12984803f5f085d5e2db1fb0b63a91d28ce1eb1c6e158e0562f98",
+    "source_bytes": 11534,
+    "bytes": 7736
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-007.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-007.webp",
+    "source_sha256": "9bf4152c17590ae8d4831653d36583d2488ea1760c6e1bfce0b87dee7b8057da",
+    "sha256": "ef70e9c0297506e5be2bc400fe3c000178eafef4579db3956a424d2e984db579",
+    "source_bytes": 299192,
+    "bytes": 121094
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-007.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-007.webp",
+    "source_sha256": "8b41664c23dce0683ff74e193025847247b36dfb55e850694f595e79e87cef4f",
+    "sha256": "1f9ccc4c5b0857d14d24ca2f81c31e2672bc4cf04fee8b86a005335b8d3130db",
+    "source_bytes": 19075,
+    "bytes": 19556
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-007.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-007.webp",
+    "source_sha256": "d951c4fcbee2d6450cd5b4435deeca3b5fcfc9765602e9343aff6b069fb73440",
+    "sha256": "b37436043a081250e8099fb3c4fd5a92a9b5356d380a25661f2ab24e6e04cdfc",
+    "source_bytes": 14181,
+    "bytes": 11704
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-008.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-008.webp",
+    "source_sha256": "15ccd712a38a8b088b5e43c082700e3324da7e996ccb10df2614afe7e02c4a5c",
+    "sha256": "095c6f1e940ffcf418614889d616d063deba0e7bb8c419ce24440d931638c6b1",
+    "source_bytes": 410036,
+    "bytes": 184650
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-008.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-008.webp",
+    "source_sha256": "ea1188048db3825f29abba1296b7eff7cb37a338392089bd5a48cc5e3ecec67e",
+    "sha256": "d6b8b399e9c16199e2bd2137925d113208f8751d999d662a7a8b6b3379ef20f4",
+    "source_bytes": 16713,
+    "bytes": 15532
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-008.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-008.webp",
+    "source_sha256": "2d412b764bb6769169467e55482537f3dadf66d01acda8abe0fe8ee2e7660bd7",
+    "sha256": "6b9a3957caeeba85b2e1de074535357cbcd1e54e087614196c50774c2199cb1e",
+    "source_bytes": 14193,
+    "bytes": 9286
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-009.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-009.webp",
+    "source_sha256": "b8b7c902110e6eb83ae80758c38a9123df763789d035d1f3e60de7aca962f16f",
+    "sha256": "85466ffb1b0b6c1f0b6d3acbd23c610620ecb7ac3652de8b0764e50f266b1025",
+    "source_bytes": 229473,
+    "bytes": 89722
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-009.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-009.webp",
+    "source_sha256": "dd3c2fbedad9c84bc3ee35e12f96c239223741aee886aaa740eba4b94b0bbf84",
+    "sha256": "0d35e17c5e6a575397976eb02caf1c2f8210dec1bf0024e89ea6fa69dae5f10b",
+    "source_bytes": 12904,
+    "bytes": 11870
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-009.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-009.webp",
+    "source_sha256": "8ad1b7a384b521908a700cf3b9d3121cb76234f4345a7607a30dc9cd33f3e7aa",
+    "sha256": "407dd808ffd950393a7f6e073107b73237031e264534b6d0dc908bcb0e79f41c",
+    "source_bytes": 10639,
+    "bytes": 7692
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-010.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-010.webp",
+    "source_sha256": "20006cd105154c559dcf3e43baa88c1f5a14bc6d71af8ee4b9d5e60a962ae402",
+    "sha256": "3abd66c53376476e8cb51275aab812d607f5a97073893ea0cacdb9e78cbbe322",
+    "source_bytes": 817046,
+    "bytes": 423012
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-010.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-010.webp",
+    "source_sha256": "4663ed1ed4a55114f56d2db6fae14212e8833f0b23a63e2dd387bac9d0e66a79",
+    "sha256": "7c47a3889b62558ee2f5f0e2d879bebe96f22ddf59fc868790161e727db629f8",
+    "source_bytes": 20654,
+    "bytes": 21320
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-010.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-010.webp",
+    "source_sha256": "f563fce6c26d0b30a93f945cc48e27b40300db2d1b2277c8c4f47cd1ae0ac5d7",
+    "sha256": "275a68eb83f63177c94ccd05d8b015f8cf10a2adf6b5f665cd03524f904d557a",
+    "source_bytes": 23709,
+    "bytes": 17416
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-011.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-011.webp",
+    "source_sha256": "8462f94deee7849d6efb0196ccefa4a54fa1b8d67d0e19bf7ea16411cb2f9de5",
+    "sha256": "156d5edfa893470b48bdc6f71aef60f06302bec90532f1b9ae0a2e12eacabcd4",
+    "source_bytes": 798466,
+    "bytes": 422712
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-011.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-011.webp",
+    "source_sha256": "2550d89ed297dc37f3dc3f5c9eba20af0de75027c17ab574f8e8c6be7bf1aa31",
+    "sha256": "ae150bfaf01e84cefa89e2b9b4d1a771019534a269b3c1970003163dbe6654ce",
+    "source_bytes": 32221,
+    "bytes": 36780
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-011.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-011.webp",
+    "source_sha256": "e52301be86267d0ab2f496c0d815e3be428bf5ea9495cd1c3af2a2ab82549286",
+    "sha256": "ecee04148f04d7fe4936f22e3927d5f44b3676bfdbc06ffde18f9fe13d52139b",
+    "source_bytes": 30972,
+    "bytes": 25386
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-012.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-012.webp",
+    "source_sha256": "80cf57864b7510c76de23c06643ccf513bc5d00b4ff25813cabfddeaf15d67e4",
+    "sha256": "46ef6a29900a37cf053575d39629df7238bea78c4824b43837c64eca78817d29",
+    "source_bytes": 666684,
+    "bytes": 328370
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-012.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-012.webp",
+    "source_sha256": "ef77587d17ab0f42c17f2d5f88ddb27cbc4b950ddefe268efbb97d6dc2209e93",
+    "sha256": "319449b52f6918d3a07c8359379fc620c6073752f7604415935820ba62224be5",
+    "source_bytes": 27543,
+    "bytes": 31986
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-012.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-012.webp",
+    "source_sha256": "504e84020ee75b2c099894068ab32f55c67f186da14751966102ea74daf4992c",
+    "sha256": "f5258824c92967d761bb88e6563608db41ded43b43981d1fead459ca3b797711",
+    "source_bytes": 26659,
+    "bytes": 21004
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-013.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-013.webp",
+    "source_sha256": "97431b2e2bfbd553cb3fe5ffa5bca96caecfa07ffeced8a0fa9e6cc4b17cfac8",
+    "sha256": "d852148a890d0d12f56ccd1e5a7621a611532d5ba93e2409802b67201c1b3478",
+    "source_bytes": 198391,
+    "bytes": 82708
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-013.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-013.webp",
+    "source_sha256": "81d29544d27322393814d9fba1dca247562e40cdbb2dfd7ad6112dd7b2ca6f94",
+    "sha256": "fcfcf2c3b26eda4d431306a9bd7cb94844f117c7bf1c247aede91646cca90312",
+    "source_bytes": 8850,
+    "bytes": 7680
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-013.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-013.webp",
+    "source_sha256": "f53b23669f5819e5e50ab4bc8b5ac3bc23d61a85c7a48c80800050b2dca85dcc",
+    "sha256": "9665ec356f1236b2b399b450537cbc7741d03c5b326f67fff4cd52921b94c778",
+    "source_bytes": 13654,
+    "bytes": 9554
+  },
+  "patryk-wojciechowicz/images/patryk-wojciechowicz-014.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/images/patryk-wojciechowicz-014.webp",
+    "source_sha256": "e409c40004eb41800dbd902604d4845ebcf22894aa4530e9c9d590f86d9c2ce2",
+    "sha256": "c76532e5cad92e44dafd41a8822fb54c230032fac6afa32fa96a9eea9744c2b2",
+    "source_bytes": 1079707,
+    "bytes": 626290
+  },
+  "patryk-wojciechowicz/thumbs/patryk-wojciechowicz-014.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/thumbs/patryk-wojciechowicz-014.webp",
+    "source_sha256": "9feb797dcdd7258cb5868bc4cdd91676fcd0a508d5972f2877a2c1414be84b85",
+    "sha256": "30a9c645e0ae9d1c59cf1b6a886dba1ef92f575c2714d4901ee615058a0e4325",
+    "source_bytes": 30738,
+    "bytes": 37262
+  },
+  "patryk-wojciechowicz/glass/patryk-wojciechowicz-014.jpg": {
+    "path": "webp-q90-v1/patryk-wojciechowicz/glass/patryk-wojciechowicz-014.webp",
+    "source_sha256": "e12c2eadca6c1f0d3f5ac0717ffc1829d4c9225f826ff7216807e2d1c60ec426",
+    "sha256": "59b97b2d707de129b4fcf6849c123dad85cb86edff5391cc1ee96c167d155731",
+    "source_bytes": 28133,
+    "bytes": 22236
+  }
+}

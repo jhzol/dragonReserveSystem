@@ -1,0 +1,22 @@
+# Insert inside the existing site block. Validated against production Caddy 2.6.2.
+# No request identifiers, URLs, IPs, headers, cookies, or credentials are retained.
+@notCoverRequest not path /activity-cover-assets/* /api/v2/activity-covers/*/glass-image
+skip_log @notCoverRequest
+log {
+    output file /var/log/caddy/cover-diagnostics.jsonl {
+        roll_size 10MiB
+        roll_keep 3
+        roll_keep_for 72h
+    }
+    format filter {
+        wrap json
+        fields {
+            request delete
+            resp_headers delete
+            user_id delete
+            err_id delete
+            err_trace delete
+            msg delete
+        }
+    }
+}

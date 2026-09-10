@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+import json
+from pydantic import BaseModel, Field, field_validator
 
 
 class ClientDiagnosticLogRequest(BaseModel):
@@ -19,6 +20,13 @@ class ClientDiagnosticLogRequest(BaseModel):
     base_lib_version: str = Field(default="", alias="baseLibVersion", max_length=50)
     system_type: str = Field(default="", alias="systemType", max_length=50)
     payload: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("payload")
+    @classmethod
+    def bounded_payload(cls, value):
+        if len(json.dumps(value, ensure_ascii=False).encode("utf-8")) > 32768:
+            raise ValueError("Diagnostic payload exceeds 32 KiB")
+        return value
 
     model_config = {
         "populate_by_name": True,

@@ -3,6 +3,7 @@
   "renderer": "skyline",
   "componentFramework": "glass-easel",
   "usingComponents": {
+    "create-access-dialog": "../../components/create-access-dialog/index",
     "activity-form-sheet": "../../components/activity-form-sheet/index",
     "participants-drawer": "../../components/participants-drawer/index"
   },

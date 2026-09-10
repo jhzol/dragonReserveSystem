@@ -13,7 +13,7 @@ def test_client_offline_restart_to_backend_log(client, user_headers, normal_user
     storage = tmp_path / 'client-outbox.json'
     seeded = subprocess.run(['node', str(script), 'seed', str(storage)], check=True, capture_output=True, text=True, timeout=15)
     seed = json.loads(seeded.stdout)
-    assert seed['retained'] == 3
+    assert seed['retained'] == 4
     assert 'integration-token' not in storage.read_text()
     assert '?token=' not in storage.read_text()
     log_path = tmp_path / 'application.log'
@@ -32,10 +32,13 @@ def test_client_offline_restart_to_backend_log(client, user_headers, normal_user
         assert json.loads(stdout)['retained'] == 0
         handler.flush()
         rows = diagnostic_service.read_recent_client_diagnostic_logs()
-        assert len(rows) == 3
+        assert len(rows) == 4
         assert {row['payload']['diagnosticEventId'] for row in rows} == set(seed['ids'])
         assert all(row['user_id'] == normal_user.id for row in rows)
         cases = {row['trace_id']: row['payload'] for row in rows}
+        assert cases['integration-attempt']['evidence']['profile']['queueEnd'] == 32
+        assert cases['integration-attempt']['evidence']['outstandingPreparations'] == 5
+        assert cases['integration-attempt']['evidence']['requestId'] == 'hm-integration-2'
         assert cases['integration-list_missing']['listStage'] == 'request_pending'
         assert cases['integration-list_missing']['listLoading'] is True
         for role in ('cover','glass'):
@@ -44,6 +47,11 @@ def test_client_offline_restart_to_backend_log(client, user_headers, normal_user
             assert case['tabHidden'] is False
             assert case['cards'][0][role].startswith('pending;native=no_callback')
             assert case['cards'][1]['ready'] is True
+            phases = case['cards'][0]['coverPhases']
+            assert phases == {'download_started': 100, 'download_progress': 230,
+                              'bytes': 12345, 'expectedBytes': 900000, 'priority': 0, 'startPriority': 1}
+            assert case['cards'][0]['glassPhases'] == {
+                'image_info_complete': 230, 'width': 1200, 'height': 1400}
         assert json.loads(storage.read_text()) == []
     finally:
         if process.poll() is None:
