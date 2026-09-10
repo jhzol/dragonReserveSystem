@@ -35,18 +35,22 @@ function prefetchSignedUpList(app) {
   if (payload && now - payload.savedAt < PREFETCH_MIN_INTERVAL_MS) {
     return null;
   }
-  if (_inflight) return _inflight;
+  if (_inflight && _inflight.uid === uid && _inflight.token === token) return _inflight.promise;
 
-  _inflight = activityService
+  const entry = { uid, token, promise: null };
+  entry.promise = activityService
     .listMyActivities()
     .then((list) => {
-      myActivitiesCache.writeRawList(uid, list || []);
+      const currentToken = app.globalData.accessToken || wx.getStorageSync("accessToken");
+      const currentUid = String(app.globalData.userId || wx.getStorageSync("userId") || "").trim();
+      if (currentToken === token && currentUid === uid) myActivitiesCache.writeRawList(uid, list || []);
     })
     .catch(() => {})
     .finally(() => {
-      _inflight = null;
+      if (_inflight === entry) _inflight = null;
     });
-  return _inflight;
+  _inflight = entry;
+  return entry.promise;
 }
 
 module.exports = {

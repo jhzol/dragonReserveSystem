@@ -849,12 +849,13 @@ button.create-btn-fixed.create-btn-hover {
 .home-card-entrance {
   opacity: 1;
   transform: translateY(0);
-  transition: transform 560ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 440ms ease-out;
+  transition: opacity 440ms ease-out;
 }
 
 .home-card-entrance--pending {
+  pointer-events: none;
   opacity: 0;
-  transform: translateY(23.08rpx);
+  transform: translateY(0);
 }
 
 .home-card-entrance--idle,
@@ -1354,15 +1355,18 @@ button.create-btn-fixed.create-btn-hover {
 .home-card-slot { position: relative; }
 .home-card-slot--large { width: 530.77rpx; }
 .home-card-slot--small { width: 346.15rpx; }
-.card-skeleton { position: absolute; top: 0; left: 0; z-index: 2; }
+.card-skeleton { position: absolute; top: 0; left: 0; z-index: 2; opacity: 1; transition: opacity 440ms ease-out; }
+/* Keep the placeholder mounted for a same-position crossfade; hidden layers cannot intercept taps. */
+.card-skeleton--revealed { opacity: 0; pointer-events: none; }
 .card-skeleton--large { width: 530.77rpx; }
 .card-skeleton--small { width: 346.15rpx; }
-.skeleton-block { position: relative; overflow: hidden; background: #e9eaec; }
-.skeleton-large { width: 530.77rpx; height: 761.53rpx; border-radius: 30.77rpx; }
+.skeleton-block { position: relative; overflow: hidden; background: #EAECEF; }
+.skeleton-date { width: 280.77rpx; height: 38.46rpx; border-radius: 19.23rpx; }
+.skeleton-large { width: 530.77rpx; height: 707.69rpx; margin-top: 15.38rpx; border-radius: 30.77rpx; }
 .skeleton-small { width: 346.15rpx; height: 346.15rpx; border-radius: 23.08rpx; }
-.skeleton-heading { width: 153.85rpx; height: 34.62rpx; border-radius: 19.23rpx; }
-.skeleton-name { width: 246.15rpx; height: 26.92rpx; border-radius: 15.38rpx; margin-top: 15.38rpx; }
-.skeleton-time { width: 184.62rpx; height: 21.15rpx; border-radius: 11.54rpx; margin-top: 9.62rpx; }
+.skeleton-heading { width: 153.85rpx; height: 38.46rpx; border-radius: 19.23rpx; }
+.skeleton-name { width: 246.15rpx; height: 23.08rpx; border-radius: 11.54rpx; margin-top: 15.38rpx; }
+.skeleton-time { width: 184.62rpx; height: 23.08rpx; border-radius: 11.54rpx; margin-top: 9.62rpx; }
 .skeleton-shimmer {
   position: absolute; top: 0; bottom: 0; left: 0; width: 45%;
   background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.65), rgba(255,255,255,0));

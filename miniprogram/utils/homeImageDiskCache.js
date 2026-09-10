@@ -2,26 +2,37 @@
 const MAX_BYTES = 100 * 1000 * 1000;
 const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 const instances = new WeakMap();
-function createHomeImageDiskCache(wxApi, { maxBytes = MAX_BYTES, now = Date.now, maxAgeMs = MAX_AGE_MS } = {}) {
+function createHomeImageDiskCache(wxApi, { maxBytes = MAX_BYTES, now = Date.now, maxAgeMs = MAX_AGE_MS, setTimer = setTimeout, clearTimer = clearTimeout } = {}) {
   let fs;
   try { fs = wxApi.getFileSystemManager(); } catch (_) { return null; }
   if (!wxApi.env?.USER_DATA_PATH || !['mkdir', 'readFile', 'writeFile', 'rename', 'readdir', 'stat', 'copyFile', 'unlink'].every(k => typeof fs[k] === 'function')) return null;
   const dir = `${wxApi.env.USER_DATA_PATH}/home-image-cache-v1`;
-  let entries = [], initialized = false, disabled = false, sequence = 0, chain = Promise.resolve();
-  const invalid = new Set(), pinned = new Set(), generations = new Map();
+  let entries = [], disabled = false, sequence = 0, chain = Promise.resolve();
+  let initialization, persistTimer = null, accessVersion = 0, savedAccessVersion = 0;
+  const invalid = new Set(), pinned = new Set(), removing = new Set(), generations = new Map();
   const call = (method, args) => new Promise((resolve, reject) => {
     const timer = setTimeout(() => { disabled = true; reject(new Error('cache IO timeout')); }, 1200);
     try { fs[method]({ ...args, success: r => { clearTimeout(timer); resolve(r); }, fail: e => { clearTimeout(timer); reject(e); } }); }
     catch (e) { clearTimeout(timer); reject(e); }
   });
   const owned = name => /^img-[a-z0-9-]+\.bin$/.test(name);
-  const remove = name => owned(name) ? call('unlink', { filePath: `${dir}/${name}` }) : Promise.reject(new Error('unowned file'));
+  const remove = async name => {
+    if (!owned(name)) throw new Error('unowned file');
+    // Mark before asynchronous unlink: foreground readers must not acquire a
+    // path already selected for eviction. Other cache hits remain unblocked.
+    removing.add(name);
+    try { return await call('unlink', { filePath: `${dir}/${name}` }); }
+    finally { removing.delete(name); }
+  };
   const persist = async () => {
+    if (persistTimer !== null) { clearTimer(persistTimer); persistTimer = null; }
+    const version = accessVersion;
     await call('writeFile', { filePath: `${dir}/index.next`, data: JSON.stringify(entries), encoding: 'utf8' });
     await call('rename', { oldPath: `${dir}/index.next`, newPath: `${dir}/index.json` });
+    savedAccessVersion = version;
+    if (accessVersion !== version) scheduleAccessPersist();
   };
   async function init() {
-    if (initialized) return;
     try { await call('mkdir', { dirPath: dir, recursive: true }); } catch (e) { if (disabled) throw e; }
     try {
       const result = await call('readFile', { filePath: `${dir}/index.json`, encoding: 'utf8' });
@@ -39,23 +50,48 @@ function createHomeImageDiskCache(wxApi, { maxBytes = MAX_BYTES, now = Date.now,
     const indexed = new Set(entries.map(e => e.name));
     // Recover only our own interrupted writes; never traverse or delete business files.
     for (const name of live) if (owned(name) && !indexed.has(name)) await remove(name);
-    initialized = true;
   }
+  function ensureInitialized() {
+    if (!initialization) initialization = init();
+    return initialization;
+  }
+  function scheduleAccessPersist() {
+    if (persistTimer !== null || disabled) return;
+    persistTimer = setTimer(() => {
+      persistTimer = null;
+      serial(async () => { if (accessVersion !== savedAccessVersion) await persist(); });
+    }, 200);
+    if (persistTimer && typeof persistTimer.unref === 'function') persistTimer.unref();
+  }
+  if (typeof wxApi.onAppHide === 'function') wxApi.onAppHide(() => {
+    if (accessVersion !== savedAccessVersion) serial(persist);
+  });
   function serial(fn, fallback) {
-    const task = chain.then(async () => { if (disabled) return fallback; await init(); return fn(); }).catch(() => fallback);
+    const task = chain.then(async () => { if (disabled) return fallback; await ensureInitialized(); return fn(); }).catch(() => fallback);
     chain = task.then(() => {}); return task;
   }
   return {
-    get(url) { return serial(async () => {
-      if (invalid.has(url)) return null;
-      const e = [...entries].reverse().find(x => x.url === url);
-      if (!e || now() - e.saved >= maxAgeMs || now() < e.saved) return null;
-      try { const r = await call('stat', { path: `${dir}/${e.name}` }); if (r.stats.size !== e.size) { invalid.add(url); pinned.delete(e.name); return null; } } catch (_) { invalid.add(url); pinned.delete(e.name); return null; }
-      e.used = now(); pinned.add(e.name);
-      // Persist LRU asynchronously through this same serialization queue.
-      await persist();
-      return `${dir}/${e.name}`;
-    }, null); },
+    async get(url) {
+      // Reads do not wait behind copies/index writes. Pin before stat so eviction
+      // cannot remove the file while a foreground read is in progress.
+      try {
+        if (disabled) return null;
+        await ensureInitialized();
+        if (disabled || invalid.has(url)) return null;
+        const generation = generations.get(url) || 0;
+        const e = [...entries].reverse().find(x => x.url === url);
+        if (!e || removing.has(e.name) || now() - e.saved >= maxAgeMs || now() < e.saved) return null;
+        pinned.add(e.name);
+        try {
+          const r = await call('stat', { path: `${dir}/${e.name}` });
+          if (r.stats.size !== e.size) throw new Error('cache size mismatch');
+        } catch (_) { invalid.add(url); pinned.delete(e.name); return null; }
+        if (invalid.has(url) || generation !== (generations.get(url) || 0) || !entries.includes(e)) return null;
+        e.used = now(); accessVersion++;
+        scheduleAccessPersist();
+        return `${dir}/${e.name}`;
+      } catch (_) { return null; }
+    },
     invalidate(url) {
       generations.set(url, (generations.get(url) || 0) + 1);
       invalid.add(url); // Immediately block racing reads/saves before queued disk work.
@@ -96,6 +132,9 @@ function createHomeImageDiskCache(wxApi, { maxBytes = MAX_BYTES, now = Date.now,
         await call('copyFile', { srcPath: path, destPath: `${dir}/${name}` });
         if (invalid.has(url) || (generations.get(url) || 0) !== generation) { await remove(name); return false; }
         entries.push({ url, name, size, saved: now(), used: now() });
+        // New file ownership must remain dirty if its first index write fails.
+        // App hide can then retry without requiring another cache hit.
+        accessVersion++;
         await persist(); return true;
       }, false);
     }

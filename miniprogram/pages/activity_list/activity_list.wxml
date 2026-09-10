@@ -4,7 +4,8 @@
   </view>
 </template>
 <template name="home-card-skeleton">
-  <view class="card-skeleton card-skeleton--{{size}}" aria-label="{{failed ? '卡片加载失败' : '卡片加载中'}}">
+  <view class="card-skeleton card-skeleton--{{size}} {{revealed ? 'card-skeleton--revealed' : ''}}" aria-hidden="{{revealed ? true : false}}" aria-label="{{failed ? '卡片加载失败' : '卡片加载中'}}">
+    <template wx:if="{{size === 'large'}}" is="home-skeleton-shape" data="{{shape: 'skeleton-date', running: running && !failed}}" />
     <template is="home-skeleton-shape" data="{{shape: size === 'large' ? 'skeleton-large' : 'skeleton-small', running: running && !failed}}" />
     <view wx:if="{{failed}}" class="home-card-retry home-card-retry--{{size}}" role="button" aria-label="重新加载这张卡片" catchtap="onRetryHomeCard" data-group="{{group}}" data-activity-id="{{activityId}}">
       <text>加载失败，点击重试</text>
@@ -87,9 +88,9 @@
             class="large-card-slide"
           >
             <view class="home-card-slot home-card-slot--large" data-group="joined" data-activity-id="{{item._id}}">
-              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'large', running: skeletonShimmerRunning, failed: item._homeMediaError, group: 'joined', activityId: item._id}}" />
+              <template is="home-card-skeleton" data="{{size: 'large', revealed: item._homeMediaReady && item._homeSlotEntered, running: skeletonShimmerRunning && !item._homeMediaError && !(item._homeMediaReady && item._homeSlotEntered), failed: item._homeMediaError, group: 'joined', activityId: item._id}}" />
             <view
-              class="large-card-wrap home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
+              class="large-card-wrap home-card-entrance home-card-entrance--{{!(item._homeMediaReady && item._homeSlotEntered) ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
               <text class="card-datetime-label">{{item.cardDateTimeLabel || item.startTime}}</text>
               <open-container
@@ -199,8 +200,8 @@
                       </view>
                       <view class="glass-meta-item">
                         <image class="glass-meta-icon-img" src="/images/icon-home-card-people.svg" mode="aspectFit" />
-                        <text class="glass-meta-text" wx:if="{{item.maxParticipants != null}}">{{item.participants.length}}/{{item.maxParticipants}} 人</text>
-                        <text class="glass-meta-text" wx:elif="{{item.participants.length > 0}}">{{item.participants.length}} 人</text>
+                        <text class="glass-meta-text" wx:if="{{item.maxParticipants != null}}">{{item.participantCount}}/{{item.maxParticipants}} 人</text>
+                        <text class="glass-meta-text" wx:elif="{{item.participantCount > 0}}">{{item.participantCount}} 人</text>
                         <text class="glass-meta-text" wx:else>0 人</text>
                       </view>
                     </view>
@@ -233,9 +234,9 @@
         >
           <swiper-item wx:for="{{groupedActivities.accepting}}" wx:key="_id" class="small-card-slide">
             <view class="home-card-slot home-card-slot--small" data-group="accepting" data-activity-id="{{item._id}}">
-              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning, failed: item._homeMediaError, group: 'accepting', activityId: item._id}}" />
+              <template is="home-card-skeleton" data="{{size: 'small', revealed: item._homeMediaReady && item._homeSlotEntered, running: skeletonShimmerRunning && !item._homeMediaError && !(item._homeMediaReady && item._homeSlotEntered), failed: item._homeMediaError, group: 'accepting', activityId: item._id}}" />
             <view
-              class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
+              class="small-card-layout home-card-entrance home-card-entrance--{{!(item._homeMediaReady && item._homeSlotEntered) ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
               <view class="small-card-shadow" aria-hidden="true"></view>
               <open-container
@@ -332,9 +333,9 @@
         >
           <swiper-item wx:for="{{groupedActivities.notStarted}}" wx:key="_id" class="small-card-slide">
             <view class="home-card-slot home-card-slot--small" data-group="notStarted" data-activity-id="{{item._id}}">
-              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning, failed: item._homeMediaError, group: 'notStarted', activityId: item._id}}" />
+              <template is="home-card-skeleton" data="{{size: 'small', revealed: item._homeMediaReady && item._homeSlotEntered, running: skeletonShimmerRunning && !item._homeMediaError && !(item._homeMediaReady && item._homeSlotEntered), failed: item._homeMediaError, group: 'notStarted', activityId: item._id}}" />
             <view
-              class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
+              class="small-card-layout home-card-entrance home-card-entrance--{{!(item._homeMediaReady && item._homeSlotEntered) ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
               <view class="small-card-shadow" aria-hidden="true"></view>
               <open-container
@@ -431,9 +432,9 @@
         >
           <swiper-item wx:for="{{groupedActivities.ended}}" wx:key="_id" class="small-card-slide">
             <view class="home-card-slot home-card-slot--small" data-group="ended" data-activity-id="{{item._id}}">
-              <template wx:if="{{!item._homeMediaReady}}" is="home-card-skeleton" data="{{size: 'small', running: skeletonShimmerRunning, failed: item._homeMediaError, group: 'ended', activityId: item._id}}" />
+              <template is="home-card-skeleton" data="{{size: 'small', revealed: item._homeMediaReady && item._homeSlotEntered, running: skeletonShimmerRunning && !item._homeMediaError && !(item._homeMediaReady && item._homeSlotEntered), failed: item._homeMediaError, group: 'ended', activityId: item._id}}" />
             <view
-              class="small-card-layout home-card-entrance home-card-entrance--{{!item._homeMediaReady ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
+              class="small-card-layout home-card-entrance home-card-entrance--{{!(item._homeMediaReady && item._homeSlotEntered) ? 'pending' : (item._id == createdCardEntranceId ? createdCardEntranceState : 'entered')}}"
             >
               <view class="small-card-shadow" aria-hidden="true"></view>
               <open-container

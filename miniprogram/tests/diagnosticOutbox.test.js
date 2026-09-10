@@ -100,7 +100,7 @@ test('normal successes coalesce disk writes and share a single upload batch', ()
   const save = h.wxApi.setStorageSync;
   h.wxApi.setStorageSync = (...args) => { writes++; save(...args); };
   for (let i=0;i<6;i++) h.outbox.enqueue({...body, payload:{reason:'all_ready_state_committed'}});
-  assert.equal(writes,0); h.advance(200); assert.equal(writes,2);
+  assert.equal(writes,0); h.advance(200); assert.equal(writes,1);
   h.advance(1000); assert.equal(h.requests.length,1); assert.equal(h.requests[0].data.events.length,6);
 });
 test('an error immediately persists pending normal summaries without waiting for debounce', () => {
@@ -109,4 +109,16 @@ test('an error immediately persists pending normal summaries without waiting for
   h.outbox.enqueue(body);
   assert.equal(h.storage.get(STORAGE_KEY).length,2);
   h.advance(1200); assert.equal(h.requests.length,1);
+});
+
+test('empty startup/resume do not write storage; unchanged flush does not rewrite queue', () => {
+  let writes = 0;
+  const wxApi = {getStorageSync: () => undefined, setStorageSync: () => writes++};
+  const empty = createDiagnosticOutbox({wxApi, getApiBaseUrl: () => 'test'});
+  empty.resume(); empty.resume(); assert.equal(writes, 0);
+  const h = setup(); const save = h.wxApi.setStorageSync;
+  h.wxApi.setStorageSync = (...args) => { writes++; save(...args); };
+  h.outbox.enqueue(body); assert.equal(writes, 1);
+  h.outbox.resume(); h.advance(1200); assert.equal(writes, 1);
+  ack(h.requests[0]); assert.equal(writes, 2);
 });

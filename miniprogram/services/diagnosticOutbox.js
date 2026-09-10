@@ -35,28 +35,44 @@ function createDiagnosticOutbox({ wxApi, getApiBaseUrl, createId, onFailure = ()
   const metrics = { dropped: 0, uploadFailures: 0, storageFailures: 0 };
   const savedMetrics = safe(() => wxApi.getStorageSync(METRICS_KEY));
   for (const key of Object.keys(metrics)) if (Number.isSafeInteger(savedMetrics?.[key]) && savedMetrics[key] >= 0) metrics[key] = savedMetrics[key];
-  const identity = () => ({
-    owner: safe(() => wxApi.getStorageSync('accessToken')) ? String(safe(() => wxApi.getStorageSync('userId')) || '') : ANONYMOUS,
-    token: String(safe(() => wxApi.getStorageSync('accessToken')) || ''),
-    endpoint: String(safe(getApiBaseUrl) || '')
-  });
+  const identity = () => {
+    const token = String(safe(() => wxApi.getStorageSync('accessToken')) || '');
+    return { owner: token ? String(safe(() => wxApi.getStorageSync('userId')) || '') : ANONYMOUS,
+      token, endpoint: String(safe(getApiBaseUrl) || '') };
+  };
+  let queueDirty = false;
+  let persistedMetrics = JSON.stringify(metrics);
+  const entryBytes = new WeakMap();
+  const sizeOf = entry => {
+    if (!entryBytes.has(entry)) entryBytes.set(entry, JSON.stringify(entry).length * 2);
+    return entryBytes.get(entry);
+  };
   function prune() {
     const before = queue.length;
     const cutoff = now() - MAX_AGE_MS;
     queue = queue.filter(e => e && typeof e.id === 'string' && e.owner && e.endpoint &&
       Number.isFinite(e.createdAt) && e.createdAt >= cutoff && e.createdAt <= now() &&
       e.body && typeof e.body.event === 'string').slice(-MAX_ENTRIES);
-    while (queue.length && JSON.stringify(queue).length * 2 > MAX_BYTES) queue.shift();
+    let bytes = 4 + queue.reduce((sum, entry) => sum + sizeOf(entry) + 2, 0);
+    while (queue.length && bytes > MAX_BYTES) bytes -= sizeOf(queue.shift()) + 2;
+    if (before !== queue.length) queueDirty = true;
     metrics.dropped += before - queue.length;
   }
   function persist() {
     if (persistTimer !== null) { clearTimer(persistTimer); persistTimer = null; }
     prune();
-    try { wxApi.setStorageSync(STORAGE_KEY, queue); wxApi.setStorageSync(METRICS_KEY, metrics); }
+    try {
+      if (queueDirty) { wxApi.setStorageSync(STORAGE_KEY, queue); queueDirty = false; }
+      const nextMetrics = JSON.stringify(metrics);
+      if (nextMetrics !== persistedMetrics) { wxApi.setStorageSync(METRICS_KEY, metrics); persistedMetrics = nextMetrics; }
+    }
     catch (_) { metrics.storageFailures++; report('diagnostic local storage unavailable'); }
   }
   const stored = safe(() => wxApi.getStorageSync(STORAGE_KEY));
-  if (Array.isArray(stored)) queue = sanitize(stored);
+  if (Array.isArray(stored)) {
+    queue = sanitize(stored);
+    queueDirty = JSON.stringify(queue) !== JSON.stringify(stored);
+  }
   persist();
 
   function schedule(delay = 1200) {
@@ -81,6 +97,7 @@ function createDiagnosticOutbox({ wxApi, getApiBaseUrl, createId, onFailure = ()
       if (success) {
         const ids = new Set(batch.map(e => e.id));
         queue = queue.filter(e => !ids.has(e.id));
+        queueDirty = true;
         retry = 0; nextAt = 0; persist(); schedule();
       } else {
         // Leave the original batch on disk, including when the process exits in flight.
@@ -116,6 +133,7 @@ function createDiagnosticOutbox({ wxApi, getApiBaseUrl, createId, onFailure = ()
       const id = createId();
       const clean = sanitize(body);
       clean.payload = { ...(clean.payload || {}), diagnosticEventId: id, occurredAt: now() };
+      queueDirty = true;
       queue.push({ id, owner: current.owner, endpoint: current.endpoint, createdAt: now(), body: clean });
       // Only ordinary success logs may wait briefly. Failures remain durable immediately.
       const normal = body.event === 'home_presentation_snapshot' && body.payload?.reason === 'all_ready_state_committed' ||

@@ -4,6 +4,11 @@ const { logPageError, resumeDiagnosticUploads } = require("./services/logger");
 
 
 
+// Session validation remains immediate; unchanged primitive profile values need no write.
+function storeIfChanged(key, value) {
+  if (wx.getStorageSync(key) !== value) wx.setStorageSync(key, value);
+}
+
 App({
 
   globalData: {
@@ -145,7 +150,7 @@ App({
 
       this.globalData.accessToken = accessToken;
 
-      wx.setStorageSync("accessToken", accessToken);
+      storeIfChanged("accessToken", accessToken);
 
     }
 
@@ -175,19 +180,19 @@ App({
 
 
 
-    wx.setStorageSync("hasWeChatAuth", true);
+    storeIfChanged("hasWeChatAuth", true);
 
-    wx.setStorageSync("userId", String(user.id || ""));
+    storeIfChanged("userId", String(user.id || ""));
 
-    wx.setStorageSync("userNickname", user.nickname || "");
+    storeIfChanged("userNickname", user.nickname || "");
 
-    wx.setStorageSync("userAvatarUrl", user.avatar_url || "");
+    storeIfChanged("userAvatarUrl", user.avatar_url || "");
 
-    wx.setStorageSync("userRole", role);
+    storeIfChanged("userRole", role);
 
     resumeDiagnosticUploads();
 
-    wx.setStorageSync("isAuthenticated", isAuthenticated);
+    storeIfChanged("isAuthenticated", isAuthenticated);
 
   },
 
@@ -205,9 +210,9 @@ App({
 
     try {
 
-      wx.setStorageSync("userRole", role);
+      storeIfChanged("userRole", role);
 
-      wx.setStorageSync("isAuthenticated", isAuthenticated);
+      storeIfChanged("isAuthenticated", isAuthenticated);
 
     } catch (e) {
 

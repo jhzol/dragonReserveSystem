@@ -99510,12 +99510,12 @@
                   "children": [
                     {
                       "type": "rectangle",
-                      "cornerRadius": 9,
+                      "cornerRadius": 10,
                       "id": "qRAQO",
                       "name": "我参与的 · 标题骨架",
                       "fill": "#EAECEF",
                       "width": 80,
-                      "height": 18
+                      "height": 20
                     }
                   ]
                 },
@@ -99529,31 +99529,91 @@
                   "gap": 12,
                   "children": [
                     {
-                      "type": "rectangle",
-                      "cornerRadius": 16,
-                      "id": "HJGvX",
-                      "name": "活动大卡整体骨架 · 1",
-                      "fill": "#EAECEF",
+                      "type": "frame",
+                      "id": "YP8yB",
+                      "name": "活动大卡骨架 · 1",
                       "width": 276,
-                      "height": 396
+                      "height": 396,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 10,
+                          "id": "vKJzL",
+                          "name": "日期时间骨架",
+                          "fill": "#EAECEF",
+                          "width": 146,
+                          "height": 20
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 16,
+                          "id": "M8fzb",
+                          "name": "卡片主视觉骨架",
+                          "fill": "#EAECEF",
+                          "width": "fill_container",
+                          "height": 368
+                        }
+                      ]
                     },
                     {
-                      "type": "rectangle",
-                      "cornerRadius": 16,
-                      "id": "RYZZQ",
-                      "name": "活动大卡整体骨架 · 2",
-                      "fill": "#EAECEF",
+                      "type": "frame",
+                      "id": "uwyrz",
+                      "name": "活动大卡骨架 · 2",
                       "width": 276,
-                      "height": 396
+                      "height": 396,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 10,
+                          "id": "k8Y7t",
+                          "name": "日期时间骨架",
+                          "fill": "#EAECEF",
+                          "width": 146,
+                          "height": 20
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 16,
+                          "id": "OWRXP",
+                          "name": "卡片主视觉骨架",
+                          "fill": "#EAECEF",
+                          "width": "fill_container",
+                          "height": 368
+                        }
+                      ]
                     },
                     {
-                      "type": "rectangle",
-                      "cornerRadius": 16,
-                      "id": "z31tNh",
-                      "name": "活动大卡整体骨架 · 3",
-                      "fill": "#EAECEF",
+                      "type": "frame",
+                      "id": "k06Ei",
+                      "name": "活动大卡骨架 · 3",
                       "width": 276,
-                      "height": 396
+                      "height": 396,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 10,
+                          "id": "r5IEI5",
+                          "name": "日期时间骨架",
+                          "fill": "#EAECEF",
+                          "width": 146,
+                          "height": 20
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 16,
+                          "id": "ovI3p",
+                          "name": "卡片主视觉骨架",
+                          "fill": "#EAECEF",
+                          "width": "fill_container",
+                          "height": 368
+                        }
+                      ]
                     }
                   ]
                 }
@@ -99577,12 +99637,12 @@
                   "children": [
                     {
                       "type": "rectangle",
-                      "cornerRadius": 9,
+                      "cornerRadius": 10,
                       "id": "kOKqn",
                       "name": "接受报名 · 标题骨架",
                       "fill": "#EAECEF",
                       "width": 80,
-                      "height": 18
+                      "height": 20
                     }
                   ]
                 },
@@ -99623,12 +99683,12 @@
                           "children": [
                             {
                               "type": "rectangle",
-                              "cornerRadius": 7,
+                              "cornerRadius": 6,
                               "id": "AJnXX",
                               "name": "小卡标题骨架",
                               "fill": "#EAECEF",
                               "width": 128,
-                              "height": 14
+                              "height": 12
                             },
                             {
                               "type": "rectangle",
@@ -99637,7 +99697,7 @@
                               "name": "小卡时间骨架",
                               "fill": "#EAECEF",
                               "width": 96,
-                              "height": 11
+                              "height": 12
                             }
                           ]
                         }
@@ -99671,12 +99731,12 @@
                           "children": [
                             {
                               "type": "rectangle",
-                              "cornerRadius": 7,
+                              "cornerRadius": 6,
                               "id": "JB68Z",
                               "name": "小卡标题骨架",
                               "fill": "#EAECEF",
                               "width": 128,
-                              "height": 14
+                              "height": 12
                             },
                             {
                               "type": "rectangle",
@@ -99685,7 +99745,7 @@
                               "name": "小卡时间骨架",
                               "fill": "#EAECEF",
                               "width": 96,
-                              "height": 11
+                              "height": 12
                             }
                           ]
                         }
@@ -99719,12 +99779,12 @@
                           "children": [
                             {
                               "type": "rectangle",
-                              "cornerRadius": 7,
+                              "cornerRadius": 6,
                               "id": "gXfYC",
                               "name": "小卡标题骨架",
                               "fill": "#EAECEF",
                               "width": 128,
-                              "height": 14
+                              "height": 12
                             },
                             {
                               "type": "rectangle",
@@ -99733,7 +99793,7 @@
                               "name": "小卡时间骨架",
                               "fill": "#EAECEF",
                               "width": 96,
-                              "height": 11
+                              "height": 12
                             }
                           ]
                         }

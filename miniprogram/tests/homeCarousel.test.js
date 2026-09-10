@@ -25,7 +25,7 @@ test("activity cards use Skyline open-container for native card-to-page transiti
   assert.equal(smallCardContainers.length, 3);
   assert.ok(smallCardContainers.every((container) => container.includes('closed-color="transparent"')));
   assert.ok(smallCardContainers.every((container) => container.includes('closed-border-radius="0"')));
-  assert.equal((wxml.match(/class="small-card-layout home-card-entrance home-card-entrance--\{\{!item\._homeMediaReady \? 'pending' : \(item\._id == createdCardEntranceId \? createdCardEntranceState : 'entered'\)\}\}"/g) || []).length, 3);
+  assert.equal((wxml.match(/class="small-card-layout home-card-entrance home-card-entrance--\{\{!\(item\._homeMediaReady && item\._homeSlotEntered\) \? 'pending' : \(item\._id == createdCardEntranceId \? createdCardEntranceState : 'entered'\)\}\}"/g) || []).length, 3);
   assert.match(wxml, /<view[\s\S]*?class="large-card-wrap home-card-entrance[^\"]*"[\s\S]*?<text class="card-datetime-label">[\s\S]*?<open-container[\s\S]*?class="large-card-transition"[\s\S]*?closed-color="transparent"/);
 
   assert.equal(projectConfig.setting.skylineRenderEnable, true);
@@ -110,9 +110,9 @@ test("home uses independent skeletons and an image-independent Tab entrance", ()
   assert.doesNotMatch(js, /_coldStartGlassPendingIds|_pendingColdStartGroupedActivities/);
   assert.match(wxml, /wx:if="\{\{homeListLoading\}\}"/);
   assert.equal((wxml.match(/class="home-card-slot home-card-slot--/g) || []).length, 4);
-  assert.equal((wxml.match(/wx:if="\{\{!item\._homeMediaReady\}\}"/g) || []).length, 4);
+  assert.equal((wxml.match(/revealed: item\._homeMediaReady && item\._homeSlotEntered/g) || []).length, 4);
   assert.doesNotMatch(wxml, /cardEntranceStaggerMs|lazy-load="\{\{true\}\}"/);
-  assert.match(wxss, /background: #e9eaec/);
+  assert.match(wxss, /background: #EAECEF/);
   assert.match(wxss, /skeleton-shimmer--running[^}]*transition: transform 1400ms linear/s);
   assert.match(wxss, /home-card-entrance--pending[^}]*opacity: 0/s);
   assert.match(js, /homeTabEntrancePending = false;[\s\S]*?_setTabBarHidden\(false, \{ animate: true \}\)/);
@@ -127,7 +127,7 @@ test("a newly created activity is inserted immediately and animates without repl
   assert.match(js, /_revealCreatedCard\(\)[\s\S]*?_createdCardDrawerDismissed\s*=\s*true[\s\S]*?_tryRevealCreatedCard\(\)/);
   assert.match(js, /_tryRevealCreatedCard\(\)[\s\S]*?!this\._createdCardDrawerDismissed[\s\S]*?!this\._createdCardGlassReady[\s\S]*?createdCardEntranceState:\s*"entered"/);
   assert.match(js, /CREATED_CARD_ENTRANCE_DURATION_MS\s*=\s*560/);
-  assert.equal((wxml.match(/!item\._homeMediaReady \? 'pending' : \(item\._id == createdCardEntranceId \? createdCardEntranceState : 'entered'\)/g) || []).length, 4);
+  assert.equal((wxml.match(/!\(item\._homeMediaReady && item\._homeSlotEntered\) \? 'pending' : \(item\._id == createdCardEntranceId \? createdCardEntranceState : 'entered'\)/g) || []).length, 4);
   assert.doesNotMatch(wxml, /transition-delay/);
 });
 

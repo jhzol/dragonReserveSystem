@@ -119,3 +119,82 @@ test('default cache survives 24h and process restart, expires after 30 days, URL
   now = 1000 + MAX_AGE_MS + 1;
   assert.equal(await cache().get('https://cover?v=old'), null);
 });
+
+test('12 warm hits return before one coalesced index write, preserving restart reuse', async () => {
+  const h = fixture(); let time = 1000;
+  const seed = createHomeImageDiskCache(h.wxApi, {now: () => time});
+  for (let i = 0; i < 12; i++) await seed.put(`url-${i}`, 'temp');
+  let writes = 0, renames = 0; const tasks = new Map(); let next = 0;
+  for (const name of ['writeFile', 'rename']) {
+    const original = h.fs[name]; h.fs[name] = args => {
+      if (name === 'writeFile') writes++; else renames++;
+      original(args);
+    };
+  }
+  const cache = createHomeImageDiskCache(h.wxApi, {now: () => ++time,
+    setTimer: fn => { tasks.set(++next, fn); return next; }, clearTimer: id => tasks.delete(id)});
+  const paths = await Promise.all(Array.from({length:12}, (_,i) => cache.get(`url-${i}`)));
+  assert.ok(paths.every(Boolean)); assert.equal(writes, 0); assert.equal(renames, 0);
+  assert.equal(tasks.size, 1); const pending = [...tasks.values()]; tasks.clear(); pending.forEach(fn => fn());
+  await tick(); assert.equal(writes, 1); assert.equal(renames, 1);
+  assert.ok(await createHomeImageDiskCache(h.wxApi, {now: () => time}).get('url-0'));
+});
+test('foreground hit bypasses an unrelated in-progress background copy', async () => {
+  const h = fixture(); const c = createHomeImageDiskCache(h.wxApi);
+  await c.put('existing', 'temp');
+  const original = h.fs.copyFile; let release;
+  h.fs.copyFile = args => { release = () => original(args); };
+  const save = c.put('background', 'temp'); await tick();
+  assert.ok(await c.get('existing')); release(); assert.equal(await save, true);
+});
+
+test('foreground get cannot return a file whose eviction is already in flight', async () => {
+  const h = fixture();
+  const c = createHomeImageDiskCache(h.wxApi, { maxBytes: 12 });
+  await c.put('a', 'temp');
+  const unlink = h.fs.unlink;
+  let release;
+  const deleting = new Promise(resolve => {
+    h.fs.unlink = args => { release = () => unlink(args); resolve(); };
+  });
+  const saving = c.put('b', 'temp');
+  await deleting;
+  assert.equal(await c.get('a'), null);
+  release();
+  assert.equal(await saving, true);
+  assert.ok(await c.get('b'));
+});
+
+test('failed deferred index write preserves usable cache and hide retries dirty access metadata', async () => {
+  const h = fixture(); let hide, time = 100;
+  h.wxApi.onAppHide = fn => { hide = fn; };
+  const tasks = new Map(); let seq = 0;
+  const c = createHomeImageDiskCache(h.wxApi, {now:()=>time,
+    setTimer:fn=>{tasks.set(++seq,fn);return seq;},clearTimer:id=>tasks.delete(id)});
+  await c.put('a','temp');
+  const original = h.fs.writeFile; let fail = true;
+  h.fs.writeFile = args => fail ? args.fail(Error('write unavailable')) : original(args);
+  time = 200; assert.ok(await c.get('a'));
+  const pending = [...tasks.values()]; tasks.clear(); pending.forEach(fn=>fn()); await tick();
+  assert.equal(JSON.parse(h.files.get('/user/home-image-cache-v1/index.json').toString())[0].used,100);
+  fail = false; hide(); await tick();
+  assert.equal(JSON.parse(h.files.get('/user/home-image-cache-v1/index.json').toString())[0].used,200);
+  assert.ok(await createHomeImageDiskCache(h.wxApi,{now:()=>time}).get('a'));
+});
+
+test('new download index failure is retried on hide without a cache read', async () => {
+  const h = fixture(); let hide;
+  h.wxApi.onAppHide = fn => { hide = fn; };
+  const c = createHomeImageDiskCache(h.wxApi);
+  assert.equal(await c.put('existing', 'temp'), true);
+  const write = h.fs.writeFile;
+  h.fs.writeFile = args => args.fail(Error('temporary index write failure'));
+  assert.equal(await c.put('new-download', 'temp'), false);
+  assert.equal(JSON.parse(h.files.get('/user/home-image-cache-v1/index.json')).length, 1);
+  h.fs.writeFile = write;
+  hide(); await tick();
+  assert.equal(JSON.parse(h.files.get('/user/home-image-cache-v1/index.json')).length, 2);
+  const restarted = createHomeImageDiskCache(h.wxApi);
+  assert.ok(await restarted.get('new-download'));
+  assert.ok(await restarted.get('existing'));
+});
